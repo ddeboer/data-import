@@ -15,6 +15,7 @@
         "symfony/form": "2.*"
     },
     "suggest": {
+        "doctrine/dbal": "If you want to use the DbalReader",
         "phpexcel/phpexcel": "If you want to use the ExcelReader",
         "symfony/form": "If you want to use the ObjectConverter"
     },
