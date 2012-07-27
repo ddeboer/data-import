@@ -31,6 +31,13 @@ class CsvReader implements ReaderInterface, \SeekableIterator
     protected $columnHeaders;
 
     /**
+     * Total number of rows in the CSV file
+     *
+     * @var int
+     */
+    protected $count;
+
+    /**
      * Construct CSV reader
      *
      * @param \SplFileObject $file      CSV file
@@ -39,21 +46,6 @@ class CsvReader implements ReaderInterface, \SeekableIterator
      * @param string         $escape    Escape characters
      */
     public function __construct(\SplFileObject $file, $delimiter = ';', $enclosure = '"', $escape = '\\')
-    {
-        $this->setFile($file, $delimiter, $enclosure, $escape);
-    }
-
-    /**
-     * Set file and prepare it for CSV reading
-     *
-     * @param \SplFileObject $file      CSV file
-     * @param string         $delimiter Delimiter
-     * @param string         $enclosure Enclosure
-     * @param string         $escape    Escape characters
-     *
-     * @return CsvReader
-     */
-    public function setFile(\SplFileObject $file, $delimiter = ';', $enclosure = '"', $escape = '\\')
     {
         $this->file = $file;
         $this->file->setFlags(\SplFileObject::READ_CSV |
@@ -64,8 +56,6 @@ class CsvReader implements ReaderInterface, \SeekableIterator
             $enclosure,
             $escape
         );
-
-        return $this;
     }
 
     /**
@@ -151,40 +141,39 @@ class CsvReader implements ReaderInterface, \SeekableIterator
     }
 
     /**
-     * Count number of rows in CSV
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function count()
     {
-        return $this->countRows();
+        if (null === $this->count) {
+            $this->count = 0;
+            foreach ($this as $row) {
+                $this->count++;
+            }
+        }
+
+        return $this->count;
     }
 
     /**
-     * Count number of rows in CSV
-     *
-     * @return int
+     * {@inheritdoc}
      */
-    public function countRows()
-    {
-        $rows = 0;
-        foreach ($this as $row) {
-            $rows++;
-        }
-
-        return $rows;
-    }
-
     public function next()
     {
         return $this->file->next();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function valid()
     {
         return $this->file->valid();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function key()
     {
         return $this->file->key();
@@ -195,6 +184,9 @@ class CsvReader implements ReaderInterface, \SeekableIterator
         $this->file->seek($pointer);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getFields()
     {
         return $this->columnHeaders;

@@ -20,6 +20,13 @@ class ExcelReader implements ReaderInterface
     protected $pointer = 0;
 
     /**
+     * Total number of rows
+     *
+     * @var int
+     */
+    protected $count;
+
+    /**
      * Construct CSV reader
      *
      * @param Source|\SplFileObject $source          The source: can be either a
@@ -123,31 +130,6 @@ class ExcelReader implements ReaderInterface
     }
 
     /**
-     * Count number of rows in CSV
-     *
-     * @return int
-     */
-    public function count()
-    {
-        return $this->countRows();
-    }
-
-    /**
-     * Count number of rows in CSV
-     *
-     * @return int
-     */
-    public function countRows()
-    {
-        $rows = 0;
-        foreach ($this as $row) {
-            $rows++;
-        }
-
-        return $rows;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function next()
@@ -177,6 +159,21 @@ class ExcelReader implements ReaderInterface
     public function seek($pointer)
     {
         $this->pointer = $pointer;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function count()
+    {
+        if (null === $this->count) {
+            $this->count = 0;
+            foreach ($this as $row) {
+                $this->count++;
+            }
+        }
+
+        return $this->count;
     }
 
     /**

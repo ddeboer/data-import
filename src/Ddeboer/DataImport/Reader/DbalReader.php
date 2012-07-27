@@ -26,11 +26,6 @@ class DbalReader implements ReaderInterface
         $this->table = $table;
     }
 
-    protected function loadData()
-    {
-        $this->data = $this->connection->fetchAll('SELECT * FROM ' . $this->table);
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -84,6 +79,27 @@ class DbalReader implements ReaderInterface
      */
     public function rewind()
     {
+        $this->loadData();
         reset($this->data);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function count()
+    {
+        $this->loadData();
+
+        return count($this->data);
+    }
+
+    /**
+     * Load data if it hasn't been loaded yet
+     */
+    protected function loadData()
+    {
+        if (null === $this->data) {
+            $this->data = $this->connection->fetchAll('SELECT * FROM ' . $this->table);
+        }
     }
 }

@@ -12,7 +12,11 @@
         "php": ">=5.3.0"
     },
     "require-dev": {
-        "symfony/form": "2.*"
+        "symfony/form": "2.*",
+        "phpexcel/phpexcel": "1.7.6",
+        "doctrine/dbal": "@stable",
+        "doctrine/orm": "@stable",
+        "ext-sqlite": "*"
     },
     "suggest": {
         "doctrine/dbal": "If you want to use the DbalReader",

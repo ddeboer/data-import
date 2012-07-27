@@ -13,9 +13,8 @@ class CsvReaderTest extends \PHPUnit_Framework_TestCase
         $csvReader->setHeaderRowNumber(0);
 
         $this->assertEquals(array('id', 'number', 'description'),
-            $csvReader->getColumnHeaders());
-
-        $this->assertEquals(3, $csvReader->count());
+            $csvReader->getFields()
+        );
 
         foreach ($csvReader as $row) {
             $this->assertNotNull($row['id']);
@@ -36,7 +35,6 @@ class CsvReaderTest extends \PHPUnit_Framework_TestCase
         $csvReader = new CsvReader($file);
 
         $this->assertNull($csvReader->getColumnHeaders());
-        $this->assertEquals(3, $csvReader->count());
     }
 
     public function testReadCsvFileWithManualColumnHeaders()
@@ -50,5 +48,20 @@ class CsvReaderTest extends \PHPUnit_Framework_TestCase
             $this->assertNotNull($row['number']);
             $this->assertNotNull($row['description']);
         }
+    }
+
+    public function testCountWithoutHeaders()
+    {
+        $file = new \SplFileObject(__DIR__.'/../Fixtures/data_no_column_headers.csv');
+        $reader = new CsvReader($file);
+        $this->assertEquals(3, $reader->count());
+    }
+
+    public function testCountWithHeaders()
+    {
+        $file = new \SplFileObject(__DIR__.'/../Fixtures/data_column_headers.csv');
+        $reader = new CsvReader($file);
+        $reader->setHeaderRowNumber(0);
+        $this->assertEquals(3, $reader->count(), 'Row count should not include header');
     }
 }
