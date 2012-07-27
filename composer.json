@@ -16,7 +16,7 @@
         "phpexcel/phpexcel": "1.7.6",
         "doctrine/dbal": "@stable",
         "doctrine/orm": "@stable",
-        "ext-sqlite": "*"
+        "ext-sqlite3": "*"
     },
     "suggest": {
         "doctrine/dbal": "If you want to use the DbalReader",
