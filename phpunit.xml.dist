@@ -9,9 +9,9 @@
 
     <filter>
         <whitelist>
-            <directory suffix=".php">./src/Ddeboer</directory>
+            <directory suffix=".php">./src</directory>
             <exclude>
-                <directory suffix="*Interface.php">./src/Ddeboer</directory>
+                <directory suffix="Interface.php">./src</directory>
             </exclude>
         </whitelist>
     </filter>
