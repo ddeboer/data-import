@@ -12,7 +12,7 @@
             <directory suffix=".php">./src/Ddeboer</directory>
             <exclude>
                 <directory suffix="*Interface.php">./src/Ddeboer</directory>
-        </exclude>
+            </exclude>
         </whitelist>
     </filter>
 </phpunit>
