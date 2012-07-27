@@ -10,27 +10,6 @@ namespace Ddeboer\DataImport\Reader;
 class CsvReader implements ReaderInterface, \SeekableIterator
 {
     /**
-     * The field delimiter (one character only)
-     *
-     * @var string
-     */
-    private $delimiter = ';';
-
-    /**
-     * The field enclosure character (one character only)
-     *
-     * @var string
-     */
-    private $enclosure = '"';
-
-    /**
-     * The field escape character (one character only)
-     *
-     * @var string
-     */
-    private $escape    = '\\';
-
-    /**
      * Number of the row that contains the column names
      *
      * @var int
