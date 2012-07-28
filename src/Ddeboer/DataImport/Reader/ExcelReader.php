@@ -166,14 +166,12 @@ class ExcelReader implements ReaderInterface
      */
     public function count()
     {
-        if (null === $this->count) {
-            $this->count = 0;
-            foreach ($this as $row) {
-                $this->count++;
-            }
+        $count = count($this->worksheet);
+        if (null !== $this->headerRowNumber) {
+            $count--;
         }
 
-        return $this->count;
+        return $count;
     }
 
     /**
