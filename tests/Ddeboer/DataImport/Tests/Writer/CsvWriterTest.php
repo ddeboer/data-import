@@ -14,7 +14,7 @@ class CsvWriterTest extends \PHPUnit_Framework_TestCase
         $writer->writeItem(array(
             'firstProperty:', 'secondProperty:'
         ));
-        
+
         $writer->writeItem(array(
             'firstProperty' => 'some value',
             'secondProperty' => 'some other value'
@@ -23,5 +23,7 @@ class CsvWriterTest extends \PHPUnit_Framework_TestCase
         $fileContents = file_get_contents($outputFile->getPathname());
         $this->assertEquals("firstProperty:;secondProperty:\n\"some value\";\"some other value\"\n",
             $fileContents);
+
+        $writer->finish();
     }
 }
