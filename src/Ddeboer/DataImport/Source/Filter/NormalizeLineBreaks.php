@@ -36,8 +36,8 @@ class NormalizeLineBreaks implements SourceFilterInterface
 
     protected function normalizeLineBreaks($string)
     {
-        $string = \str_replace(self::CR, self::LF, $string);
         $string = \str_replace(self::CRLF, self::LF, $string);
+        $string = \str_replace(self::CR, self::LF, $string);
 
         return $string;
     }
