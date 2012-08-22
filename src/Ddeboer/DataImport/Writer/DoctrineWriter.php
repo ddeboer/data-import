@@ -198,7 +198,7 @@ class DoctrineWriter extends AbstractWriter
                 $value = $item->{'get' . ucfirst($fieldName)};
             }
 
-            if (!$value) {
+            if (null === $value) {
                 continue;
             }
 
