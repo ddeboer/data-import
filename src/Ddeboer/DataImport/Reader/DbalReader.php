@@ -8,22 +8,35 @@ use Doctrine\DBAL\Connection;
  */
 class DbalReader implements ReaderInterface
 {
-    protected $connection;
-    protected $schemaManager;
-    protected $table;
-    protected $data;
+    /***
+     * @var \Doctrine\DBAL\Connection
+     */
+    private $connection;
+
+    /**
+     * @var array
+     */
+    private $data;
+
+    /**
+     * @var \Doctrine\DBAL\Driver\Statement
+     */
+    private $stmt;
 
     /**
      * Constructor
      *
      * @param Connection $connection Database connection
-     * @param string     $table      Database table name
+     * @param string     $sql        SQL statement
      */
-    public function __construct(Connection $connection, $table)
+    public function __construct(Connection $connection, $sql, array $params = array())
     {
         $this->connection = $connection;
-        $this->schemaManager = $connection->getSchemaManager();
-        $this->table = $table;
+        $this->stmt = $this->connection->prepare($sql);
+
+        foreach ($params as $key => $value) {
+            $this->stmt->bindValue($key, $value);
+        }
     }
 
     /**
@@ -31,13 +44,9 @@ class DbalReader implements ReaderInterface
      */
     public function getFields()
     {
-        $fields = array();
+        $this->stmt->execute();
 
-        foreach ($this->schemaManager->listTableColumns($this->table) as $column) {
-            $fields[] = $column->getName();
-        }
-
-        return $fields;
+        return array_keys($this->stmt->fetch(\PDO::FETCH_ASSOC));
     }
 
     /**
@@ -99,7 +108,8 @@ class DbalReader implements ReaderInterface
     protected function loadData()
     {
         if (null === $this->data) {
-            $this->data = $this->connection->fetchAll('SELECT * FROM ' . $this->table);
+            $this->stmt->execute();
+            $this->data = $this->stmt->fetchAll(\PDO::FETCH_ASSOC);
         }
     }
 }
