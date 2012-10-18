@@ -14,11 +14,16 @@ class CsvWriter extends AbstractWriter
     /**
      * Constructor
      *
-     * @param \SplFileObject $file CSV file
+     * @param \SplFileObject $file      CSV file
+     * @param string         $mode      See http://php.net/manual/en/function.fopen.php
+     * @param string         $delimiter The delimiter
+     * @param string         $enclosure The enclosure
      */
-    public function __construct(\SplFileObject $file)
+    public function __construct(\SplFileObject $file, $mode = 'w', $delimiter = ';', $enclosure = '"')
     {
-        $this->fp = fopen($file->getPathname(), 'w');
+        $this->fp = fopen($file->getPathname(), $mode);
+        $this->delimiter = $delimiter;
+        $this->enclosure = $enclosure;
     }
 
     /**
@@ -26,9 +31,6 @@ class CsvWriter extends AbstractWriter
      */
     public function writeItem(array $item, array $originalItem = array())
     {
-//        foreach ($cells as &$cell) {
-//            $cell = iconv('UTF-8', 'Windows-1252', $cell);
-//        }
         fputcsv($this->fp, $item, $this->delimiter, $this->enclosure);
     }
 
