@@ -20,6 +20,8 @@
         "symfony/console": "@stable"
     },
     "suggest": {
+        "ext-iconv": "For the CharsetValueConverter",
+        "ext-mbstring": "For the CharsetValueConverter",
         "doctrine/dbal": "If you want to use the DbalReader",
         "phpexcel/phpexcel": "If you want to use the ExcelReader",
         "symfony/console": "If you want to use the ConsoleProgressWriter",
