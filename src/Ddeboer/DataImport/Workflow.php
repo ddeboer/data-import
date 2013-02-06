@@ -199,10 +199,6 @@ class Workflow
         // Read all items
         foreach ($this->reader as $item) {
 
-            if(!isset($item)) {
-                continue;
-            }
-
             // Apply filters before conversion
             if (!$this->filterItem($item, $this->filters)) {
                 continue;
