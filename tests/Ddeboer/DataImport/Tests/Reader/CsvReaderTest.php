@@ -57,9 +57,9 @@ class CsvReaderTest extends \PHPUnit_Framework_TestCase
         $csvReader->setColumnHeaders(array('id', 'number', 'description'));
 
         foreach ($csvReader as $row) {
-                $this->assertNotNull($row['id']);
-                $this->assertNotNull($row['number']);
-                $this->assertNotNull($row['description']);
+            $this->assertNotNull($row['id']);
+            $this->assertNotNull($row['number']);
+            $this->assertNotNull($row['description']);
         }
     }
 
