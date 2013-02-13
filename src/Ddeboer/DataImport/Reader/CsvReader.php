@@ -50,7 +50,8 @@ class CsvReader implements ReaderInterface, \SeekableIterator
         $this->file = $file;
         $this->file->setFlags(\SplFileObject::READ_CSV |
             \SplFileObject::SKIP_EMPTY |
-            \SplFileObject::READ_AHEAD);
+            \SplFileObject::READ_AHEAD |
+            \SplFileObject::DROP_NEW_LINE);
         $this->file->setCsvControl(
             $delimiter,
             $enclosure,
