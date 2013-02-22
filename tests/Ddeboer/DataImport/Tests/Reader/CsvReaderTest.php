@@ -50,6 +50,19 @@ class CsvReaderTest extends \PHPUnit_Framework_TestCase
         }
     }
 
+    public function testReadCsvFileWithTrailingBlankLines()
+    {
+        $file = new \SplFileObject(__DIR__.'/../Fixtures/data_blank_lines.csv');
+        $csvReader = new CsvReader($file);
+        $csvReader->setColumnHeaders(array('id', 'number', 'description'));
+
+        foreach ($csvReader as $row) {
+            $this->assertNotNull($row['id']);
+            $this->assertNotNull($row['number']);
+            $this->assertNotNull($row['description']);
+        }
+    }
+
     public function testCountWithoutHeaders()
     {
         $file = new \SplFileObject(__DIR__.'/../Fixtures/data_no_column_headers.csv');
