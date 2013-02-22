@@ -2,6 +2,7 @@
     "name": "ddeboer/data-import",
     "description": "Import data from, and export data to, a range of file formats and media",
     "keywords": [ "data", "import", "export", "csv", "excel", "doctrine" ],
+    "license": "MIT",
     "authors": [
         {
             "name": "David de Boer",
@@ -13,11 +14,11 @@
     },
     "require-dev": {
         "ext-sqlite3": "*",
-        "symfony/form": "2.*",
-        "phpexcel/phpexcel": "1.7.6",
-        "doctrine/dbal": "@stable",
-        "doctrine/orm": "@stable",
-        "symfony/console": "@stable"
+        "symfony/form": "*",
+        "phpexcel/phpexcel": "*",
+        "doctrine/dbal": "*",
+        "doctrine/orm": "*",
+        "symfony/console": "*"
     },
     "suggest": {
         "ext-iconv": "For the CharsetValueConverter",
