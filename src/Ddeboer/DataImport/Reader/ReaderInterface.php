@@ -14,5 +14,10 @@ interface ReaderInterface extends \Iterator, \Countable
      *
      * @return array
      */
-    function getFields();
+    public function getFields();
+
+    /**
+     * Get the number of data items (rows, elements)
+     */
+    public function count();
 }
