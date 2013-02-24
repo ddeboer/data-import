@@ -18,6 +18,8 @@ interface ReaderInterface extends \Iterator, \Countable
 
     /**
      * Get the number of data items (rows, elements)
+     *
+     * @return int
      */
     public function count();
 }
