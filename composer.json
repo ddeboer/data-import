@@ -14,7 +14,7 @@
     },
     "require-dev": {
         "ext-sqlite3": "*",
-        "symfony/form": "*",
+        "symfony/property-access": "*",
         "phpexcel/phpexcel": "*",
         "doctrine/dbal": "*",
         "doctrine/orm": "*",

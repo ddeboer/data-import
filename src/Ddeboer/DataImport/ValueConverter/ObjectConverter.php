@@ -3,7 +3,8 @@
 namespace Ddeboer\DataImport\ValueConverter;
 
 use Ddeboer\DataImport\Exception\UnexpectedTypeException;
-use Symfony\Component\Form\Util\PropertyPath;
+use Symfony\Component\PropertyAccess\PropertyPath;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 /**
  * @author Markus Bachmann <markus.bachmann@bachi.biz
@@ -16,6 +17,11 @@ class ObjectConverter implements ValueConverterInterface
     protected $propertyPath;
 
     /**
+     * @var PropertyAccessor
+     */
+    protected $propertyAccessor;
+
+    /**
      * Constructor
      *
      * @param string|null $propertyPath
@@ -23,6 +29,7 @@ class ObjectConverter implements ValueConverterInterface
     public function __construct($propertyPath = null)
     {
         $this->propertyPath = $propertyPath;
+        $this->propertyAccessor = PropertyAccess::getPropertyAccessor();
     }
 
     /**
@@ -63,6 +70,7 @@ class ObjectConverter implements ValueConverterInterface
         }
 
         $path = new PropertyPath($this->propertyPath);
-        return $path->getValue($input);
+
+        return $this->propertyAccessor->getValue($input, $path);
     }
 }
