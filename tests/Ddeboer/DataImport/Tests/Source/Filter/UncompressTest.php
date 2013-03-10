@@ -18,8 +18,6 @@ class UncompressTest extends \PHPUnit_Framework_TestCase
 
     protected function getTempFile()
     {
-        $tempFile = tempnam(null, null) . '.Z';
-        copy(__DIR__ . '/../../Fixtures/uncompress.txt.Z', $tempFile);
-        return new \SplFileObject($tempFile);
+        return new \SplFileObject(__DIR__ . '/../../Fixtures/uncompress.txt.Z');
     }
 }
