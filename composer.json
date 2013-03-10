@@ -26,7 +26,7 @@
         "doctrine/dbal": "If you want to use the DbalReader",
         "phpexcel/phpexcel": "If you want to use the ExcelReader",
         "symfony/console": "If you want to use the ConsoleProgressWriter",
-        "symfony/form": "If you want to use the ObjectConverter"
+        "symfony/property-access": "If you want to use the ObjectConverter"
     },
     "autoload": {
         "psr-0": { "Ddeboer\\DataImport": "src" }
