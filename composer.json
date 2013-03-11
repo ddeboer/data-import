@@ -14,11 +14,11 @@
     },
     "require-dev": {
         "ext-sqlite3": "*",
-        "symfony/form": "*",
+        "symfony/form": "2.1.*",
         "phpexcel/phpexcel": "*",
         "doctrine/dbal": "*",
         "doctrine/orm": "*",
-        "symfony/console": "*"
+        "symfony/console": "2.1.*"
     },
     "suggest": {
         "ext-iconv": "For the CharsetValueConverter",
