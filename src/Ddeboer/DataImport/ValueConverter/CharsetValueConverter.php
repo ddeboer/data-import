@@ -17,13 +17,19 @@ class CharsetValueConverter implements ValueConverterInterface
     private $charset;
 
     /**
+     * @var string
+     */
+    private $inCharset;
+
+    /**
      * Constructor
      *
      * @param string $charset
      */
-    public function __construct($charset)
+    public function __construct($charset, $inCharset = 'UTF-8')
     {
         $this->charset = $charset;
+        $this->inCharset = $inCharset;
     }
 
     /**
@@ -39,9 +45,9 @@ class CharsetValueConverter implements ValueConverterInterface
             return mb_convert_encoding($input, $this->charset);
         }
         if (function_exists('iconv')) {
-            return iconv('UTF-8', $this->charset, $input);
+            return iconv($this->inCharset, $this->charset, $input);
         }
 
-        throw new \RuntimeException('Could not convert the charset. Please install mbstring or iconv!');
+        throw new \RuntimeException('Could not convert the charset. Please install the mbstring or iconv extension!');
     }
 }
