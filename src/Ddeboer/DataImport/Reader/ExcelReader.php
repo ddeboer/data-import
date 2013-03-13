@@ -40,7 +40,7 @@ class ExcelReader implements ReaderInterface
             $source = $source->getFile();
         }
 
-        $excel = \PHPExcel_IOFactory::load($source);
+        $excel = \PHPExcel_IOFactory::load($source->getPathname());
         $this->worksheet = $excel->getActiveSheet()->toArray();
 
         if (null !== $headerRowNumber) {
