@@ -2,7 +2,7 @@
 
 namespace Ddeboer\DataImport\Reader;
 
-use Ddeboer\DataImport\SourceInterface;
+use Ddeboer\DataImport\Source\SourceInterface;
 
 /**
  * Reads Excel files with the help of PHPExcel
@@ -36,7 +36,7 @@ class ExcelReader implements ReaderInterface
      */
     public function __construct($source, $headerRowNumber = null)
     {
-        if ($source instanceof Source) {
+        if ($source instanceof SourceInterface) {
             $source = $source->getFile();
         }
 
