@@ -48,10 +48,12 @@ class CsvReader implements ReaderInterface, \SeekableIterator
     public function __construct(\SplFileObject $file, $delimiter = ';', $enclosure = '"', $escape = '\\')
     {
         $this->file = $file;
-        $this->file->setFlags(\SplFileObject::READ_CSV |
+        $this->file->setFlags(
+            \SplFileObject::READ_CSV |
             \SplFileObject::SKIP_EMPTY |
             \SplFileObject::READ_AHEAD |
-            \SplFileObject::DROP_NEW_LINE);
+            \SplFileObject::DROP_NEW_LINE
+        );
         $this->file->setCsvControl(
             $delimiter,
             $enclosure,
