@@ -13,7 +13,7 @@ Installation
 ------------
 
 This library is available on [Packagist](http://packagist.org/packages/ddeboer/data-import). 
-The recommended way to install react is [through composer](http://getcomposer.org).
+The recommended way to install Ddeboer Data Import is [through composer](http://getcomposer.org).
 
 To install it, add the following to your `composer.json`:
 
