@@ -12,15 +12,18 @@ your data with filters and converters.
 Installation
 ------------
 
-This library is available on [Packagist](http://packagist.org/packages/ddeboer/data-import).
+This library is available on [Packagist](http://packagist.org/packages/ddeboer/data-import). 
+The recommended way to install Ddeboer Data Import is [through composer](http://getcomposer.org).
 
 To install it, add the following to your `composer.json`:
 
-```
-"require": {
-    ...
-    "ddeboer/data-import": "dev-master",
-    ...
+```JSON
+{
+    "require": {
+        ...
+        "ddeboer/data-import": "dev-master",
+        ...
+    }
 }
 ```
 
@@ -45,7 +48,7 @@ Usage
 
 An example:
 
-```
+```php
 use Ddeboer\DataImport\Workflow;
 use Ddeboer\DataImport\Source\Http;
 use Ddeboer\DataImport\Source\Filter\Unzip;
