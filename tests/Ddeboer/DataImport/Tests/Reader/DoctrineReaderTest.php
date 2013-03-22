@@ -60,9 +60,11 @@ class DoctrineReaderTest extends \PHPUnit_Framework_TestCase
         $em = EntityManager::create($dbParams, $config);
 
         $schemaTool = new \Doctrine\ORM\Tools\SchemaTool($em);
-        $schemaTool->createSchema(array(
-            $em->getMetadataFactory()->getMetadataFor('Ddeboer\DataImport\Tests\Fixtures\Entity\User')
-        ));
+        $schemaTool->createSchema(
+            array(
+                $em->getMetadataFactory()->getMetadataFor('Ddeboer\DataImport\Tests\Fixtures\Entity\User')
+            )
+        );
 
         return $em;
     }
