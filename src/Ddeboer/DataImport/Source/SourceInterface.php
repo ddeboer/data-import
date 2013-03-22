@@ -7,5 +7,5 @@ interface SourceInterface
     /**
      * @return \SplFileObject
      */
-    function getFile();
+    public function getFile();
 }

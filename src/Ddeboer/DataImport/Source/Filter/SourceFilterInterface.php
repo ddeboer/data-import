@@ -14,7 +14,7 @@ interface SourceFilterInterface
      *
      * @param \SplFileObject $file Original source file
      *
-     * @return \SplFileObject      Filtered source file
+     * @return \SplFileObject Filtered source file
      */
-    function filter(\SplFileObject $file);
+    public function filter(\SplFileObject $file);
 }

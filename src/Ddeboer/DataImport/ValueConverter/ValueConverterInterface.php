@@ -19,5 +19,5 @@ interface ValueConverterInterface
      *
      * @return mixed
      */
-    function convert($input);
+    public function convert($input);
 }

@@ -24,7 +24,6 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
         }));
     }
 
-
     public function testAddCallbackItemConverter()
     {
         $this->getWorkflow()->addItemConverter(new CallbackItemConverter(function(array $input) {
@@ -33,6 +32,7 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
                     unset($input[$k]);
                 }
             }
+
             return $input;
         }));
     }
@@ -55,7 +55,7 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
 
         $writer->expects($this->once())
             ->method('finish');
-        
+
         $this->getWorkflow()->addWriter($writer)
             ->process();
     }

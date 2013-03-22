@@ -48,15 +48,18 @@ class Http implements SourceInterface
         }
 
         if ($this->username && $this->password) {
-            $context = stream_context_create(array(
-                'http' => array(
-                    'header'  => "Authorization: Basic "
-                                 . base64_encode("{$this->username}:{$this->password}")
+            $context = stream_context_create(
+                array(
+                    'http' => array(
+                        'header'  => "Authorization: Basic "
+                            . base64_encode("{$this->username}:{$this->password}")
+                    )
                 )
-            ));
+            );
         }
 
         file_put_contents($target, file_get_contents($this->url));
+
         return new \SplFileObject($target);
     }
 

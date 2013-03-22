@@ -72,8 +72,8 @@ class DoctrineWriter extends AbstractWriter
     /**
      *
      * @param EntityManager $entityManager
-     * @param string $entityName
-     * @param string $index     Index to find current entities by
+     * @param string        $entityName
+     * @param string        $index         Index to find current entities by
      */
     public function __construct(EntityManager $entityManager, $entityName, $index = null)
     {
@@ -92,12 +92,13 @@ class DoctrineWriter extends AbstractWriter
     /**
      * Set number of entities that may be persisted before a new flush
      *
-     * @param int $batchSize
+     * @param  int            $batchSize
      * @return DoctrineWriter
      */
     public function setBatchSize($batchSize)
     {
         $this->batchSize = $batchSize;
+
         return $this;
     }
 
@@ -109,12 +110,14 @@ class DoctrineWriter extends AbstractWriter
     public function setTruncate($truncate)
     {
         $this->truncate = $truncate;
+
         return $this;
     }
 
     public function disableTruncate()
     {
         $this->truncate = false;
+
         return $this;
     }
 

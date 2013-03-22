@@ -10,8 +10,8 @@ class Unzip implements SourceFilterInterface
     /**
      * Construnct unzip filter
      *
-     * @param string $filename  The filename in the zip file to return
-     * @param string $target    Target directory
+     * @param string $filename The filename in the zip file to return
+     * @param string $target   Target directory
      */
     public function __construct($filename, $target = null)
     {

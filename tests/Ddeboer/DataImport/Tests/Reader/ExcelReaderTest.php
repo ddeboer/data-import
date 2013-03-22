@@ -11,6 +11,7 @@ class ExcelReaderTest extends \PHPUnit_Framework_TestCase
         $file = new \SplFileObject(__DIR__.'/../Fixtures/data_column_headers.xlsx');
         $reader = new ExcelReader($file, 0);
         $this->assertEquals(array('id', 'number', 'description'), $reader->getFields());
+        $this->assertEquals(array('id', 'number', 'description'), $reader->getColumnHeaders());
     }
 
     public function testCountWithoutHeaders()

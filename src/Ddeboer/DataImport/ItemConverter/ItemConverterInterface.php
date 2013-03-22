@@ -16,5 +16,5 @@ interface ItemConverterInterface
      *
      * @return array|null the modified input or null to remove it
      */
-    function convert(array $input);
+    public function convert(array $input);
 }

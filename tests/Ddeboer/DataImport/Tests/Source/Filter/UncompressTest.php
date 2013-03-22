@@ -9,7 +9,7 @@ class UncompressTest extends \PHPUnit_Framework_TestCase
     public function testFilter()
     {
         $uncompress = new Uncompress();
-        
+
         $file = $uncompress->filter($this->getTempFile());
 
         $this->assertInstanceOf('\SplFileObject', $file);

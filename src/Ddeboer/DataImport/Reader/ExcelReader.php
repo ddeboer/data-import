@@ -29,10 +29,9 @@ class ExcelReader implements ReaderInterface
     /**
      * Construct CSV reader
      *
-     * @param Source|\SplFileObject $source          The source: can be either a
-     *                                               source or file object
-     * @param int                   $headerRowNumber Optional number of header
-     *                                               row
+     * @param Source|\SplFileObject $source The source: can be either a source
+     *                                      or file object
+     * @param int $headerRowNumber          Optional number of header row
      */
     public function __construct($source, $headerRowNumber = null)
     {

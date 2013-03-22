@@ -14,7 +14,7 @@ interface WriterInterface
      *
      * @return Writer
      */
-    function prepare();
+    public function prepare();
 
     /**
      * Write one data item
@@ -24,12 +24,12 @@ interface WriterInterface
      *
      * @return Writer
      */
-    function writeItem(array $item, array $originalItem = array());
+    public function writeItem(array $item, array $originalItem = array());
 
     /**
      * Wrap up the writer after all items have been written
      *
      * @return Writer
      */
-    function finish();
+    public function finish();
 }

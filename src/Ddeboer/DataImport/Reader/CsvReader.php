@@ -81,7 +81,6 @@ class CsvReader implements ReaderInterface, \SeekableIterator
                 return array_combine(array_values($this->columnHeaders), $line);
             }
 
-
         } else {
             // Else just return the column values
             return $line;
@@ -214,7 +213,7 @@ class CsvReader implements ReaderInterface, \SeekableIterator
      *
      * @param int $rowNumber Row number
      *
-     * @return array        Column headers
+     * @return array Column headers
      */
     protected function readHeaderRow($rowNumber)
     {

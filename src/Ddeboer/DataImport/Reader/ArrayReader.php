@@ -78,4 +78,3 @@ class ArrayReader implements ReaderInterface
         return isset($this->data[$this->key()]);
     }
 }
-

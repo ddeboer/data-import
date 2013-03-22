@@ -32,7 +32,7 @@ class Uncompress implements SourceFilterInterface
 
     /**
      *
-     * @param \SplFileObject $file
+     * @param  \SplFileObject $file
      * @return \SplFileObject
      */
     public function filter(\SplFileObject $file)

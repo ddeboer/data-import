@@ -10,5 +10,5 @@ interface FilterInterface
     /**
      * @return boolean
      */
-    function filter(array $item);
+    public function filter(array $item);
 }

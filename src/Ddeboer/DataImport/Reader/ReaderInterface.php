@@ -14,7 +14,7 @@ interface ReaderInterface extends \Iterator, \Countable
      *
      * @return array
      */
-    function getFields();
-    
+    public function getFields();
+
     // Don't add count() to interface: see https://github.com/ddeboer/data-import/pull/5
 }
