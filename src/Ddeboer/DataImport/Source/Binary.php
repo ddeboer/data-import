@@ -34,6 +34,7 @@ class Binary implements SourceInterface
     public function __destruct()
     {
         fclose($this->handle);
+        unlink($this->tmp_file_path);
     }
 
     /**
