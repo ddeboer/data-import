@@ -2,7 +2,7 @@
 
 namespace Ddeboer\DataImport\Source;
 
-class Http implements SourceInterface
+class HttpSource implements SourceInterface
 {
     protected $filters = array();
     protected $username;

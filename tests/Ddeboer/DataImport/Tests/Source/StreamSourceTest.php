@@ -2,18 +2,18 @@
 
 namespace Ddeboer\DataImport\Tests\Source;
 
-use Ddeboer\DataImport\Source\Stream;
+use Ddeboer\DataImport\Source\StreamSource;
 
 /**
  * @author Markus Bachmann <markus.bachmann@bachi.biz>
  */
-class StreamTest extends \PHPUnit_Framework_TestCase
+class StreamSourceTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetFilename()
     {
         $fixture = __DIR__.'/../Fixtures/data_cr_breaks.csv';
 
-        $source = new Stream($fixture);
+        $source = new StreamSource($fixture);
         $this->assertEquals(new \SplFileObject($fixture), $source->getFile());
     }
 
@@ -22,9 +22,9 @@ class StreamTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidFilename()
     {
-        $fixture = 'notworing://test.csv';
+        $fixture = 'notworking://test.csv';
 
-        $source = new Stream($fixture);
+        $source = new StreamSource($fixture);
         $source->getFile();
     }
 }

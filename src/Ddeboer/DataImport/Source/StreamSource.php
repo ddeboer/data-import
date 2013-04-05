@@ -7,7 +7,7 @@ use Ddeboer\DataImport\Exception\SourceNotFoundException;
 /**
  * @author Markus Bachmann <markus.bachmann@bachi.biz>
  */
-class Stream implements SourceInterface
+class StreamSource implements SourceInterface
 {
     /**
      * @var string
