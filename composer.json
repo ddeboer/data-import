@@ -13,6 +13,8 @@
         "php": ">=5.3.0"
     },
     "require-dev": {
+        "ext-iconv": "*",
+        "ext-mbstring": "*",
         "ext-sqlite3": "*",
         "symfony/property-access": "*",
         "phpexcel/phpexcel": "*",
