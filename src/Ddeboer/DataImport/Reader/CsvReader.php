@@ -36,6 +36,13 @@ class CsvReader implements ReaderInterface, \SeekableIterator
      * @var int
      */
     protected $count;
+    
+    /**
+     * Faulty CSV rows
+     * 
+     * @var array 
+     */
+    protected $errors = array();
 
     /**
      * Construct CSV reader
@@ -67,6 +74,8 @@ class CsvReader implements ReaderInterface, \SeekableIterator
      * If a header row has been set, an associative array will be returned
      *
      * @return array
+     *
+     * @throws InvalidDataException
      */
     public function current()
     {
@@ -76,11 +85,14 @@ class CsvReader implements ReaderInterface, \SeekableIterator
         // array for the columns in this line
         if (!empty($this->columnHeaders)) {
             // Count the number of elements in both: they must be equal.
-            // If not, ignore the row
             if (count($this->columnHeaders) == count($line)) {
                 return array_combine(array_values($this->columnHeaders), $line);
+            } else {
+                // They are not equal, so log the row as error and skip it.
+                $this->errors[$this->key()] = $line;
+                $this->next();
+                return $this->current();
             }
-
         } else {
             // Else just return the column values
             return $line;
@@ -206,6 +218,16 @@ class CsvReader implements ReaderInterface, \SeekableIterator
         $this->seek($number);
 
         return $this->current();
+    }
+    
+    public function getErrors()
+    {
+        return $this->errors;
+    }
+    
+    public function hasErrors()
+    {
+        return count($this->errors) > 0;
     }
 
     /**
