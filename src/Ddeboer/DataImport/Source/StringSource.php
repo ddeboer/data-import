@@ -31,6 +31,7 @@ class StringSource implements SourceInterface
     {
         $file = new \SplTempFileObject();
         $file->fwrite($this->data);
+        $file->fseek(0);
         
         return $file;
     }
