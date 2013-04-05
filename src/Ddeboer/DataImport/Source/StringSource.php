@@ -1,6 +1,10 @@
 <?php
 namespace Ddeboer\DataImport\Source;
 
+/**
+ * Source that holds data as a string
+ * 
+ */
 class StringSource implements SourceInterface
 {
     /**
