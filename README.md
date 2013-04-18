@@ -1,4 +1,4 @@
-[![Build Status](https://secure.travis-ci.org/ddeboer/data-import.png)](http://travis-ci.org/ddeboer/data-import)
+[![Build Status](https://travis-ci.org/ddeboer/data-import.png?branch=master)](https://travis-ci.org/ddeboer/data-import)
 
 Ddeboer Data Import library
 ===========================
