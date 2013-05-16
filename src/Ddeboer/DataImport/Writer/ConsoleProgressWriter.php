@@ -2,9 +2,9 @@
 
 namespace Ddeboer\DataImport\Writer;
 
-use Ddeboer\DataImport\Writer\ConsoleProgressWriter\ProgressHelper;
 use Ddeboer\DataImport\Reader\ReaderInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Helper\ProgressHelper;
 
 /**
  * Writes output to the Symfony2 console

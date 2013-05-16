@@ -20,7 +20,7 @@
         "phpexcel/phpexcel": "*",
         "doctrine/dbal": "*",
         "doctrine/orm": "*",
-        "symfony/console": "*"
+        "symfony/console": ">=2.2"
     },
     "suggest": {
         "ext-iconv": "For the CharsetValueConverter",
