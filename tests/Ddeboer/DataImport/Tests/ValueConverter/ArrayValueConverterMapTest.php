@@ -32,7 +32,7 @@ class ArrayValueConverterMapTest extends \PHPUnit_Framework_TestCase
             ),
         );
 
-        $addBarConverter = new CallbackValueConverter(function($input) { return 'foo'.$input; });
+        $addBarConverter = new CallbackValueConverter(function($input) { return 'bar'.$input; });
         $addBazConverter = new CallbackValueConverter(function($input) { return 'baz'.$input; });
 
         $converter = new ArrayValueConverterMap(
@@ -44,10 +44,10 @@ class ArrayValueConverterMapTest extends \PHPUnit_Framework_TestCase
 
         $data = $converter->convert($data);
 
-        $this->assertEquals('footest', $data[0]['foo']);
-        $this->assertEquals('foobaztest', $data[0]['bar']);
+        $this->assertEquals('bartest', $data[0]['foo']);
+        $this->assertEquals('barbaztest', $data[0]['bar']);
 
-        $this->assertEquals('footest2', $data[1]['foo']);
-        $this->assertEquals('foobaztest2', $data[1]['bar']);
+        $this->assertEquals('bartest2', $data[1]['foo']);
+        $this->assertEquals('barbaztest2', $data[1]['bar']);
     }
 }
