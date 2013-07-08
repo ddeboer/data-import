@@ -30,7 +30,7 @@ class ArrayValueConverterMap implements ValueConverterInterface
     public function convert($input)
     {
         if (!is_array($input)) {
-            throw new \InvalidArgumentException('Input of a ValueConverterCollection must be an array');
+            throw new \InvalidArgumentException('Input of a ArrayValueConverterMap must be an array');
         }
 
         foreach ($input as $key => $item) {
