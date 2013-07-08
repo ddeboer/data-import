@@ -6,7 +6,7 @@ use Ddeboer\DataImport\ValueConverter\ArrayValueConverterMap;
 use Ddeboer\DataImport\ValueConverter\CallbackValueConverter;
 
 /**
- * @author Markus Bachmann <markus.bachmann@bachi.biz>
+ * @author Christoph Rosse <christoph@rosse.at>
  */
 class ArrayValueConverterMapTest extends \PHPUnit_Framework_TestCase
 {
