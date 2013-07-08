@@ -3,7 +3,7 @@
 namespace Ddeboer\DataImport\ValueConverter;
 
 /**
- * Converts item values using a callback
+ * Converts a nested array using a converter-map
  *
  * @author Christoph Rosse <christoph@rosse.at>
  */
