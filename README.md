@@ -162,7 +162,7 @@ GlobalMapping
 
 The global-mapping allows you to define an array that is used to rename fields of an item.
 
-Using global-mapping can be used to add renaming-rules for multi-level array and is applied after the standard-mapping rules are applied.
+Using global-mapping can be used to add renaming-rules for a multi-level array and is applied after the standard-mapping rules are applied.
 
 ```php
 
