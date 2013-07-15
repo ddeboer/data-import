@@ -2,7 +2,7 @@
 
 namespace Ddeboer\DataImport\Tests\Fixtures;
 
-use Ddeboer\DataImport\Writer\Writer;
+use Ddeboer\DataImport\Writer\WriterInterface;
 
 /**
  * This class is used to test output from Workflow->process class.
@@ -10,7 +10,7 @@ use Ddeboer\DataImport\Writer\Writer;
  *
  * Class TestWriter
  */
-class TestWriter implements Writer
+class TestWriter implements WriterInterface
 {
 	protected $data;
 
