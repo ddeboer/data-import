@@ -182,7 +182,7 @@ Using global-mapping can be used to add renaming-rules for a multi-level array a
     // ...
 
     // this defines a single mapping
-    $workflow->addMapping('baz' => 'bazinga');
+    $workflow->addMapping('baz', 'bazinga');
 
     // this defines renaming global rules
     $workflow->setGlobalMapping(array(
