@@ -2,6 +2,8 @@
 
 namespace Ddeboer\DataImport\Tests;
 
+use Ddeboer\DataImport\Reader\ArrayReader;
+use Ddeboer\DataImport\Tests\Fixtures\TestWriter;
 use Ddeboer\DataImport\Workflow;
 use Ddeboer\DataImport\Filter\CallbackFilter;
 use Ddeboer\DataImport\ValueConverter\CallbackValueConverter;
@@ -59,6 +61,25 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
         $this->getWorkflow()->addWriter($writer)
             ->process();
     }
+
+	public function testMappingAnItem()
+	{
+		$originalData = array(array('foo' => 'bar'));
+
+		$ouputTestData = array();
+
+		$writer = new TestWriter($ouputTestData);
+		$reader = new ArrayReader($originalData);
+
+		$workflow = new Workflow($reader);
+
+		$workflow->addMapping('foo', 'bar')
+			->addWriter($writer)
+			->process()
+		;
+
+		$this->assertArrayHasKey('bar', $ouputTestData[0]);
+	}
 
     protected function getWorkflow()
     {
