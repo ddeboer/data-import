@@ -1,20 +1,26 @@
 <?php
 
-namespace Ddeboer\DataImport\Tests\Fixtures;
-
-use Ddeboer\DataImport\Writer\WriterInterface;
+namespace Ddeboer\DataImport\Writer;
 
 /**
- * This class is used to test output from Workflow->process class.
+ * This class writes an item into an array that was passed by reference
  * The data array is passed as reference so the modifications can be tested.
  *
  * Class TestWriter
  */
-class TestWriter implements WriterInterface
+class ArrayWriter implements WriterInterface
 {
+	/**
+	 * @var array
+	 */
 	protected $data;
 
-	public function __construct(&$data)
+	/**
+	 * Constructor
+	 *
+	 * @param array $data
+	 */
+	public function __construct(array &$data)
 	{
 		$this->data = &$data;
 	}
@@ -49,6 +55,6 @@ class TestWriter implements WriterInterface
 	 */
 	public function finish()
 	{
-		// TODO: Implement finish() method.
+
 	}
 }
