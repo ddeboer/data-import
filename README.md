@@ -100,7 +100,7 @@ $workflow
         function($csvLine) {
             var_dump($csvLine);
         }
-    );
+    ));
 
 // Process the workflow
 $workflow->process();
