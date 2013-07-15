@@ -9,51 +9,51 @@ namespace Ddeboer\DataImport\Writer;
  */
 class ArrayWriter implements WriterInterface
 {
-	/**
-	 * @var array
-	 */
-	protected $data;
+    /**
+     * @var array
+     */
+    protected $data;
 
-	/**
-	 * Constructor
-	 *
-	 * @param array $data
-	 */
-	public function __construct(array &$data)
-	{
-		$this->data = &$data;
-	}
+    /**
+     * Constructor
+     *
+     * @param array $data
+     */
+    public function __construct(array &$data)
+    {
+        $this->data = &$data;
+    }
 
-	/**
-	 * Prepare the writer before writing the items
-	 *
-	 * @return Writer
-	 */
-	public function prepare()
-	{
-		$this->data = array();
-	}
+    /**
+     * Prepare the writer before writing the items
+     *
+     * @return Writer
+     */
+    public function prepare()
+    {
+        $this->data = array();
+    }
 
-	/**
-	 * Write one data item
-	 *
-	 * @param array $item         The data item with converted values
-	 * @param array $originalItem The data item with its original values
-	 *
-	 * @return Writer
-	 */
-	public function writeItem(array $item, array $originalItem = array())
-	{
-		$this->data[] = $item;
-	}
+    /**
+     * Write one data item
+     *
+     * @param array $item         The data item with converted values
+     * @param array $originalItem The data item with its original values
+     *
+     * @return Writer
+     */
+    public function writeItem(array $item, array $originalItem = array())
+    {
+        $this->data[] = $item;
+    }
 
-	/**
-	 * Wrap up the writer after all items have been written
-	 *
-	 * @return Writer
-	 */
-	public function finish()
-	{
+    /**
+     * Wrap up the writer after all items have been written
+     *
+     * @return Writer
+     */
+    public function finish()
+    {
 
-	}
+    }
 }
