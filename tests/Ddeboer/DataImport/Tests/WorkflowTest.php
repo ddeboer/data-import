@@ -81,6 +81,64 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
 		$this->assertArrayHasKey('bar', $ouputTestData[0]);
 	}
 
+	public function testGlobalMappingAnItem()
+	{
+		$originalData = array(array(
+			'foo' => 'bar',
+			'baz' => array('another' => 'thing')
+		));
+
+		$ouputTestData = array();
+
+		$writer = new TestWriter($ouputTestData);
+		$reader = new ArrayReader($originalData);
+
+		$workflow = new Workflow($reader);
+
+		$mapping = array(
+			'foo' => 'bazinga',
+			'baz' => array('another' => 'somethingelse')
+		);
+
+		$workflow->setGlobalMapping($mapping)
+			->addWriter($writer)
+			->process()
+		;
+
+		$this->assertArrayHasKey('bazinga', $ouputTestData[0]);
+		$this->assertArrayHasKey('somethingelse', $ouputTestData[0]['baz']);
+	}
+
+	public function testGlobalMappingAnItemInCombinationWithMappingAnItem()
+	{
+		$originalData = array(array(
+			'foo' => 'bar',
+			'baz' => array('another' => 'thing')
+		));
+
+		$ouputTestData = array();
+
+		$writer = new TestWriter($ouputTestData);
+		$reader = new ArrayReader($originalData);
+
+		$workflow = new Workflow($reader);
+
+		$mapping = array(
+			'foo' => 'bazinga',
+			'bazoo' => array('another' => 'somethingelse')
+		);
+
+		$workflow->setGlobalMapping($mapping)
+			->addMapping('baz', 'bazoo')
+			->addWriter($writer)
+			->process()
+		;
+
+		$this->assertArrayHasKey('bazinga', $ouputTestData[0]);
+		$this->assertArrayHasKey('bazoo', $ouputTestData[0]);
+		$this->assertArrayHasKey('somethingelse', $ouputTestData[0]['bazoo']);
+	}
+
     protected function getWorkflow()
     {
         $reader = $this->getMockBuilder('\Ddeboer\DataImport\Reader\CsvReader')

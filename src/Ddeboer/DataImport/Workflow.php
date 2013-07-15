@@ -64,6 +64,13 @@ class Workflow
      */
     protected $mappings = array();
 
+	/**
+	 * Array for a global-mapping definition
+	 *
+	 * @var array
+	 */
+	protected $globalMapping = array();
+
     /**
      * Construct a workflow
      *
@@ -89,6 +96,20 @@ class Workflow
 
         return $this;
     }
+
+	/**
+	 * Set the Global-Mapping array
+	 *
+	 * @param array $mapping
+	 *
+	 * @return $this
+	 */
+	public function setGlobalMapping(array $mapping)
+	{
+		$this->globalMapping = $mapping;
+
+		return $this;
+	}
 
     /**
      * Add after conversion filter
@@ -301,6 +322,61 @@ class Workflow
             }
         }
 
+		$item = $this->applyGlobalMapping($item);
+
         return $item;
     }
+
+	/**
+	 * Use the global-mapping to rename fields of an item
+	 *
+	 * @param array $item
+	 */
+	protected function applyGlobalMapping(array $item)
+	{
+		// apply the global mapping array
+		foreach ($this->globalMapping as $fromField => $toField) {
+			$item = $this->applyMapping($item, $fromField, $toField);
+		}
+
+		return $item;
+	}
+
+	/**
+	 * Applies a mapping to an item
+	 *
+	 * @param array $item
+	 * @param       $fromField
+	 * @param       $toField
+	 *
+	 * @return array
+	 */
+	protected function applyMapping(array $item, $fromField, $toField)
+	{
+		// skip fields that dont exist
+		if (!isset($item[$fromField])) {
+			return;
+		}
+
+		// skip equal fields
+		if ($fromField == $toField)
+		{
+			return $item;
+		}
+
+		// standard renaming
+		if (!is_array($toField)) {
+			$item[$toField] = $item[$fromField];
+			unset($item[$fromField]);
+
+			return $item;
+		}
+
+		// recursive renaming of an array
+		foreach ($toField as $from => $to) {
+			$item[$fromField] = $this->applyMapping($item[$fromField], $from, $to);
+		}
+
+		return $item;
+	}
 }
