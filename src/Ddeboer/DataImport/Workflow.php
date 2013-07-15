@@ -331,8 +331,8 @@ class Workflow
      * Use the global-mapping to rename fields of an item
      *
      * @param array $item
-	 *
-	 * @return array
+     *
+     * @return array
      */
     protected function applyGlobalMapping(array $item)
     {
