@@ -4,9 +4,8 @@ namespace Ddeboer\DataImport\Writer;
 
 /**
  * This class writes an item into an array that was passed by reference
- * The data array is passed as reference so the modifications can be tested.
  *
- * Class TestWriter
+ * Class ArrayWriter
  */
 class ArrayWriter implements WriterInterface
 {
