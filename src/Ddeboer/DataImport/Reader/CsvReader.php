@@ -80,6 +80,10 @@ class CsvReader implements ReaderInterface, \SeekableIterator
     public function current()
     {
         $line = $this->file->current();
+        
+        if (!$this->valid()) {
+            return false;
+        }
 
         // If the CSV has column headers, use them to construct an associative
         // array for the columns in this line
