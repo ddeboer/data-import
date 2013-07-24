@@ -2,6 +2,8 @@
 
 namespace Ddeboer\DataImport\Tests;
 
+use Ddeboer\DataImport\Reader\ArrayReader;
+use Ddeboer\DataImport\Writer\ArrayWriter;
 use Ddeboer\DataImport\Workflow;
 use Ddeboer\DataImport\Filter\CallbackFilter;
 use Ddeboer\DataImport\ValueConverter\CallbackValueConverter;
@@ -58,6 +60,83 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
 
         $this->getWorkflow()->addWriter($writer)
             ->process();
+    }
+
+    public function testMappingAnItem()
+    {
+        $originalData = array(array('foo' => 'bar'));
+
+        $ouputTestData = array();
+
+        $writer = new ArrayWriter($ouputTestData);
+        $reader = new ArrayReader($originalData);
+
+        $workflow = new Workflow($reader);
+
+        $workflow->addMapping('foo', 'bar')
+            ->addWriter($writer)
+            ->process()
+        ;
+
+        $this->assertArrayHasKey('bar', $ouputTestData[0]);
+    }
+
+    public function testGlobalMappingAnItem()
+    {
+        $originalData = array(array(
+            'foo' => 'bar',
+            'baz' => array('another' => 'thing')
+        ));
+
+        $ouputTestData = array();
+
+        $writer = new ArrayWriter($ouputTestData);
+        $reader = new ArrayReader($originalData);
+
+        $workflow = new Workflow($reader);
+
+        $mapping = array(
+            'foo' => 'bazinga',
+            'baz' => array('another' => 'somethingelse')
+        );
+
+        $workflow->setGlobalMapping($mapping)
+            ->addWriter($writer)
+            ->process()
+        ;
+
+        $this->assertArrayHasKey('bazinga', $ouputTestData[0]);
+        $this->assertArrayHasKey('somethingelse', $ouputTestData[0]['baz']);
+    }
+
+    public function testGlobalMappingAnItemInCombinationWithMappingAnItem()
+    {
+        $originalData = array(array(
+            'foo' => 'bar',
+            'baz' => array('another' => 'thing')
+        ));
+
+        $ouputTestData = array();
+
+        $writer = new ArrayWriter($ouputTestData);
+        $reader = new ArrayReader($originalData);
+
+        $workflow = new Workflow($reader);
+
+        $mapping = array(
+            'foo' => 'bazinga',
+            'bazoo' => array('another' => 'somethingelse')
+        );
+
+        $workflow->setGlobalMapping($mapping)
+            ->addMapping('baz', 'bazoo')
+            ->addWriter($writer)
+            ->process()
+        ;
+
+        $this->assertArrayHasKey('bazinga', $ouputTestData[0]);
+        $this->assertArrayHasKey('bazoo', $ouputTestData[0]);
+        $this->assertArrayHasKey('somethingelse', $ouputTestData[0]['bazoo']);
     }
 
     protected function getWorkflow()
