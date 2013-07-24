@@ -156,3 +156,53 @@ The converters defined in the list are applied on every data-item's value that m
     );
 
 ```
+
+GlobalMapping
+-------------
+
+The global-mapping allows you to define an array that is used to rename fields of an item.
+
+Using global-mapping can be used to add renaming-rules for multi-level array and is applied after the standard-mapping rules are applied.
+
+```php
+
+    //...
+    $data = array(
+        0 => array(
+            'foo' => 'bar',
+            'baz' => array(
+                'some' => 'value',
+                'some2' => 'value'
+            )
+        )
+    );
+
+    // ...
+    // create the workflow and reader etc.
+    // ...
+
+    // this defines a single mapping
+    $workflow->addMapping('baz' => 'bazinga');
+
+    // this defines renaming global rules
+    $workflow->setGlobalMapping(array(
+        'foo' => 'fooloo',
+        'bazinga' => array( // we need to use the new name here because global mapping is applied after standard mapping
+            'some' => 'something',
+            'some2' => 'somethingelse'
+        )
+    ));
+
+    // ..
+    // after filtering data looks as follows
+    $data = array(
+        0 => array(
+            'fooloo' => 'bar',
+            'bazinga' => array(
+                'something' => 'value',
+                'somethingelse' => 'value'
+            )
+        )
+    );
+```
+
