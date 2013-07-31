@@ -65,6 +65,13 @@ class Workflow
     protected $mappings = array();
 
     /**
+     * Number of items to process per iteration
+     * @see process()
+     * @var integer
+     */
+    protected $batch = 500;
+
+    /**
      * Construct a workflow
      *
      * @param Reader $reader
@@ -197,30 +204,34 @@ class Workflow
         }
 
         // Read all items
-        foreach ($this->reader as $item) {
+        $start = 0;
+        while ($this->reader->key()) {
+            foreach (new \LimitIterator($this->reader, $start, $this->batch) as $item) {
 
-            // Apply filters before conversion
-            if (!$this->filterItem($item, $this->filters)) {
-                continue;
+                // Apply filters before conversion
+                if (!$this->filterItem($item, $this->filters)) {
+                    continue;
+                }
+
+                $convertedItem = $this->convertItem($item);
+                if (!$convertedItem) {
+                    continue;
+                }
+
+                // Apply filters after conversion
+                if (!$this->filterItem($convertedItem, $this->afterConversionFilters)) {
+                    continue;
+                }
+
+                $mappedItem = $this->mapItem($convertedItem);
+
+                foreach ($this->writers as $writer) {
+                    $writer->writeItem($mappedItem, $item);
+                }
+
+                $count++;
             }
-
-            $convertedItem = $this->convertItem($item);
-            if (!$convertedItem) {
-                continue;
-            }
-
-            // Apply filters after conversion
-            if (!$this->filterItem($convertedItem, $this->afterConversionFilters)) {
-                continue;
-            }
-
-            $mappedItem = $this->mapItem($convertedItem);
-
-            foreach ($this->writers as $writer) {
-                $writer->writeItem($mappedItem, $item);
-            }
-
-            $count++;
+            $start += $this->batch;
         }
 
         // Finish writers
@@ -302,5 +313,17 @@ class Workflow
         }
 
         return $item;
+    }
+
+    /**
+     * Set the number of items to process per iteration.
+     *
+     * @return this
+     */
+    public function setBatch($batch)
+    {
+        $this->batch = $batch;
+
+        return $this;
     }
 }
