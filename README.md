@@ -50,7 +50,7 @@ An example:
 
 ```php
 use Ddeboer\DataImport\Workflow;
-use Ddeboer\DataImport\Source\Http;
+use Ddeboer\DataImport\Source\HttpSource;
 use Ddeboer\DataImport\Source\Filter\Unzip;
 use Ddeboer\DataImport\Reader\CsvReader;
 use Ddeboer\DataImport\ValueConverter\DateTimeValueConverter;
@@ -58,7 +58,7 @@ use Ddeboer\DataImport\ValueConverter\DateTimeValueConverter;
 (...)
 
 // Create the source; here we use an HTTP one
-$source = new Http('http://www.opta.nl/download/registers/nummers_csv.zip');
+$source = new HttpSource('http://www.opta.nl/download/registers/nummers_csv.zip');
 
 // As the source file is zipped, we add an unzip filter
 $source->addFilter(new Unzip('nummers.csv'));
