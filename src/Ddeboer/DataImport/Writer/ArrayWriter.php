@@ -42,7 +42,7 @@ class ArrayWriter implements WriterInterface
      *
      * @return Writer
      */
-    public function writeItem(array $item, array $originalItem = array())
+    public function writeItem(array $item, $originalItem = array())
     {
         $this->data[] = $item;
     }

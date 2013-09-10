@@ -31,7 +31,7 @@ class CallbackItemConverter implements ItemConverterInterface
     /**
      * {@inheritDoc}
      */
-    public function convert(array $input)
+    public function convert($input)
     {
         return call_user_func($this->callback, $input);
     }

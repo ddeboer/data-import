@@ -20,11 +20,11 @@ interface WriterInterface
      * Write one data item
      *
      * @param array $item         The data item with converted values
-     * @param array $originalItem The data item with its original values
+     * @param mixed $originalItem The data item with its original values
      *
      * @return Writer
      */
-    public function writeItem(array $item, array $originalItem = array());
+    public function writeItem(array $item, $originalItem = array());
 
     /**
      * Wrap up the writer after all items have been written

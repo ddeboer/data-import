@@ -39,7 +39,7 @@ class CallbackWriter implements WriterInterface
     /**
      * {@inheritDoc}
      */
-    public function writeItem(array $item, array $originalItem = array())
+    public function writeItem(array $item, $originalItem = array())
     {
         call_user_func($this->callback, $item, $originalItem);
 

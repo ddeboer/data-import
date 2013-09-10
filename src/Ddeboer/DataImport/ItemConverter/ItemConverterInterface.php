@@ -12,9 +12,9 @@ interface ItemConverterInterface
     /**
      * Convert an input
      *
-     * @param array $input Input
+     * @param mixed $input Input
      *
      * @return array|null the modified input or null to remove it
      */
-    public function convert(array $input);
+    public function convert($input);
 }

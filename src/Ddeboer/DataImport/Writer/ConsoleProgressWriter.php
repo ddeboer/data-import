@@ -28,7 +28,7 @@ class ConsoleProgressWriter extends AbstractWriter
         $this->progress->start($this->output, $this->reader->count());
     }
 
-    public function writeItem(array $item, array $originalItem = array())
+    public function writeItem(array $item, $originalItem = array())
     {
         $this->progress->advance();
     }
