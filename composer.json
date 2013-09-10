@@ -17,7 +17,7 @@
         "ext-mbstring": "*",
         "ext-sqlite3": "*",
         "symfony/property-access": "*",
-        "phpexcel/phpexcel": "*",
+        "phpoffice/phpexcel": "*",
         "doctrine/dbal": "*",
         "doctrine/orm": "*",
         "symfony/console": ">=2.2"
@@ -26,7 +26,7 @@
         "ext-iconv": "For the CharsetValueConverter",
         "ext-mbstring": "For the CharsetValueConverter",
         "doctrine/dbal": "If you want to use the DbalReader",
-        "phpexcel/phpexcel": "If you want to use the ExcelReader",
+        "phpoffice/phpexcel": "If you want to use the ExcelReader",
         "symfony/console": "If you want to use the ConsoleProgressWriter",
         "symfony/property-access": "If you want to use the ObjectConverter"
     },
