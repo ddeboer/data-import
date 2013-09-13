@@ -1,5 +1,6 @@
-Ddeboer Data Import library [![Build Status](https://travis-ci.org/ddeboer/data-import.png?branch=master)](https://travis-ci.org/ddeboer/data-import) [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/ddeboer/data-import/badges/quality-score.png?s=41129c80140adc6931288c9df15fb87ec6ea6f8a)](https://scrutinizer-ci.com/g/ddeboer/data-import/) [![Code Coverage](https://scrutinizer-ci.com/g/ddeboer/data-import/badges/coverage.png?s=724267091a6d02f83b6c435a431e71d467b361f8)](https://scrutinizer-ci.com/g/ddeboer/data-import/) [![Latest Stable Version](https://poser.pugx.org/ddeboer/data-import/v/stable.png)](https://packagist.org/packages/ddeboer/data-import)
+Ddeboer Data Import library
 ===========================
+[![Build Status](https://travis-ci.org/ddeboer/data-import.png?branch=master)](https://travis-ci.org/ddeboer/data-import) [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/ddeboer/data-import/badges/quality-score.png?s=41129c80140adc6931288c9df15fb87ec6ea6f8a)](https://scrutinizer-ci.com/g/ddeboer/data-import/) [![Code Coverage](https://scrutinizer-ci.com/g/ddeboer/data-import/badges/coverage.png?s=724267091a6d02f83b6c435a431e71d467b361f8)](https://scrutinizer-ci.com/g/ddeboer/data-import/) [![Latest Stable Version](https://poser.pugx.org/ddeboer/data-import/v/stable.png)](https://packagist.org/packages/ddeboer/data-import)
 
 Introduction
 ------------
@@ -35,12 +36,12 @@ Usage
 
 Each data import revolves around the workflow and takes place along the following lines:
 
-1. Construct a reader.
-2. Construct a workflow and pass the reader to it. Add at least one writer to
+1. Construct a [reader](#readers).
+2. Construct a workflow and pass the reader to it. Add at least one [writer](#writers) to
    the workflow.
-3. Optionally, add filters, item converters and value converters to the
+3. Optionally, add [filters](#filters), item converters and [value converters](#value-converters) to the
    workflow.
-4. Process the workflow. This will read the data from your reader, filter and
+4. Process the workflow. This will read the data from the reader, filter and
    convert the data, and write the output to each of the writers.
 
 So, schematically:
@@ -50,7 +51,6 @@ use Ddeboer\DataImport\Workflow;
 use Ddeboer\DataImport\Reader;
 use Ddeboer\DataImport\Writer;
 use Ddeboer\DataImport\Filter;
-use Ddeboer\DataImport\
 
 $reader = new Reader\...;
 $workflow = new Workflow($reader);
@@ -107,7 +107,7 @@ Many of the data writers closely resemble their reader counterparts:
 * A `DoctrineWriter`.
 
 Also available are:
-* A `ConsoleProgressWriter` that displays a import progress when you start the
+* A `ConsoleProgressWriter` that displays import progress when you start the
   workflow from the command-line:
     ```
     use Ddeboer\DataImport\Writer\ConsoleProgressWriter;
