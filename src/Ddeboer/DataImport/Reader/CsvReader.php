@@ -74,8 +74,6 @@ class CsvReader implements ReaderInterface, \SeekableIterator
      * If a header row has been set, an associative array will be returned
      *
      * @return array
-     *
-     * @throws InvalidDataException
      */
     public function current()
     {
@@ -219,15 +217,31 @@ class CsvReader implements ReaderInterface, \SeekableIterator
 
         return $this->current();
     }
-    
+
+    /**
+     * Get rows that have an invalid number of columns
+     *
+     * @return array
+     */
     public function getErrors()
     {
+        if (0 === $this->key()) {
+            // Iterator has not yet been processed, so do that now
+            foreach ($this as $row) {
+            }
+        }
+
         return $this->errors;
     }
-    
+
+    /**
+     * Does the reader contain any invalid rows?
+     *
+     * @return bool
+     */
     public function hasErrors()
     {
-        return count($this->errors) > 0;
+        return count($this->getErrors()) > 0;
     }
 
     /**

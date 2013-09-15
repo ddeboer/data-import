@@ -12,7 +12,10 @@ class CsvReaderTest extends \PHPUnit_Framework_TestCase
         $csvReader = new CsvReader($file);
         $csvReader->setHeaderRowNumber(0);
 
-        $this->assertEquals(array('id', 'number', 'description'),
+        $this->assertEquals(
+            array(
+                'id', 'number', 'description'
+            ),
             $csvReader->getFields()
         );
 
@@ -22,11 +25,14 @@ class CsvReaderTest extends \PHPUnit_Framework_TestCase
             $this->assertNotNull($row['description']);
         }
 
-        $this->assertEquals(array(
-            'id'        => 6,
-            'number'    => '456',
-            'description' => 'Another description'
-        ), $csvReader->getRow(2));
+        $this->assertEquals(
+            array(
+                'id'        => 6,
+                'number'    => '456',
+                'description' => 'Another description'
+            ),
+            $csvReader->getRow(2)
+        );
     }
 
     public function testReadCsvFileWithoutColumnHeaders()
@@ -83,12 +89,9 @@ class CsvReaderTest extends \PHPUnit_Framework_TestCase
         $file = new \SplFileObject(__DIR__.'/../Fixtures/data_column_headers_invalid.csv');
         $reader = new CsvReader($file);
         $reader->setHeaderRowNumber(0);
-        
-        foreach ($reader as $row) {
-            
-        }
+
         $this->assertTrue($reader->hasErrors());
-        $this->assertCount(2, $reader->getErrors());     
+        $this->assertCount(2, $reader->getErrors());
         
         $errors = $reader->getErrors();
         $this->assertEquals(2, key($errors));
