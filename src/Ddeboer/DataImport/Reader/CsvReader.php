@@ -87,9 +87,12 @@ class CsvReader implements ReaderInterface, \SeekableIterator
                 return array_combine(array_values($this->columnHeaders), $line);
             } else {
                 // They are not equal, so log the row as error and skip it.
-                $this->errors[$this->key()] = $line;
-                $this->next();
-                return $this->current();
+                if ($this->valid()) {
+                    $this->errors[$this->key()] = $line;
+                    $this->next();
+
+                    return $this->current();
+                }
             }
         } else {
             // Else just return the column values
