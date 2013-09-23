@@ -139,6 +139,34 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('somethingelse', $ouputTestData[0]['bazoo']);
     }
 
+    public function testWorkflowWithObjects()
+    {
+        $reader = new ArrayReader(array(
+            new Dummy('foo'),
+            new Dummy('bar'),
+            new Dummy('foobar'),
+        ));
+
+        $data = array();
+        $writer = new ArrayWriter($data);
+
+        $workflow = new Workflow($reader);
+        $workflow->addWriter($writer);
+        $workflow->addItemConverter(new CallbackItemConverter(function($item) {
+            return array('name' => $item->name);
+        }));
+        $workflow->addValueConverter('name', new CallbackValueConverter(function($name) {
+            return strrev($name);
+        }));
+        $workflow->process();
+
+        $this->assertEquals(array(
+            array('name' => 'oof'),
+            array('name' => 'rab'),
+            array('name' => 'raboof')
+        ), $data);
+    }
+
     protected function getWorkflow()
     {
         $reader = $this->getMockBuilder('\Ddeboer\DataImport\Reader\CsvReader')
@@ -146,5 +174,15 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         return new Workflow($reader);
+    }
+}
+
+class Dummy
+{
+    public $name;
+
+    public function __construct($name)
+    {
+        $this->name = $name;
     }
 }
