@@ -170,7 +170,7 @@ class DoctrineWriter extends AbstractWriter
     /**
      * {@inheritdoc}
      */
-    public function writeItem(array $item, $originalItem = array())
+    public function writeItem(array $item)
     {
         $this->counter++;
         $entity = null;
