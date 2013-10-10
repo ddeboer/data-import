@@ -23,7 +23,7 @@ This library is available on [Packagist](http://packagist.org/packages/ddeboer/d
 The recommended way to install it is through [Composer](http://getcomposer.org):
 
 ```bash
-$ composer require ddeboer/data-import:0.2
+$ composer require ddeboer/data-import:@stable
 ```
 
 For integration with Symfony2 projects, the [DdeboerDataImportBundle](https://github.com/ddeboer/DdeboerDataImportBundle)
