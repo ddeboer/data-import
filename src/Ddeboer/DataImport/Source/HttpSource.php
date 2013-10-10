@@ -47,6 +47,8 @@ class HttpSource implements SourceInterface
             $target = tempnam('/tmp', 'data_import');
         }
 
+        $context = null;
+
         if ($this->username && $this->password) {
             $context = stream_context_create(
                 array(
@@ -58,7 +60,7 @@ class HttpSource implements SourceInterface
             );
         }
 
-        file_put_contents($target, file_get_contents($this->url));
+        file_put_contents($target, file_get_contents($this->url, null, $context));
 
         return new \SplFileObject($target);
     }
