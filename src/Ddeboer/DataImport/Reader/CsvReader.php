@@ -45,6 +45,13 @@ class CsvReader implements ReaderInterface, \SeekableIterator
     protected $errors = array();
 
     /**
+     * Strict parsing - skip any lines mismatching header length
+     *
+     * @var boolean
+     */
+    protected $strict = true;
+
+    /**
      * Construct CSV reader
      *
      * @param \SplFileObject $file      CSV file
@@ -82,12 +89,16 @@ class CsvReader implements ReaderInterface, \SeekableIterator
         // If the CSV has column headers, use them to construct an associative
         // array for the columns in this line
         if (!empty($this->columnHeaders)) {
+            $numColumnHeaders = count($this->columnHeaders);
+            $numLines = count($line);
+
             // Count the number of elements in both:
-            // there must be at least as many elements in the row as there are headers.
-            if (count($this->columnHeaders) >= count($line)) {
+            // strict: they must be equal.
+            // not strict: there must be at least as many elements in the row as there are headers.
+            if ($numColumnHeaders == $numLines || !$this->isStrict() && $numColumnHeaders > $numLines) {
                 return array_combine(
                     array_values($this->columnHeaders),
-                    array_pad($line, count($this->columnHeaders), null)
+                    array_pad($line, $numColumnHeaders, null)
                 );
             } else {
                 // They are not equal, so log the row as error and skip it.
@@ -249,6 +260,31 @@ class CsvReader implements ReaderInterface, \SeekableIterator
     public function hasErrors()
     {
         return count($this->getErrors()) > 0;
+    }
+
+
+    /**
+     * Should the reader use strict parsing?
+     *
+     * @return bool
+     */
+    public function isStrict()
+    {
+        return $this->strict;
+    }
+
+    /**
+     * Set strict parsing
+     *
+     * @param bool $strict
+     *
+     * @return CsvReader
+     */
+    public function setStrict($strict)
+    {
+        $this->strict = $strict;
+
+        return $this;
     }
 
     /**
