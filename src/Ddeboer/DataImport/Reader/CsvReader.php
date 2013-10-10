@@ -96,7 +96,7 @@ class CsvReader implements ReaderInterface, \SeekableIterator
             // strict: they must be equal.
             // not strict: there must be at least as many elements in the row as there are headers.
             if ($numColumnHeaders == $numLines) {
-                
+
                 return array_combine(
                     array_values($this->columnHeaders),
                     $line
@@ -104,13 +104,14 @@ class CsvReader implements ReaderInterface, \SeekableIterator
 
             } elseif (!$this->isStrict()){
 
-                // Data row too short
                 if ($numColumnHeaders > $numLines) {
+                    // Data row too short
                     return array_combine(
                         array_values($this->columnHeaders),
                         array_pad($line, $numColumnHeaders, null)
                     );
-                } else { // Data row too long
+                } else {
+                    // Data row too long
                     return array_combine(
                         array_values($this->columnHeaders),
                         array_slice($line, 0, $numColumnHeaders)
