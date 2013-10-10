@@ -36,13 +36,20 @@ class CsvReader implements ReaderInterface, \SeekableIterator
      * @var int
      */
     protected $count;
-    
+
     /**
      * Faulty CSV rows
-     * 
-     * @var array 
+     *
+     * @var array
      */
     protected $errors = array();
+
+    /**
+     * Strict parsing - skip any lines mismatching header length
+     *
+     * @var boolean
+     */
+    protected $strict = true;
 
     /**
      * Construct CSV reader
@@ -82,9 +89,17 @@ class CsvReader implements ReaderInterface, \SeekableIterator
         // If the CSV has column headers, use them to construct an associative
         // array for the columns in this line
         if (!empty($this->columnHeaders)) {
-            // Count the number of elements in both: they must be equal.
-            if (count($this->columnHeaders) == count($line)) {
-                return array_combine(array_values($this->columnHeaders), $line);
+            $numColumnHeaders = count($this->columnHeaders);
+            $numLines = count($line);
+
+            // Count the number of elements in both:
+            // strict: they must be equal.
+            // not strict: there must be at least as many elements in the row as there are headers.
+            if ($numColumnHeaders == $numLines || !$this->isStrict() && $numColumnHeaders > $numLines) {
+                return array_combine(
+                    array_values($this->columnHeaders),
+                    array_pad($line, $numColumnHeaders, null)
+                );
             } else {
                 // They are not equal, so log the row as error and skip it.
                 if ($this->valid()) {
@@ -245,6 +260,31 @@ class CsvReader implements ReaderInterface, \SeekableIterator
     public function hasErrors()
     {
         return count($this->getErrors()) > 0;
+    }
+
+
+    /**
+     * Should the reader use strict parsing?
+     *
+     * @return bool
+     */
+    public function isStrict()
+    {
+        return $this->strict;
+    }
+
+    /**
+     * Set strict parsing
+     *
+     * @param bool $strict
+     *
+     * @return CsvReader
+     */
+    public function setStrict($strict)
+    {
+        $this->strict = $strict;
+
+        return $this;
     }
 
     /**
