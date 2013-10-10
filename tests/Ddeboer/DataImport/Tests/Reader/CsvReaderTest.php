@@ -94,16 +94,16 @@ class CsvReaderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(3, $csvReader->count());
     }
 
-    public function testCountWithMoreElementsThanColumnHeadersInvalidNotStrict()
+    public function testCountWithMoreElementsThanColumnHeadersNotStrict()
     {
-        $file = new \SplFileObject(__DIR__.'/../Fixtures/data_more_elements_than_column_headers_invalid.csv');
+        $file = new \SplFileObject(__DIR__.'/../Fixtures/data_more_elements_than_column_headers.csv');
         $csvReader = new CsvReader($file);
         $csvReader->setStrict(false);
         $csvReader->setHeaderRowNumber(0);
 
-        $errors = $csvReader->getErrors();
-        $this->assertEquals(2, key($errors));
-        $this->assertEquals(array ('6', '456', 'Another description', 'Some more info'), current($errors));
+        $this->assertEquals(3, $csvReader->count());
+        $this->assertFalse($csvReader->hasErrors());
+        $this->assertEquals(array(6, 456, 'Another description'), array_values($csvReader->getRow(2)));
     }
 
     public function testVaryingElementCountWithColumnHeadersNotStrict()
@@ -113,13 +113,8 @@ class CsvReaderTest extends \PHPUnit_Framework_TestCase
         $csvReader->setStrict(false);
         $csvReader->setHeaderRowNumber(0);
 
-        $this->assertTrue($csvReader->hasErrors());
-
-        $this->assertCount(1, $csvReader->getErrors());
-
-        $errors = $csvReader->getErrors();
-        $this->assertEquals(3, key($errors));
-        $this->assertEquals(array('7', '7890', 'Some more info', 'too many columns'), current($errors));
+        $this->assertEquals(4, $csvReader->count());
+        $this->assertFalse($csvReader->hasErrors());
     }
 
     public function testVaryingElementCountWithoutColumnHeadersNotStrict()
@@ -129,12 +124,8 @@ class CsvReaderTest extends \PHPUnit_Framework_TestCase
         $csvReader->setStrict(false);
         $csvReader->setColumnHeaders(array('id', 'number', 'description'));
 
-        $this->assertTrue($csvReader->hasErrors());
-        $this->assertCount(1, $csvReader->getErrors());
-
-        $errors = $csvReader->getErrors();
-        $this->assertEquals(3, key($errors));
-        $this->assertEquals(array(3, 230, 'Yet more info', 'Even more info'), current($errors));
+        $this->assertEquals(5, $csvReader->count());
+        $this->assertFalse($csvReader->hasErrors());
     }
 
     public function testInvalidCsv()
