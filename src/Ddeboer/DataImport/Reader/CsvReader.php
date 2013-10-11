@@ -90,15 +90,20 @@ class CsvReader implements ReaderInterface, \SeekableIterator
         // array for the columns in this line
         if (!empty($this->columnHeaders)) {
             $numColumnHeaders = count($this->columnHeaders);
-            $numLines = count($line);
+            // In non-strict mode pad/slice the line to match the column headers
+            if (!$this->isStrict()){
+                if ($numColumnHeaders > count($line)) {
+                    $line = array_pad($line, $numColumnHeaders, null); // Line too short
+                } else {
+                    $line = array_slice($line, 0, $numColumnHeaders); // Line too long
+                }
+            }
 
-            // Count the number of elements in both:
-            // strict: they must be equal.
-            // not strict: there must be at least as many elements in the row as there are headers.
-            if ($numColumnHeaders == $numLines || !$this->isStrict() && $numColumnHeaders > $numLines) {
+            // Count the number of elements in both: they must be equal.
+            if ($numColumnHeaders == count($line)) {
                 return array_combine(
                     array_values($this->columnHeaders),
-                    array_pad($line, $numColumnHeaders, null)
+                    $line
                 );
             } else {
                 // They are not equal, so log the row as error and skip it.
