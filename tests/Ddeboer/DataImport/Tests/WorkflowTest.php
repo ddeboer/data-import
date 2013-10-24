@@ -167,6 +167,49 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
         ), $data);
     }
 
+    /**
+     * @expectedException \Ddeboer\DataImport\Exception\UnexpectedTypeException
+     */
+    public function testItemConverterWhichReturnObjects()
+    {
+        $reader = new ArrayReader(array(
+            new Dummy('foo'),
+            new Dummy('bar'),
+            new Dummy('foobar'),
+        ));
+
+        $data = array();
+        $writer = new ArrayWriter($data);
+
+        $workflow = new Workflow($reader);
+        $workflow->addWriter($writer);
+        $workflow->addItemConverter(new CallbackItemConverter(function($item) {
+            return $item;
+        }));
+
+        $workflow->process();
+    }
+
+    /**
+     * @expectedException \Ddeboer\DataImport\Exception\UnexpectedTypeException
+     */
+    public function testItemConverterWithObjectsAndNoItemConverters()
+    {
+        $reader = new ArrayReader(array(
+            new Dummy('foo'),
+            new Dummy('bar'),
+            new Dummy('foobar'),
+        ));
+
+        $data = array();
+        $writer = new ArrayWriter($data);
+
+        $workflow = new Workflow($reader);
+        $workflow->addWriter($writer);
+
+        $workflow->process();
+    }
+
     protected function getWorkflow()
     {
         $reader = $this->getMockBuilder('\Ddeboer\DataImport\Reader\CsvReader')
