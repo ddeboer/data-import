@@ -26,9 +26,14 @@ class ConvertEncoding implements SourceFilterInterface
             : tempnam(null, null) . '.' . $file->getExtension();
 
         $contents = \file_get_contents($file->getPathname());
-        $converted = \mb_convert_encoding($contents, $this->toEncoding);
-        file_put_contents($target, $converted);
+        
+        if (!mb_detect_encoding($contents, $this->toEncoding)) {
+            $converted = \mb_convert_encoding($contents, $this->toEncoding);
+            file_put_contents($target, $converted);
 
-        return new \SplFileObject($target);
+            return new \SplFileObject($target);
+        } else {
+            return $file;
+        }
     }
 }
