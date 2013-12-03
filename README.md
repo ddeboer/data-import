@@ -19,7 +19,7 @@ Features
 Installation
 ------------
 
-This library is available on [Packagist](http://packagist.org/packages/ddeboer/data-import). 
+This library is available on [Packagist](http://packagist.org/packages/ddeboer/data-import).
 The recommended way to install it is through [Composer](http://getcomposer.org):
 
 ```bash
@@ -54,10 +54,12 @@ use Ddeboer\DataImport\Filter;
 
 $reader = new Reader\...;
 $workflow = new Workflow($reader);
-$workflow->addWriter(new Writer\...());
+$workflow
+    ->addWriter(new Writer\...())
     ->addWriter(new Writer\...())
     ->addFilter(new Filter\CallbackFilter(...))
-    ->process();
+    ->process()
+;
 ```
 
 ### Readers
@@ -65,18 +67,19 @@ $workflow->addWriter(new Writer\...());
 This library includes a handful of readers:
 
 * An `ArrayReader` for reading arrays (or testing your workflow).
-* A `CsvReader` for reading CSV files, optimized to use a little memory as possible:
+* A `CsvReader` for reading CSV files, optimized to use as little memory as possible:
     ```php
     use Ddeboer\DataImport\Reader\CsvReader;
 
     $reader = new CsvReader(new \SplFileObject('/path/to/csv_file.csv'));
     ```
+    **Note:** This reader operates in a 'strict mode' by default, see [CsvReader strict mode](#csvreader-strict-mode) for more details.
 * A `DbalReader` to read data through [Doctrine’s DBAL](http://www.doctrine-project.org/projects/dbal.html):
     ```php
     use Ddeboer\DataImport\Reader\DbalReader;
 
     $reader = new DbalReader(
-        $connection,    // Instance of \Doctrine\DBAL\Connection
+        $connection, // Instance of \Doctrine\DBAL\Connection
         'SELECT u.id, u.username, g.name FROM `user` u INNER JOIN groups g ON u.group_id = g.id'
     );
     ```
@@ -122,8 +125,10 @@ Build your own writer by implementing the [WriterInterface](/src/Ddeboer/DataImp
 If you want, you can use multiple writers:
 
 ```php
-$workflow->addWriter($progressWriter)
-    ->addWriter($csvWriter);
+$workflow
+    ->addWriter($progressWriter)
+    ->addWriter($csvWriter)
+;
 ```
 
 ### Filters
@@ -135,7 +140,7 @@ a [CallbackFilter](/src/Ddeboer/DataImport/Filter/CallBackFilter.php):
 use Ddeboer\DataImport\Filter\CallbackFilter;
 
 // Don’t import The Beatles
-$filter = new CallbackFilter(function($data) {
+$filter = new CallbackFilter(function ($data) {
     if ('The Beatles' == $data['name']) {
         return false;
     } else {
@@ -160,6 +165,7 @@ Value converters are used to convert specific fields (e.g., columns in database)
       $converter = new DateTimeValueConverter('d/m/Y H:i:s');
       $workflow->addValueConverter('my_date_field', $converter);
       ```
+
 * A `StringToObjectConverter` that looks up an object in the database based
   on a string value:
     ```php
@@ -169,7 +175,8 @@ Value converters are used to convert specific fields (e.g., columns in database)
     $workflow->addValueConverter('input_name', $converter);
     ```
 
-## An example
+An example
+----------
 
 ```php
 use Ddeboer\DataImport\Workflow;
@@ -177,6 +184,8 @@ use Ddeboer\DataImport\Source\HttpSource;
 use Ddeboer\DataImport\Source\Filter\Unzip;
 use Ddeboer\DataImport\Reader\CsvReader;
 use Ddeboer\DataImport\ValueConverter\DateTimeValueConverter;
+use Ddeboer\DataImport\ValueConverter\CallbackValueConverter;
+use Ddeboer\DataImport\Writer\CallbackWriter;
 
 (...)
 
@@ -203,27 +212,19 @@ $workflow
     ->addValueConverter('twn_datumeind', $dateTimeConverter)
     ->addValueConverter('datummutatie', $dateTimeConverter)
 
-// You can also add closures as converters
-    ->addValueConverter('twn_nummertm',
-        new \Ddeboer\DataImport\ValueConverter\CallbackValueConverter(
-            function($input) {
-                return str_replace('-', '', $input);
-            }
-        )
-    ->addValueConverter('twn_nummervan',
-        new \Ddeboer\DataImport\ValueConverter\CallbackValueConverter(
-            function($input) {
-                return str_replace('-', '', $input);
-            }
-        )
+    // You can also add closures as converters
+    ->addValueConverter('twn_nummertm', new CallbackValueConverter(function ($input) {
+        return str_replace('-', '', $input);
+    }))
+    ->addValueConverter('twn_nummervan', new CallbackValueConverter(function ($input) {
+        return str_replace('-', '', $input);
+    }))
 
-// Use one of the writers supplied with this bundle, implement your own, or use
-// a closure:
-    ->addWriter(new \Ddeboer\DataImport\Writer\CallbackWriter(
-        function($csvLine) {
-            var_dump($csvLine);
-        }
-    ));
+    // Use one of the writers supplied with this bundle, implement your own, or use a closure:
+    ->addWriter(new CallbackWriter(function ($csvLine) {
+        var_dump($csvLine);
+    }))
+;
 
 // Process the workflow
 $workflow->process();
@@ -237,7 +238,6 @@ The ArrayValueConverterMap is used to filter values of a multi-level array.
 The converters defined in the list are applied on every data-item's value that match the defined array_keys.
 
 ```php
-
     //...
     $data = array(
         'products' => array(
@@ -248,7 +248,7 @@ The converters defined in the list are applied on every data-item's value that m
             1 => array(
                 'name' => 'some name',
                 'price' => '€12,16',
-            ),
+            )
         )
     );
 
@@ -257,9 +257,9 @@ The converters defined in the list are applied on every data-item's value that m
     // ...
 
     $workflow->addValueConverter(new ArrayValueConverterMap(array(
-        'name' => array(new CharsetValueConverter('UTF-8', 'UTF-16')),  // encode to UTF-8
-        'price' => array(new CallbackValueConverter(function($input) {  // remove € char
-            return str_replace('€', '', $intput);
+        'name' => array(new CharsetValueConverter('UTF-8', 'UTF-16')), // encode to UTF-8
+        'price' => array(new CallbackValueConverter(function ($input) {
+            return str_replace('€', '', $intput); // remove € char
         }),
     )));
 
@@ -274,10 +274,9 @@ The converters defined in the list are applied on every data-item's value that m
             1 => array(
                 'name' => 'some name',
                 'price' => '12,16',
-            ),
+            )
         )
     );
-
 ```
 
 GlobalMapping
@@ -285,10 +284,10 @@ GlobalMapping
 
 The global-mapping allows you to define an array that is used to rename fields of an item.
 
-Using global-mapping can be used to add renaming-rules for a multi-level array and is applied after the standard-mapping rules are applied.
+Using global-mapping can be used to add renaming-rules for a multi-level array and is applied
+after the standard-mapping rules are applied.
 
 ```php
-
     //...
     $data = array(
         0 => array(
@@ -310,7 +309,9 @@ Using global-mapping can be used to add renaming-rules for a multi-level array a
     // this defines renaming global rules
     $workflow->setGlobalMapping(array(
         'foo' => 'fooloo',
-        'bazinga' => array( // we need to use the new name here because global mapping is applied after standard mapping
+
+        // we need to use the new name here because global mapping is applied after standard mapping
+        'bazinga' => array(
             'some' => 'something',
             'some2' => 'somethingelse'
         )
@@ -329,3 +330,26 @@ Using global-mapping can be used to add renaming-rules for a multi-level array a
     );
 ```
 
+Troubleshooting
+---------------
+
+### CsvReader strict mode
+
+The `CsvReader` operates in 'strict mode' by default, this means that if there
+are any rows in the CSV provided that contain a different number of values than
+the column headers provided, then an error is logged and the row is skipped.
+
+To disable this functionality, you can set `$reader->setStrict(false)` after
+you instantiate the reader.
+
+Disabling strict mode means:
+
+1. Any rows that contain fewer values than the column headers are simply
+   padded with null values.
+2. Any additional values in a row that contain more values than the
+   column headers are ignored.
+
+Examples where this is useful:
+
+- **Outlook 2010:** which omits trailing blank values
+- **Google Contacts:** which exports more values than there are column headers
