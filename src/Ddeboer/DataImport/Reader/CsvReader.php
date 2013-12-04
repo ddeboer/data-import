@@ -181,13 +181,9 @@ class CsvReader implements ReaderInterface, \SeekableIterator
     public function count()
     {
         if (null === $this->count) {
-            $this->count = 0;
-
             $position = $this->key();
 
-            foreach ($this as $row) {
-                $this->count++;
-            }
+            $this->count = iterator_count($this);
 
             $this->seek($position);
         }
