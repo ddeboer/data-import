@@ -106,6 +106,19 @@ class CsvReaderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array(6, 456, 'Another description'), array_values($csvReader->getRow(2)));
     }
 
+    public function testCountDoesNotMoveFilePointer()
+    {
+        $file = new \SplFileObject(__DIR__.'/../Fixtures/data_column_headers.csv');
+        $csvReader = new CsvReader($file);
+        $csvReader->setHeaderRowNumber(0);
+
+        $key_before_count = $csvReader->key();
+        $csvReader->count();
+        $key_after_count = $csvReader->key();
+
+        $this->assertEquals($key_after_count, $key_before_count);
+    }
+
     public function testVaryingElementCountWithColumnHeadersNotStrict()
     {
         $file = new \SplFileObject(__DIR__.'/../Fixtures/data_column_headers_varying_element_count.csv');
