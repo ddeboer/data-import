@@ -195,10 +195,13 @@ class DoctrineWriter extends AbstractWriter
         foreach ($this->entityMetadata->getFieldNames() as $fieldName) {
 
             $value = null;
-            if (isset($item[$fieldName])) {
+			$getter = $this->getItemFunction($fieldName,'get');
+			
+			if (isset($item[$fieldName])) {
                 $value = $item[$fieldName];
-            } elseif (method_exists($item, 'get' . ucfirst($fieldName))) {
-                $value = $item->{'get' . ucfirst($fieldName)};
+            }
+			else if(method_exists($item, $getter)) {				
+				$value = $item->{$getter};
             }
 
             if (null === $value) {
@@ -210,7 +213,7 @@ class DoctrineWriter extends AbstractWriter
                     $entity, $fieldName
                 ))
             {
-                $setter = 'set' . ucfirst($fieldName);
+				$setter = $this->getItemFunction($fieldName,'set');
                 $this->setValue($entity, $value, $setter);
             }
         }
@@ -222,7 +225,37 @@ class DoctrineWriter extends AbstractWriter
             $this->entityManager->clear();
         }
     }
+	
+	public function writeItems($reader, $common_values = array()) {
+		foreach ($reader as $row) {
+			try {
+				foreach($reader->getColumnHeaders() as $header) {
+					$item[$header] = $row[$header];
+				}
+				if( !empty($common_values) ) {
+					foreach( $common_values as $field => $value ) {
+						$item[$field] = $value;
+					}
+				}
+				$this->writeItem($item);
+			}
+			catch(\Exception $e) {}
+        }
+	}
 
+	public function getItemFunction( $attribut, $type ) {
+		try {
+			$attribut_function = str_replace('_', ' ', $attribut);
+			$attribut_function = ucwords($attribut_function);
+			$attribut_function = str_replace(' ', '', $attribut_function);
+			$attribut_function = $type.$attribut_function;
+			return $attribut_function;
+		}
+		catch(\Exception $e) { 
+			return null;
+		}
+	}
+	
     /**
      * Truncate the database table for this writer
      *
