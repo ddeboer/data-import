@@ -11,7 +11,7 @@ class CallbackFilterTest extends \PHPUnit_Framework_TestCase
 {
     public function testFilter()
     {
-        $callback = function(array $item) {
+        $callback = function (array $item) {
             return false;
         };
 
