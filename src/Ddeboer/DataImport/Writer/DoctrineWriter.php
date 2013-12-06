@@ -179,9 +179,14 @@ class DoctrineWriter extends AbstractWriter
         // first
         if (false === $this->truncate) {
             if ($this->index) {
-                $entity = $this->entityRepository->findOneBy(array(
-                    $this->index => $item[$this->index]
-                ));
+                if (!is_array($this->index)) {
+                    $tableIndex = array($this->index => $item[$this->index]);
+                } else {
+                    foreach ($this->index as $index) {
+                        $tableIndex[$index] = $item[$index];
+                    }
+                }
+                $entity = $this->entityRepository->findOneBy($tableIndex);
             } else {
                 $entity = $this->entityRepository->find(current($item));
             }
@@ -191,6 +196,8 @@ class DoctrineWriter extends AbstractWriter
             $className = $this->entityMetadata->getName();
             $entity = $this->getNewInstance($className, $item);
         }
+
+        $this->loadAssociationObjectsToEntity($item, $entity);
 
         foreach ($this->entityMetadata->getFieldNames() as $fieldName) {
 
@@ -220,6 +227,31 @@ class DoctrineWriter extends AbstractWriter
         if (($this->counter % $this->batchSize) == 0) {
             $this->entityManager->flush();
             $this->entityManager->clear();
+        }
+    }
+
+    /**
+     * Add the associated objects in case the item have for persist its relation
+     *
+     * @param array $item
+     * @param $entity
+     * @return void
+     */
+    protected function loadAssociationObjectsToEntity(array $item, $entity)
+    {
+        foreach ($this->entityMetadata->getAssociationMappings() as $associationMapping) {
+
+            $value = null;
+            if (isset($item[$associationMapping['fieldName']])) {
+                $value = $this->entityManager->getRepository($associationMapping['targetEntity'])->find($item[$associationMapping['fieldName']]);
+            }
+
+            if (null === $value) {
+                continue;
+            }
+
+            $setter = 'set' . ucfirst($associationMapping['fieldName']);
+            $this->setValue($entity, $value, $setter);
         }
     }
 
