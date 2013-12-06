@@ -28,6 +28,7 @@ class DbalReader implements ReaderInterface
      *
      * @param Connection $connection Database connection
      * @param string     $sql        SQL statement
+     * @param array      $params     SQL statement parameters
      */
     public function __construct(Connection $connection, $sql, array $params = array())
     {
