@@ -2,10 +2,11 @@
 
 namespace Ddeboer\DataImport\ValueConverter;
 
-use Ddeboer\DataImport\ValueConverter\ValueConverterInterface;
 use Doctrine\Common\Persistence\ObjectRepository;
 
 /**
+ * Converts a string to an object
+ *
  * @author Markus Bachmann <markus.bachmann@bachi.biz>
  */
 class StringToObjectConverter implements ValueConverterInterface
