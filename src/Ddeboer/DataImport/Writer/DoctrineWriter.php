@@ -58,7 +58,7 @@ class DoctrineWriter extends AbstractWriter
     /**
      * Original Doctrine logger
      *
-     * @var Doctrine\DBAL\Logging\SQLLogger
+     * @var \Doctrine\DBAL\Logging\SQLLogger
      */
     protected $originalLogger;
 
@@ -70,6 +70,7 @@ class DoctrineWriter extends AbstractWriter
     protected $truncate = true;
 
     /**
+     * Constructor
      *
      * @param EntityManager $entityManager
      * @param string        $entityName
@@ -179,9 +180,9 @@ class DoctrineWriter extends AbstractWriter
         // first
         if (false === $this->truncate) {
             if ($this->index) {
-                $entity = $this->entityRepository->findOneBy(array(
-                    $this->index => $item[$this->index]
-                ));
+                $entity = $this->entityRepository->findOneBy(
+                    array($this->index => $item[$this->index])
+                );
             } else {
                 $entity = $this->entityRepository->find(current($item));
             }
@@ -206,10 +207,8 @@ class DoctrineWriter extends AbstractWriter
             }
 
             if (!($value instanceof \DateTime)
-                || $value != $this->entityMetadata->getFieldValue(
-                    $entity, $fieldName
-                ))
-            {
+                || $value != $this->entityMetadata->getFieldValue($entity, $fieldName)
+            ) {
                 $setter = 'set' . ucfirst($fieldName);
                 $this->setValue($entity, $value, $setter);
             }
