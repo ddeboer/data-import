@@ -19,8 +19,7 @@ interface WriterInterface
     /**
      * Write one data item
      *
-     * @param array $item         The data item with converted values
-     * @param mixed $originalItem The data item with its original values
+     * @param array $item The data item with converted values
      *
      * @return WriterInterface
      */
