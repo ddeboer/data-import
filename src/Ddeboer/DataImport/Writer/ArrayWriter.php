@@ -25,9 +25,7 @@ class ArrayWriter implements WriterInterface
     }
 
     /**
-     * Prepare the writer before writing the items
-     *
-     * @return Writer
+     * {@inheritDoc}
      */
     public function prepare()
     {
@@ -35,22 +33,15 @@ class ArrayWriter implements WriterInterface
     }
 
     /**
-     * Write one data item
-     *
-     * @param array $item         The data item with converted values
-     * @param array $originalItem The data item with its original values
-     *
-     * @return Writer
+     * {@inheritDoc}
      */
-    public function writeItem(array $item, array $originalItem = array())
+    public function writeItem(array $item)
     {
         $this->data[] = $item;
     }
 
     /**
-     * Wrap up the writer after all items have been written
-     *
-     * @return Writer
+     * {@inheritDoc}
      */
     public function finish()
     {

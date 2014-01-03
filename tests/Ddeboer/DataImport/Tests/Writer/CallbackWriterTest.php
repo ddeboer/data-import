@@ -11,7 +11,7 @@ class CallbackWriterTest extends \PHPUnit_Framework_TestCase
 {
     public function testPrepare()
     {
-        $callable = function(array $item, array $originalItem) {
+        $callable = function(array $item) {
             return '';
         };
 
@@ -22,7 +22,7 @@ class CallbackWriterTest extends \PHPUnit_Framework_TestCase
     public function testWriteItem()
     {
         $string = '';
-        $callable = function(array $item, array $originalItem) use (&$string) {
+        $callable = function(array $item) use (&$string) {
             $string = implode(',', array_values($item));
         };
 
@@ -33,7 +33,7 @@ class CallbackWriterTest extends \PHPUnit_Framework_TestCase
 
     public function testFinish()
     {
-        $callable = function(array $item, array $originalItem) {
+        $callable = function(array $item) {
             return '';
         };
 

@@ -12,7 +12,7 @@ interface WriterInterface
     /**
      * Prepare the writer before writing the items
      *
-     * @return Writer
+     * @return WriterInterface
      */
     public function prepare();
 
@@ -20,16 +20,16 @@ interface WriterInterface
      * Write one data item
      *
      * @param array $item         The data item with converted values
-     * @param array $originalItem The data item with its original values
+     * @param mixed $originalItem The data item with its original values
      *
-     * @return Writer
+     * @return WriterInterface
      */
-    public function writeItem(array $item, array $originalItem = array());
+    public function writeItem(array $item);
 
     /**
      * Wrap up the writer after all items have been written
      *
-     * @return Writer
+     * @return WriterInterface
      */
     public function finish();
 }

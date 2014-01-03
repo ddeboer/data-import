@@ -2,6 +2,7 @@
 
 namespace Ddeboer\DataImport;
 
+use Ddeboer\DataImport\Exception\UnexpectedTypeException;
 use Ddeboer\DataImport\Reader\ReaderInterface;
 use Ddeboer\DataImport\Writer\WriterInterface;
 use Ddeboer\DataImport\Filter\FilterInterface;
@@ -261,7 +262,7 @@ class Workflow
      *
      * @return boolean
      */
-    protected function filterItem(array $item, array $filters)
+    protected function filterItem($item, array $filters)
     {
         foreach ($filters as $filter) {
             if (false == $filter->filter($item)) {
@@ -280,14 +281,23 @@ class Workflow
      *
      * @return array Converted item values
      */
-    protected function convertItem(array $item)
+    protected function convertItem($item)
     {
         foreach ($this->itemConverters as $converter) {
             $item = $converter->convert($item);
+            if ($item && !(is_array($item) || ($item instanceof \ArrayAccess && $item instanceof \Traversable))) {
+                throw new UnexpectedTypeException($item, 'false or array');
+            }
+
             if (!$item) {
                 return $item;
             }
         }
+
+        if ($item && !(is_array($item) || ($item instanceof \ArrayAccess && $item instanceof \Traversable))) {
+            throw new UnexpectedTypeException($item, 'false or array');
+        }
+
         foreach ($this->valueConverters as $property => $converters) {
             if (isset($item[$property])) {
                 foreach ($converters as $converter) {

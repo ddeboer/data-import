@@ -29,7 +29,7 @@ class CsvWriter extends AbstractWriter
     /**
      * {@inheritdoc}
      */
-    public function writeItem(array $item, array $originalItem = array())
+    public function writeItem(array $item)
     {
         fputcsv($this->fp, $item, $this->delimiter, $this->enclosure);
     }
