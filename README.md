@@ -133,8 +133,9 @@ $workflow
 
 ### Filters
 
-A filter decides whether data input is accepted into the import process. The library currently ships with
-a [CallbackFilter](/src/Ddeboer/DataImport/Filter/CallBackFilter.php):
+A filter decides whether data input is accepted into the import process. 
+
+#### [CallbackFilter](/src/Ddeboer/DataImport/Filter/CallBackFilter.php)
 
 ```php
 use Ddeboer\DataImport\Filter\CallbackFilter;
@@ -149,6 +150,37 @@ $filter = new CallbackFilter(function ($data) {
 });
 
 $workflow->addFilter($filter);
+```
+
+#### [OffsetFilter](/src/Ddeboer/DataImport/Filter/OffsetFilter.php)
+
+OffsetFilter allows you to
+
+* skip certain amount of items from the beginning
+* process only specified amount of items (and skip the rest)
+
+You can combine these two parameters to process a slice from the middle of the
+data: like rows 5-7 of a CSV file with ten rows.
+
+OffsetFilter is configured by it's constructor:
+`new OffsetFilter($offset = 0, $limit = null)`. Note: `$offset` is a 0-based index.
+
+```php
+use Ddeboer\DataImport\Filter\OffsetFilter;
+
+// Default implementation is to start from the beginning without maximum count
+$filter = new OffsetFilter(0, null);
+$filter = new OffsetFilter(); // You can omit both parameters
+
+// Start from the third item, process to the end
+$filter = new OffsetFilter(2, null);
+$filter = new OffsetFilter(2); // You can omit the second parameter
+
+// Start from the first item, process max three items
+$filter = new OffsetFilter(0, 3);
+
+// Start from the third item, process max five items (items 3 - 7)
+$filter = new OffsetFilter(2, 5);
 ```
 
 ### Item converters
