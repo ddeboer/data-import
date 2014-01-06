@@ -29,17 +29,23 @@ class ExcelReader implements ReaderInterface
     /**
      * Construct CSV reader
      *
-     * @param Source|\SplFileObject $source The source: can be either a source
+     * @param SourceInterface|\SplFileObject $source The source: can be either a source
      *                                      or file object
      * @param int $headerRowNumber          Optional number of header row
+     * @param int $activeSheet              Index of active sheet to read from
      */
-    public function __construct($source, $headerRowNumber = null)
+    public function __construct($source, $headerRowNumber = null, $activeSheet = null)
     {
         if ($source instanceof SourceInterface) {
             $source = $source->getFile();
         }
 
         $excel = \PHPExcel_IOFactory::load($source->getPathname());
+
+        if (null !== $activeSheet) {
+            $excel->setActiveSheetIndex($activeSheet);
+        }
+
         $this->worksheet = $excel->getActiveSheet()->toArray();
 
         if (null !== $headerRowNumber) {

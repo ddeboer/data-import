@@ -37,4 +37,14 @@ class ExcelReaderTest extends \PHPUnit_Framework_TestCase
             $this->assertEquals(array('id', 'number', 'description'), array_keys($row));
         }
     }
+
+    public function testMultiSheet()
+    {
+        $file = new \SplFileObject(__DIR__.'/../Fixtures/data_multi_sheet.xls');
+        $sheet1reader = new ExcelReader($file, null, 0);
+        $this->assertEquals(3, $sheet1reader->count());
+
+        $sheet2reader = new ExcelReader($file, null, 1);
+        $this->assertEquals(2, $sheet2reader->count());
+    }
 }
