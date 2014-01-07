@@ -32,6 +32,7 @@ class ExcelReader implements ReaderInterface
      * @param SourceInterface|\SplFileObject $source The source: can be either a source
      *                                      or file object
      * @param int $headerRowNumber          Optional number of header row
+     * @param int $activeSheet              Index of active sheet to read from
      */
     public function __construct($source, $headerRowNumber = null, $activeSheet = -1)
     {
