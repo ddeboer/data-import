@@ -91,7 +91,7 @@ class CsvReader implements ReaderInterface, \SeekableIterator
         if (!empty($this->columnHeaders)) {
             $numColumnHeaders = count($this->columnHeaders);
             // In non-strict mode pad/slice the line to match the column headers
-            if (!$this->isStrict()){
+            if (!$this->isStrict()) {
                 if ($numColumnHeaders > count($line)) {
                     $line = array_pad($line, $numColumnHeaders, null); // Line too short
                 } else {
@@ -196,7 +196,7 @@ class CsvReader implements ReaderInterface, \SeekableIterator
      */
     public function next()
     {
-        return $this->file->next();
+        $this->file->next();
     }
 
     /**
