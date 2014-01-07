@@ -42,7 +42,7 @@ class ExcelReader implements ReaderInterface
 
         $excel = \PHPExcel_IOFactory::load($source->getPathname());
 
-        if ($activeSheet) {
+        if (null !== $activeSheet) {
             $excel->setActiveSheetIndex($activeSheet);
         }
 
