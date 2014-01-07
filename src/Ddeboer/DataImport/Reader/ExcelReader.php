@@ -34,7 +34,7 @@ class ExcelReader implements ReaderInterface
      * @param int $headerRowNumber          Optional number of header row
      * @param int $activeSheet              Index of active sheet to read from
      */
-    public function __construct($source, $headerRowNumber = null, $activeSheet = -1)
+    public function __construct($source, $headerRowNumber = null, $activeSheet = null)
     {
         if ($source instanceof SourceInterface) {
             $source = $source->getFile();
@@ -42,7 +42,7 @@ class ExcelReader implements ReaderInterface
 
         $excel = \PHPExcel_IOFactory::load($source->getPathname());
 
-        if ($activeSheet > -1) {
+        if ($activeSheet) {
             $excel->setActiveSheetIndex($activeSheet);
         }
 
