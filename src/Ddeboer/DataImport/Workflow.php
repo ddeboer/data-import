@@ -75,7 +75,7 @@ class Workflow
     /**
      * Construct a workflow
      *
-     * @param Reader $reader
+     * @param ReaderInterface $reader
      */
     public function __construct(ReaderInterface $reader)
     {
@@ -280,6 +280,7 @@ class Workflow
      * @param string $item Original item values
      *
      * @return array Converted item values
+     * @throws UnexpectedTypeException
      */
     protected function convertItem($item)
     {
@@ -371,8 +372,7 @@ class Workflow
         }
 
         // skip equal fields
-        if ($fromField == $toField)
-        {
+        if ($fromField == $toField) {
             return $item;
         }
 
