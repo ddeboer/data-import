@@ -28,11 +28,13 @@
         "phpoffice/phpexcel": "*",
         "doctrine/dbal": "*",
         "doctrine/orm": "*",
-        "symfony/console": ">=2.2"
+        "symfony/console": ">=2.2",
+        "symfony/validator": "~2.3.0"
     },
     "suggest": {
         "ext-iconv": "For the CharsetValueConverter",
         "ext-mbstring": "For the CharsetValueConverter",
+        "symfony/validator": "to use the ValidatorFilter",
         "doctrine/dbal": "If you want to use the DbalReader",
         "phpoffice/phpexcel": "If you want to use the ExcelReader",
         "symfony/console": "If you want to use the ConsoleProgressWriter",

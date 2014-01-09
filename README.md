@@ -183,6 +183,28 @@ $filter = new OffsetFilter(0, 3);
 $filter = new OffsetFilter(2, 5);
 ```
 
+#### [ValidatorFilter](/src/Ddeboer/DataImport/Filter/ValidatorFilter.php)
+
+Its a common use case to validate the data before you save it to the database.
+Exactly for this use case we created the ValidatorFilter. See how it works:
+
+```php
+
+$filter = new ValidatorFilter($validator);
+$filter->add('email', new Assert\Email());
+$filter->add('sku', new Assert\NotBlank());
+```
+
+The default behaviour for the validator is to collect all violations and skip
+each row which isn't valid. If you want to stop on the first failing row you can
+call `ValidatorFilter::throwExceptions()`. 
+Now the filter will throw a [ValidationException](/src/Ddeboer/Exception/ValidationException] 
+which contains the line number and the violation list.
+
+_Note_
+Its recommend to add the ValidatorFilter before you add all other filters.
+For a detailed explanation see https://github.com/ddeboer/data-import/pull/47#issuecomment-31969949.
+
 ### Item converters
 
 ### Value converters
