@@ -1,6 +1,9 @@
 Ddeboer Data Import library
 ===========================
-[![Build Status](https://travis-ci.org/ddeboer/data-import.png?branch=master)](https://travis-ci.org/ddeboer/data-import) [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/ddeboer/data-import/badges/quality-score.png?s=41129c80140adc6931288c9df15fb87ec6ea6f8a)](https://scrutinizer-ci.com/g/ddeboer/data-import/) [![Code Coverage](https://scrutinizer-ci.com/g/ddeboer/data-import/badges/coverage.png?s=724267091a6d02f83b6c435a431e71d467b361f8)](https://scrutinizer-ci.com/g/ddeboer/data-import/) [![Latest Stable Version](https://poser.pugx.org/ddeboer/data-import/v/stable.png)](https://packagist.org/packages/ddeboer/data-import)
+[![Build Status](https://travis-ci.org/ddeboer/data-import.png?branch=master)](https://travis-ci.org/ddeboer/data-import) 
+[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/ddeboer/data-import/badges/quality-score.png?s=41129c80140adc6931288c9df15fb87ec6ea6f8a)](https://scrutinizer-ci.com/g/ddeboer/data-import/) 
+[![Code Coverage](https://scrutinizer-ci.com/g/ddeboer/data-import/badges/coverage.png?s=724267091a6d02f83b6c435a431e71d467b361f8)](https://scrutinizer-ci.com/g/ddeboer/data-import/) 
+[![Latest Stable Version](https://poser.pugx.org/ddeboer/data-import/v/stable.png)](https://packagist.org/packages/ddeboer/data-import)
 
 Introduction
 ------------
@@ -16,6 +19,42 @@ Features
 * Decoupled components that you can use on their own, such as a CSV reader and writer.
 * Well-tested code.
 
+Documentation
+-------------
+* [Installation](#installation)
+* [The workflow](#the-workflow)
+* [Readers](#readers)
+ - [ArrayReader](#arrayreader)
+ - [CsvReader](#csvreader)
+ - [DbalReader](#dbalreader)
+ - [DoctrineReader](#doctrinereader)
+ - [ExcelReader](#excelreader)
+ - [Create a reader](#create-a-reader)
+ - [Sources](#sources)
+   - [Source filters](#source-filters) 
+* [Writers](#writers)
+ - [ArrayWriter](#arraywriter)
+ - [CsvWriter](#csvwriter)
+ - [DoctrineWriter](#doctrinewriter)
+ - [ConsoleProgressWriter](#consoleprogresswriter)
+ - [Create a writer](#create-a-writer)
+* [Filters](#filters)
+ - [CallbackFilter](#callbackfilter)
+ - [OffsetFilter](#offsetfilter)
+ - [ValidatorFilter](#offsetfilter)
+* [Converters](#converters)
+  - [Item converters](#item-converters)
+  - [Value converters](#value-converters)
+    - [DateTimeValueConverter](#datetimevalueconverter)
+    - [ObjectConverter](#objectconverter)
+    - [StringToObjectValueConverter](#stringtoobjectvalueconverter)
+    - [ArrayValueConverterMap](#arrayvalueconvertermap)
+    - [CallbackValueConverter](#callbackvalueconverter)
+* [Examples](#examples)
+ - [Read a CSV file and write to database](#read-a-csv-file-and-write-to-database)
+* [Running the tests](#running-the-tests) 
+* [License](#license) 
+
 Installation
 ------------
 
@@ -24,6 +63,12 @@ The recommended way to install it is through [Composer](http://getcomposer.org):
 
 ```bash
 $ composer require ddeboer/data-import:@stable
+```
+
+Then include Composer’s autoloader:
+
+```php
+require_once 'vendor/autoload.php';
 ```
 
 For integration with Symfony2 projects, the [DdeboerDataImportBundle](https://github.com/ddeboer/DdeboerDataImportBundle)
@@ -407,3 +452,9 @@ Examples where this is useful:
 
 - **Outlook 2010:** which omits trailing blank values
 - **Google Contacts:** which exports more values than there are column headers
+
+
+License
+-------
+
+DataImport is released under the MIT license. See the [LICENSE](#LICENSE) file for details.
