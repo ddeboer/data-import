@@ -19,42 +19,42 @@ class Workflow
     /**
      * Reader
      *
-     * @var Reader
+     * @var ReaderInterface
      */
     protected $reader;
 
     /**
      * Array of writers
      *
-     * @var Writer[]
+     * @var array|WriterInterface[]
      */
     protected $writers = array();
 
     /**
      * Array of value converters
      *
-     * @var ValueConverter[]
+     * @var array
      */
     protected $valueConverters = array();
 
     /**
      * Array of item converters
      *
-     * @var ValueConverter[]
+     * @var array|ItemConverterInterface[]
      */
     protected $itemConverters = array();
 
     /**
      * Array of filters
      *
-     * @var Filter[]
+     * @var array|FilterInterface[]
      */
     protected $filters = array();
 
     /**
      * Array of filters that will be checked after data conversion
      *
-     * @var Filter[]
+     * @var array|FilterInterface[]
      */
     protected $afterConversionFilters = array();
 
@@ -257,8 +257,8 @@ class Workflow
      * Apply the filter chain to the input; if at least one filter fails, the
      * chain fails
      *
-     * @param array $item    Item
-     * @param array $filters Array of filters
+     * @param array                   $item    Item
+     * @param array|FilterInterface[] $filters Array of filters
      *
      * @return boolean
      */
