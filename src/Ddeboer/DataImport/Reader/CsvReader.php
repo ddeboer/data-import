@@ -61,6 +61,8 @@ class CsvReader implements ReaderInterface, \SeekableIterator
      */
     public function __construct(\SplFileObject $file, $delimiter = ';', $enclosure = '"', $escape = '\\')
     {
+        ini_set('auto_detect_line_endings', true);
+
         $this->file = $file;
         $this->file->setFlags(
             \SplFileObject::READ_CSV |

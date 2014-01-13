@@ -181,4 +181,17 @@ class CsvReaderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(4, key($errors));
         $this->assertEquals(array('strictly invalid'), current($errors));
     }
+
+    public function testLineBreaks()
+    {
+        $reader = $this->getReader('data_cr_breaks.csv');
+        $this->assertCount(3, $reader);
+    }
+
+    protected function getReader($filename)
+    {
+        $file = new \SplFileObject(__DIR__.'/../Fixtures/'.$filename);
+
+        return new CsvReader($file);
+    }
 }

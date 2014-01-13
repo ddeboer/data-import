@@ -8,6 +8,8 @@ class NormalizeLineBreaksTest extends \PHPUnit_Framework_TestCase
 {
     public function testFilter()
     {
+        ini_set('auto_detect_line_endings', false);
+
         $file = new \SplFileObject(__DIR__.'/../../Fixtures/data_cr_breaks.csv');
 
         $count = 0;
