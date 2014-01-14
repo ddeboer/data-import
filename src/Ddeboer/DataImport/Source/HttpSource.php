@@ -2,71 +2,38 @@
 
 namespace Ddeboer\DataImport\Source;
 
-class HttpSource implements SourceInterface
+class HttpSource extends StreamSource
 {
-    protected $filters = array();
     protected $username;
     protected $password;
+    protected $isDownloaded = false;
 
     public function __construct($url, $username = null, $password = null)
     {
-        $this->url = $url;
+        parent::__construct($url);
+
         if ($username && $password) {
             $this->setAuthentication($username, $password);
         }
     }
 
+    /**
+     * Set HTTP authentication
+     *
+     * @param string $username Username
+     * @param string $password Password
+     */
     public function setAuthentication($username, $password)
     {
-        $this->username = $username;
-        $this->password = $password;
-    }
-
-    /**
-     *
-     * @return \SplFileObject
-     */
-    public function getFile()
-    {
-        $file = $this->downloadFile();
-        foreach ($this->filters as $filter) {
-            $file = $filter->filter($file);
-        }
-
-        return $file;
-    }
-
-    /**
-     * Download the file from the internet to a temporary location
-     *
-     * @return \SplFileObject
-     */
-    public function downloadFile($target = null)
-    {
-        if (!$target) {
-            $target = tempnam('/tmp', 'data_import');
-        }
-
-        $context = null;
-
-        if ($this->username && $this->password) {
-            $context = stream_context_create(
-                array(
-                    'http' => array(
-                        'header'  => "Authorization: Basic "
-                            . base64_encode("{$this->username}:{$this->password}")
-                    )
+        $context = stream_context_create(
+            array(
+                'http' => array(
+                    'header'  => "Authorization: Basic "
+                        . base64_encode("{$this->username}:{$this->password}")
                 )
-            );
-        }
+            )
+        );
 
-        file_put_contents($target, file_get_contents($this->url, null, $context));
-
-        return new \SplFileObject($target);
-    }
-
-    public function addFilter($filter)
-    {
-        $this->filters[] = $filter;
+        $this->setContext($context);
     }
 }

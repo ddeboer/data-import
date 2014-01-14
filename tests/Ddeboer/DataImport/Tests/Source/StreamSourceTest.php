@@ -2,6 +2,7 @@
 
 namespace Ddeboer\DataImport\Tests\Source;
 
+use Ddeboer\DataImport\Reader\CsvReader;
 use Ddeboer\DataImport\Source\StreamSource;
 
 /**
@@ -9,22 +10,23 @@ use Ddeboer\DataImport\Source\StreamSource;
  */
 class StreamSourceTest extends \PHPUnit_Framework_TestCase
 {
-    public function testGetFilename()
+    public function testCsv()
     {
-        $fixture = __DIR__.'/../Fixtures/data_cr_breaks.csv';
-
+        $fixture = __DIR__.'/../Fixtures/data_column_headers.csv';
         $source = new StreamSource($fixture);
-        $this->assertEquals(new \SplFileObject($fixture), $source->getFile());
+        $reader = new CsvReader($source);
+
+        $this->assertCount(4, $reader);
     }
 
     /**
-     * @expectedException Ddeboer\DataImport\Exception\SourceNotFoundException
+     * @expectedException \Ddeboer\DataImport\Exception\SourceNotFoundException
      */
     public function testInvalidFilename()
     {
         $fixture = 'notworking://test.csv';
 
         $source = new StreamSource($fixture);
-        $source->getFile();
+        $source->rewind();
     }
 }
