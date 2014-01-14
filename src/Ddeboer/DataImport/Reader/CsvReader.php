@@ -110,10 +110,14 @@ class CsvReader implements ReaderInterface, \SeekableIterator
             } else {
                 // They are not equal, so log the row as error and skip it.
                 if ($this->valid()) {
-                    $this->errors[$this->key()] = $line;
+                    $this->errors[$this->key()] = $line;                    
                     $this->next();
-
-                    return $this->current();
+                    $current = $this->current();
+                    if (isset($current)) {
+                        return $current;
+                    }
+                    $this->seek($this->key());
+                    return $line;     
                 }
             }
         } else {
