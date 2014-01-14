@@ -170,28 +170,6 @@ class Workflow
         return $this;
     }
 
-    protected function getMappingItemConverter()
-    {
-        // Find mapping item converter
-        $converters = \array_filter(
-            $this->itemConverters,
-            function ($converter) {
-                return $converter instanceof MappingItemConverter;
-            }
-        );
-
-        if (count($converters) > 0) {
-            // Return first mapping item converter that we encounter
-            $converter = $converters[0];
-        } else {
-            // Create default converter
-            $converter = new MappingItemConverter();
-            $this->addItemConverter($converter);
-        }
-
-        return $converter;
-    }
-
     /**
      * Process the whole import workflow
      *
@@ -302,4 +280,32 @@ class Workflow
 
         return $item;
     }
+
+    /**
+     * Get item converter that takes care of mapping
+     *
+     * @return MappingItemConverter
+     */
+    protected function getMappingItemConverter()
+    {
+        // Find mapping item converter
+        $converters = \array_filter(
+            $this->itemConverters,
+            function ($converter) {
+                return $converter instanceof MappingItemConverter;
+            }
+        );
+
+        if (count($converters) > 0) {
+            // Return first mapping item converter that we encounter
+            $converter = $converters[0];
+        } else {
+            // Create default converter
+            $converter = new MappingItemConverter();
+            $this->addItemConverter($converter);
+        }
+
+        return $converter;
+    }
+
 }
