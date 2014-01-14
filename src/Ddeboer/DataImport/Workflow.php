@@ -3,6 +3,7 @@
 namespace Ddeboer\DataImport;
 
 use Ddeboer\DataImport\Exception\UnexpectedTypeException;
+use Ddeboer\DataImport\ItemConverter\MappingItemConverter;
 use Ddeboer\DataImport\Reader\ReaderInterface;
 use Ddeboer\DataImport\Writer\WriterInterface;
 use Ddeboer\DataImport\Filter\FilterInterface;
@@ -59,20 +60,6 @@ class Workflow
     protected $afterConversionFilters = array();
 
     /**
-     * Array of mappings
-     *
-     * @var array
-     */
-    protected $mappings = array();
-
-    /**
-     * Array for a global-mapping definition
-     *
-     * @var array
-     */
-    protected $globalMapping = array();
-
-    /**
      * Construct a workflow
      *
      * @param ReaderInterface $reader
@@ -94,20 +81,6 @@ class Workflow
     public function addFilter(FilterInterface $filter)
     {
         $this->filters[] = $filter;
-
-        return $this;
-    }
-
-    /**
-     * Set the Global-Mapping array
-     *
-     * @param array $mapping
-     *
-     * @return Workflow
-     */
-    public function setGlobalMapping(array $mapping)
-    {
-        $this->globalMapping = $mapping;
 
         return $this;
     }
@@ -178,8 +151,8 @@ class Workflow
      * If we can get the field names from the reader, they are just to check the
      * $fromField against.
      *
-     * @param string $fromField Field to map from
-     * @param string $toField   Field to map to
+     * @param string       $fromField Field to map from
+     * @param string|array $toField   Field or array to map to
      *
      * @return $this
      * @throws \InvalidArgumentException
@@ -192,9 +165,31 @@ class Workflow
             }
         }
 
-        $this->mappings[$fromField] = $toField;
+        $this->getMappingItemConverter()->addMapping($fromField, $toField);
 
         return $this;
+    }
+
+    protected function getMappingItemConverter()
+    {
+        // Find mapping item converter
+        $converters = \array_filter(
+            $this->itemConverters,
+            function ($converter) {
+                return $converter instanceof MappingItemConverter;
+            }
+        );
+
+        if (count($converters) > 0) {
+            // Return first mapping item converter that we encounter
+            $converter = $converters[0];
+        } else {
+            // Create default converter
+            $converter = new MappingItemConverter();
+            $this->addItemConverter($converter);
+        }
+
+        return $converter;
     }
 
     /**
@@ -236,10 +231,8 @@ class Workflow
                 continue;
             }
 
-            $mappedItem = $this->mapItem($convertedItem);
-
             foreach ($this->writers as $writer) {
-                $writer->writeItem($mappedItem, $item);
+                $writer->writeItem($convertedItem, $item);
             }
 
             $count++;
@@ -305,88 +298,6 @@ class Workflow
                     $item[$property] = $converter->convert($item[$property]);
                 }
             }
-        }
-
-        return $item;
-    }
-
-    /**
-     * Map an item
-     *
-     * @param array $item Item values
-     *
-     * @return array
-     */
-    protected function mapItem(array $item)
-    {
-        foreach ($item as $key => $value) {
-            if (isset($this->mappings[$key])) {
-                $toField = $this->mappings[$key];
-
-                // Skip mappings where field to map from and field to map to
-                // are equal. This may not make sense as a mapping, but it can
-                // be the result of mappings that are generated automatically.
-                if ($toField != $key) {
-                    $item[$this->mappings[$key]] = $value;
-                    unset($item[$key]);
-                }
-            }
-        }
-
-        $item = $this->applyGlobalMapping($item);
-
-        return $item;
-    }
-
-    /**
-     * Use the global-mapping to rename fields of an item
-     *
-     * @param array $item
-     *
-     * @return array
-     */
-    protected function applyGlobalMapping(array $item)
-    {
-        // apply the global mapping array
-        foreach ($this->globalMapping as $fromField => $toField) {
-            $item = $this->applyMapping($item, $fromField, $toField);
-        }
-
-        return $item;
-    }
-
-    /**
-     * Applies a mapping to an item
-     *
-     * @param array $item
-     * @param string $fromField
-     * @param string $toField
-     *
-     * @return array
-     */
-    protected function applyMapping(array $item, $fromField, $toField)
-    {
-        // skip fields that dont exist
-        if (!isset($item[$fromField])) {
-            return;
-        }
-
-        // skip equal fields
-        if ($fromField == $toField) {
-            return $item;
-        }
-
-        // standard renaming
-        if (!is_array($toField)) {
-            $item[$toField] = $item[$fromField];
-            unset($item[$fromField]);
-
-            return $item;
-        }
-
-        // recursive renaming of an array
-        foreach ($toField as $from => $to) {
-            $item[$fromField] = $this->applyMapping($item[$fromField], $from, $to);
         }
 
         return $item;

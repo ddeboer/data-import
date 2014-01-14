@@ -14,7 +14,7 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
 {
     public function testAddCallbackFilter()
     {
-        $this->getWorkflow()->addFilter(new CallbackFilter(function($input) {
+        $this->getWorkflow()->addFilter(new CallbackFilter(function () {
             return true;
         }));
     }
@@ -81,7 +81,7 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('bar', $ouputTestData[0]);
     }
 
-    public function testGlobalMappingAnItem()
+    public function testMapping()
     {
         $originalData = array(array(
             'foo' => 'bar',
@@ -95,48 +95,14 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
 
         $workflow = new Workflow($reader);
 
-        $mapping = array(
-            'foo' => 'bazinga',
-            'baz' => array('another' => 'somethingelse')
-        );
-
-        $workflow->setGlobalMapping($mapping)
+        $workflow->addMapping('foo', 'bazinga')
+            ->addMapping('baz', array('another' => 'somethingelse'))
             ->addWriter($writer)
             ->process()
         ;
 
         $this->assertArrayHasKey('bazinga', $ouputTestData[0]);
         $this->assertArrayHasKey('somethingelse', $ouputTestData[0]['baz']);
-    }
-
-    public function testGlobalMappingAnItemInCombinationWithMappingAnItem()
-    {
-        $originalData = array(array(
-            'foo' => 'bar',
-            'baz' => array('another' => 'thing')
-        ));
-
-        $ouputTestData = array();
-
-        $writer = new ArrayWriter($ouputTestData);
-        $reader = new ArrayReader($originalData);
-
-        $workflow = new Workflow($reader);
-
-        $mapping = array(
-            'foo' => 'bazinga',
-            'bazoo' => array('another' => 'somethingelse')
-        );
-
-        $workflow->setGlobalMapping($mapping)
-            ->addMapping('baz', 'bazoo')
-            ->addWriter($writer)
-            ->process()
-        ;
-
-        $this->assertArrayHasKey('bazinga', $ouputTestData[0]);
-        $this->assertArrayHasKey('bazoo', $ouputTestData[0]);
-        $this->assertArrayHasKey('somethingelse', $ouputTestData[0]['bazoo']);
     }
 
     public function testWorkflowWithObjects()
