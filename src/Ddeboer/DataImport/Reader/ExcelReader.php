@@ -2,8 +2,6 @@
 
 namespace Ddeboer\DataImport\Reader;
 
-use Ddeboer\DataImport\Source\SourceInterface;
-
 /**
  * Reads Excel files with the help of PHPExcel
  *
@@ -29,18 +27,13 @@ class ExcelReader implements ReaderInterface
     /**
      * Construct CSV reader
      *
-     * @param SourceInterface|\SplFileObject $source The source: can be either a source
-     *                                      or file object
-     * @param int $headerRowNumber          Optional number of header row
-     * @param int $activeSheet              Index of active sheet to read from
+     * @param \SplFileObject $file            Excel file
+     * @param int            $headerRowNumber Optional number of header row
+     * @param int            $activeSheet     Index of active sheet to read from
      */
-    public function __construct($source, $headerRowNumber = null, $activeSheet = null)
+    public function __construct(\SplFileObject $file, $headerRowNumber = null, $activeSheet = null)
     {
-        if ($source instanceof SourceInterface) {
-            $source = $source->getFile();
-        }
-
-        $excel = \PHPExcel_IOFactory::load($source->getPathname());
+        $excel = \PHPExcel_IOFactory::load($file->getPathname());
 
         if (null !== $activeSheet) {
             $excel->setActiveSheetIndex($activeSheet);
