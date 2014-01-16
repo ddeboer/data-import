@@ -220,6 +220,8 @@ class DoctrineWriter extends AbstractWriter
             $this->entityManager->flush();
             $this->entityManager->clear();
         }
+
+        return $this;
     }
 
     /**
