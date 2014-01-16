@@ -77,7 +77,7 @@ class MappingItemConverter implements ItemConverterInterface
     {
         // skip fields that dont exist
         if (!isset($item[$from])) {
-            return;
+            return $item;
         }
 
         // skip equal fields
