@@ -32,6 +32,8 @@ class CsvWriter extends AbstractWriter
     public function writeItem(array $item)
     {
         fputcsv($this->fp, $item, $this->delimiter, $this->enclosure);
+
+        return $this;
     }
 
     /**

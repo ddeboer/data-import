@@ -11,18 +11,25 @@ class CsvWriterTest extends \PHPUnit_Framework_TestCase
         $outputFile = new \SplFileObject(tempnam('/tmp', null));
         $writer = new CsvWriter($outputFile);
 
-        $writer->writeItem(array(
-            'firstProperty:', 'secondProperty:'
-        ));
+        $writer->writeItem(array('first', 'last'));
 
-        $writer->writeItem(array(
-            'firstProperty' => 'some value',
-            'secondProperty' => 'some other value'
-        ));
+        $writer->writeItem(
+            array(
+                'first' => 'James',
+                'last'  => 'Bond'
+            )
+        )->writeItem(
+            array(
+                'first' => '',
+                'last'  => 'Dr. No'
+            )
+        );
 
         $fileContents = file_get_contents($outputFile->getPathname());
-        $this->assertEquals("firstProperty:;secondProperty:\n\"some value\";\"some other value\"\n",
-            $fileContents);
+        $this->assertEquals(
+            "first;last\nJames;Bond\n;\"Dr. No\"\n",
+            $fileContents
+        );
 
         $writer->finish();
     }
