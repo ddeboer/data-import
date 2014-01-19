@@ -40,7 +40,7 @@ class CsvReaderTest extends \PHPUnit_Framework_TestCase
         $file = new \SplFileObject(__DIR__.'/../Fixtures/data_no_column_headers.csv');
         $csvReader = new CsvReader($file);
 
-        $this->assertNull($csvReader->getColumnHeaders());
+        $this->assertEmpty($csvReader->getColumnHeaders());
     }
 
     public function testReadCsvFileWithManualColumnHeaders()
@@ -186,6 +186,59 @@ class CsvReaderTest extends \PHPUnit_Framework_TestCase
     {
         $reader = $this->getReader('data_cr_breaks.csv');
         $this->assertCount(3, $reader);
+    }
+
+    /**
+     * @expectedException \Ddeboer\DataImport\Exception\DuplicateHeadersException description
+     */
+    public function testDuplicateHeadersThrowsException()
+    {
+        $reader = $this->getReader('data_column_headers_duplicates.csv');
+        $reader->setHeaderRowNumber(0);
+    }
+
+    public function testDuplicateHeadersIncrement()
+    {
+        $reader = $this->getReader('data_column_headers_duplicates.csv');
+        $reader->setHeaderRowNumber(0, CsvReader::DUPLICATE_HEADERS_INCREMENT);
+        $reader->rewind();
+        $current = $reader->current();
+
+        $this->assertEquals(
+            array('id', 'description', 'description1', 'description2', 'details', 'details1', 'last'),
+            $reader->getColumnHeaders()
+        );
+
+        $this->assertEquals(
+            array(
+                'id'           => '50',
+                'description'  => 'First',
+                'description1' => 'Second',
+                'description2' => 'Third',
+                'details'      => 'Details1',
+                'details1'     => 'Details2',
+                'last'         => 'Last one'
+            ),
+            $current
+        );
+    }
+
+    public function testDuplicateHeadersMerge()
+    {
+        $reader = $this->getReader('data_column_headers_duplicates.csv');
+        $reader->setHeaderRowNumber(0, CsvReader::DUPLICATE_HEADERS_MERGE);
+        $reader->rewind();
+        $current = $reader->current();
+
+        $this->assertCount(4, $reader->getColumnHeaders());
+
+        $expected = array(
+            'id'          => '50',
+            'description' => array('First', 'Second', 'Third'),
+            'details'     => array('Details1', 'Details2'),
+            'last'        => 'Last one'
+        );
+        $this->assertEquals($expected, $current);
     }
 
     protected function getReader($filename)
