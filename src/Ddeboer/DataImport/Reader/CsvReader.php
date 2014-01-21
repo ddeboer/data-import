@@ -2,6 +2,8 @@
 
 namespace Ddeboer\DataImport\Reader;
 
+use Ddeboer\DataImport\Exception\DuplicateHeadersException;
+
 /**
  * Reads a CSV file, using as little memory as possible
  *
@@ -9,6 +11,9 @@ namespace Ddeboer\DataImport\Reader;
  */
 class CsvReader implements ReaderInterface, \SeekableIterator
 {
+    const DUPLICATE_HEADERS_INCREMENT = 1;
+    const DUPLICATE_HEADERS_MERGE     = 2;
+
     /**
      * Number of the row that contains the column names
      *
@@ -28,7 +33,16 @@ class CsvReader implements ReaderInterface, \SeekableIterator
      *
      * @var array
      */
-    protected $columnHeaders;
+    protected $columnHeaders = array();
+
+    /**
+     * Number of column headers, stored and re-used for performance
+     *
+     * In case of duplicate headers, this is always the number of unmerged headers.
+     *
+     * @var int
+     */
+    protected $headersCount;
 
     /**
      * Total number of rows in the CSV file
@@ -50,6 +64,13 @@ class CsvReader implements ReaderInterface, \SeekableIterator
      * @var boolean
      */
     protected $strict = true;
+
+    /**
+     * How to handle duplicate headers
+     *
+     * @var int
+     */
+    protected $duplicateHeadersFlag;
 
     /**
      * Construct CSV reader
@@ -91,35 +112,36 @@ class CsvReader implements ReaderInterface, \SeekableIterator
         // If the CSV has column headers, use them to construct an associative
         // array for the columns in this line
         if (!empty($this->columnHeaders)) {
-            $numColumnHeaders = count($this->columnHeaders);
             // In non-strict mode pad/slice the line to match the column headers
             if (!$this->isStrict()) {
-                if ($numColumnHeaders > count($line)) {
-                    $line = array_pad($line, $numColumnHeaders, null); // Line too short
+                if ($this->headersCount > count($line)) {
+                    $line = array_pad($line, $this->headersCount, null); // Line too short
                 } else {
-                    $line = array_slice($line, 0, $numColumnHeaders); // Line too long
+                    $line = array_slice($line, 0, $this->headersCount); // Line too long
                 }
+            }
+
+            // See if values for duplicate headers should be merged
+            if (self::DUPLICATE_HEADERS_MERGE === $this->duplicateHeadersFlag) {
+                $line = $this->mergeDuplicates($line);
             }
 
             // Count the number of elements in both: they must be equal.
-            if ($numColumnHeaders == count($line)) {
-                return array_combine(
-                    array_values($this->columnHeaders),
-                    $line
-                );
-            } else {
-                // They are not equal, so log the row as error and skip it.
-                if ($this->valid()) {
-                    $this->errors[$this->key()] = $line;
-                    $this->next();
-
-                    return $this->current();
-                }
+            if (count($this->columnHeaders) === count($line)) {
+                return array_combine(array_keys($this->columnHeaders), $line);
             }
-        } else {
-            // Else just return the column values
-            return $line;
+
+            // They are not equal, so log the row as error and skip it.
+            if ($this->valid()) {
+                $this->errors[$this->key()] = $line;
+                $this->next();
+
+                return $this->current();
+            }
         }
+
+        // Else just return the column values
+        return $line;
     }
 
     /**
@@ -129,7 +151,7 @@ class CsvReader implements ReaderInterface, \SeekableIterator
      */
     public function getColumnHeaders()
     {
-        return $this->columnHeaders;
+        return array_keys($this->columnHeaders);
     }
 
     /**
@@ -141,9 +163,35 @@ class CsvReader implements ReaderInterface, \SeekableIterator
      */
     public function setColumnHeaders(array $columnHeaders)
     {
-        $this->columnHeaders = $columnHeaders;
+        $this->columnHeaders = array_count_values($columnHeaders);
+        $this->headersCount = count($columnHeaders);
 
         return $this;
+    }
+
+    /**
+     * Set header row number
+     *
+     * @param int $rowNumber  Number of the row that contains column header names
+     * @param int $duplicates How to handle duplicates (optional). One of:
+     *                        - CsvReader::DUPLICATE_HEADERS_INCREMENT;
+     *                          increments duplicates (dup, dup1, dup2 etc.)
+     *                        - CsvReader::DUPLICATE_HEADERS_MERGE; merges
+     *                          values for duplicate headers into an array
+     *                          (dup => [value1, value2, value3])
+     *
+     * @return CsvReader
+     * @throws DuplicateHeadersException If duplicate headers are encountered
+     *                                   and no duplicate handling has been
+     *                                   specified
+     */
+    public function setHeaderRowNumber($rowNumber, $duplicates = null)
+    {
+        $this->duplicateHeadersFlag = $duplicates;
+        $this->headerRowNumber = $rowNumber;
+        $headers = $this->readHeaderRow($rowNumber);
+
+        return $this->setColumnHeaders($headers);
     }
 
     /**
@@ -152,7 +200,6 @@ class CsvReader implements ReaderInterface, \SeekableIterator
      * If a header row has been set, the pointer is set just below the header
      * row. That way, when you iterate over the rows, that header row is
      * skipped.
-     *
      */
     public function rewind()
     {
@@ -160,21 +207,6 @@ class CsvReader implements ReaderInterface, \SeekableIterator
         if (null !== $this->headerRowNumber) {
             $this->file->seek($this->headerRowNumber + 1);
         }
-    }
-
-    /**
-     * Set header row number
-     *
-     * @param int $rowNumber Number of the row that contains column header names
-     *
-     * @return CsvReader
-     */
-    public function setHeaderRowNumber($rowNumber)
-    {
-        $this->headerRowNumber = $rowNumber;
-        $this->columnHeaders = $this->readHeaderRow($rowNumber);
-
-        return $this;
     }
 
     /**
@@ -227,7 +259,7 @@ class CsvReader implements ReaderInterface, \SeekableIterator
      */
     public function getFields()
     {
-        return $this->columnHeaders;
+        return $this->getColumnHeaders();
     }
 
     /**
@@ -301,12 +333,90 @@ class CsvReader implements ReaderInterface, \SeekableIterator
      * @param int $rowNumber Row number
      *
      * @return array Column headers
+     * @throws DuplicateHeadersException
      */
     protected function readHeaderRow($rowNumber)
     {
         $this->file->seek($rowNumber);
         $headers = $this->file->current();
 
+        // Test for duplicate column headers
+        $diff = array_diff_assoc($headers, array_unique($headers));
+        if (count($diff) > 0) {
+            switch ($this->duplicateHeadersFlag) {
+                case self::DUPLICATE_HEADERS_INCREMENT:
+                    $headers = $this->incrementHeaders($headers);
+                    // Fall through
+                case self::DUPLICATE_HEADERS_MERGE:
+                    break;
+                default:
+                    throw new DuplicateHeadersException($diff);
+            }
+        }
+
         return $headers;
+    }
+
+    /**
+     * Add an increment to duplicate headers
+     *
+     * So the following line:
+     * |duplicate|duplicate|duplicate|
+     * |first    |second   |third    |
+     *
+     * Yields value:
+     * $duplicate => 'first', $duplicate1 => 'second', $duplicate2 => 'third'
+     *
+     * @param array $headers
+     *
+     * @return array
+     */
+    protected function incrementHeaders(array $headers)
+    {
+        $incrementedHeaders = array();
+        foreach (array_count_values($headers) as $header => $count) {
+            if ($count > 1) {
+                $incrementedHeaders[] = $header;
+                for ($i = 1; $i < $count; $i++) {
+                    $incrementedHeaders[] = $header . $i;
+                }
+            } else {
+                $incrementedHeaders[] = $header;
+            }
+        }
+
+        return $incrementedHeaders;
+    }
+
+    /**
+     * Merges values for duplicate headers into an array
+     *
+     * So the following line:
+     * |duplicate|duplicate|duplicate|
+     * |first    |second   |third    |
+     *
+     * Yields value:
+     * $duplicate => ['first', 'second', 'third']
+     *
+     * @param array $line
+     *
+     * @return array
+     */
+    protected function mergeDuplicates(array $line)
+    {
+        $values = array();
+
+        $i = 0;
+        foreach ($this->columnHeaders as $count) {
+            if (1 === $count) {
+                $values[] = $line[$i];
+            } else {
+                $values[] = array_slice($line, $i, $count);
+            }
+
+            $i += $count;
+        }
+
+        return $values;
     }
 }

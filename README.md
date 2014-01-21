@@ -119,6 +119,27 @@ This library includes a handful of readers:
     $reader = new CsvReader(new \SplFileObject('/path/to/csv_file.csv'));
     ```
     **Note:** This reader operates in a 'strict mode' by default, see [CsvReader strict mode](#csvreader-strict-mode) for more details.
+
+#### Duplicate headers
+
+Sometimes a CSV file contains duplicate column headers, for instance:
+
+id  | details  | details
+--- | -------- | --------
+1   | bla      | more bla
+
+By default, a `DuplicateHeadersException` will be thrown if you call
+`setHeaderRowNumber(0)` on this file. You can handle duplicate columns in
+one of three ways:
+* call `setColumnHeaders(['id', 'details', 'details_2'])` to specify your own
+  headers
+* call `setHeaderRowNumber` with the `CsvReader::DUPLICATE_HEADERS_INCREMENT`
+  flag to generate incremented headers; in this case: `id`, `details` and
+  `details1`
+* call `setHeaderRowNumber` with the `CsvReader::DUPLICATE_HEADERS_MERGE` flag
+  to merge duplicate values into arrays; in this case, the first row’s values
+  will become: `[ 'id' => 1, 'details' => [ 'bla', 'more bla' ] ]`.
+
 * A `DbalReader` to read data through [Doctrine’s DBAL](http://www.doctrine-project.org/projects/dbal.html):
     ```php
     use Ddeboer\DataImport\Reader\DbalReader;
