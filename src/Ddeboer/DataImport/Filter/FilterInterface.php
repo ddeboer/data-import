@@ -8,7 +8,11 @@ namespace Ddeboer\DataImport\Filter;
 interface FilterInterface
 {
     /**
-     * @return boolean
+     * Filter input
+     *
+     * @param array $item Input
+     *
+     * @return boolean If false is returned, the workflow will skip the input
      */
     public function filter(array $item);
 }
