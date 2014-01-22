@@ -29,7 +29,7 @@ class ObjectConverter implements ValueConverterInterface
     public function __construct($propertyPath = null)
     {
         $this->propertyPath = $propertyPath;
-        $this->propertyAccessor = PropertyAccess::getPropertyAccessor();
+        $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
     }
 
     /**
