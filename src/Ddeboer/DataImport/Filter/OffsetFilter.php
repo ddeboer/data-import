@@ -53,7 +53,9 @@ class OffsetFilter implements FilterInterface
     public function filter(array $item)
     {
         // In case we've already filtered up to limited
-        if ($this->maxLimitHit) { return false; }
+        if ($this->maxLimitHit) {
+            return false;
+        }
 
         $this->offsetCount++;
 
