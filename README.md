@@ -16,43 +16,47 @@ Features
 * Read from and write to CSV files, Excel files, databases, and more.
 * Convert between charsets, dates, strings and objects on the fly.
 * Build reusable and extensible import workflows.
-* Decoupled components that you can use on their own, such as a CSV reader and writer.
+* Decoupled components that you can use on their own, such as a CSV and Excel
+  reader and writer.
 * Well-tested code.
 
 Documentation
 -------------
 * [Installation](#installation)
-* [The workflow](#the-workflow)
-* [Readers](#readers)
- - [ArrayReader](#arrayreader)
- - [CsvReader](#csvreader)
- - [DbalReader](#dbalreader)
- - [DoctrineReader](#doctrinereader)
- - [ExcelReader](#excelreader)
- - [Create a reader](#create-a-reader)
- - [Sources](#sources)
-   - [Source filters](#source-filters) 
-* [Writers](#writers)
- - [ArrayWriter](#arraywriter)
- - [CsvWriter](#csvwriter)
- - [DoctrineWriter](#doctrinewriter)
- - [ConsoleProgressWriter](#consoleprogresswriter)
- - [Create a writer](#create-a-writer)
-* [Filters](#filters)
- - [CallbackFilter](#callbackfilter)
- - [OffsetFilter](#offsetfilter)
- - [ValidatorFilter](#offsetfilter)
-* [Converters](#converters)
-  - [Item converters](#item-converters)
-  - [Value converters](#value-converters)
-    - [DateTimeValueConverter](#datetimevalueconverter)
-    - [ObjectConverter](#objectconverter)
-    - [StringToObjectValueConverter](#stringtoobjectvalueconverter)
-    - [ArrayValueConverterMap](#arrayvalueconvertermap)
-    - [CallbackValueConverter](#callbackvalueconverter)
-* [Examples](#examples)
- - [Read a CSV file and write to database](#read-a-csv-file-and-write-to-database)
-* [Running the tests](#running-the-tests) 
+* [Usage](#usage)
+  * [The workflow](#the-workflow)
+  * [Readers](#readers)
+    - [ArrayReader](#arrayreader)
+    - [CsvReader](#csvreader)
+    - [DbalReader](#dbalreader)
+    - [DoctrineReader](#doctrinereader)
+    - [ExcelReader](#excelreader)
+    - [Create a reader](#create-a-reader)
+  * [Writers](#writers)
+    - [ArrayWriter](#arraywriter)
+    - [CsvWriter](#csvwriter)
+    - [DoctrineWriter](#doctrinewriter)
+    - [ConsoleProgressWriter](#consoleprogresswriter)
+    - [CallbackWriter](#callbackwriter)
+    - [Create a writer](#create-a-writer)
+  * [Filters](#filters)
+    - [CallbackFilter](#callbackfilter)
+    - [OffsetFilter](#offsetfilter)
+    - [ValidatorFilter](#offsetfilter)
+  * [Converters](#converters)
+    - [Item converters](#item-converters)
+      - [MappingItemConverter](#mappingitemconverter)
+      - [CallbackItemConverter](#callbackitemconverter)
+    - [Value converters](#value-converters)
+      - [DateTimeValueConverter](#datetimevalueconverter)
+      - [ObjectConverter](#objectconverter)
+      - [StringToObjectValueConverter](#stringtoobjectvalueconverter)
+      - [ArrayValueConverterMap](#arrayvalueconvertermap)
+      - [CallbackValueConverter](#callbackvalueconverter)
+  * [Examples](#examples)
+    - [Import CSV file and write to database](#import-csv-file-and-write-to-database)
+    - [Export to CSV file](#export-to-csv-file)
+* [Running the tests](#running-the-tests)
 * [License](#license) 
 
 Installation
@@ -77,19 +81,30 @@ is available.
 Usage
 -----
 
+Broadly speaking, you can use this library in two ways:
+
+* organize your import process around a [workflow](#workflow), or
+* use one or more of the components on their own, such as [readers](#readers),
+  [writers](#writers) or [converters](#converters).
+
+This library enable you to configure a data import
+
 ### The workflow
 
 Each data import revolves around the workflow and takes place along the following lines:
 
 1. Construct a [reader](#readers).
-2. Construct a workflow and pass the reader to it. Add at least one [writer](#writers) to
-   the workflow.
-3. Optionally, add [filters](#filters), item converters and [value converters](#value-converters) to the
-   workflow.
+2. Construct a workflow and pass the reader to it. Add at least one
+   [writer](#writers) to the workflow.
+3. Optionally, add [filters](#filters), item converters and
+   [value converters](#value-converters) to the workflow.
 4. Process the workflow. This will read the data from the reader, filter and
    convert the data, and write the output to each of the writers.
 
-So, schematically:
+In other words, the workflow acts as a [mediator](#http://en.wikipedia.org/wiki/Mediator_pattern)
+between a reader and one or more writers, filters and converters.
+
+Schematically:
 
 ```php
 use Ddeboer\DataImport\Workflow;
@@ -109,18 +124,79 @@ $workflow
 
 ### Readers
 
-This library includes a handful of readers:
+Readers read data that will be imported by iterating over it. This library
+includes a handful of readers. Additionally, you can easily
+[implement your own](#create-a-reader).
 
-* An `ArrayReader` for reading arrays (or testing your workflow).
-* A `CsvReader` for reading CSV files, optimized to use as little memory as possible:
-    ```php
-    use Ddeboer\DataImport\Reader\CsvReader;
+You can use readers on their own, or construct a workflow from them:
 
-    $reader = new CsvReader(new \SplFileObject('/path/to/csv_file.csv'));
-    ```
-    **Note:** This reader operates in a 'strict mode' by default, see [CsvReader strict mode](#csvreader-strict-mode) for more details.
+```php
+$workflow = new Workflow($reader);
+```
+#### ArrayReader
 
-#### Duplicate headers
+Reads arrays. Most useful for testing your workflow.
+
+#### CsvReader
+
+Reads CSV files, and is optimized to use as little memory as possible.
+
+```php
+use Ddeboer\DataImport\Reader\CsvReader;
+
+$file = new \SplFileObject('/path/to/csv_file.csv');
+$reader = new CsvReader($file);
+
+foreach ($reader as $row) {
+    // $row will be an array containing the comma-separated elements of the line:
+    // array(
+    //   0 => 'James',
+    //   1 => 'Bond'
+    //   etc...
+    // )
+}
+```
+
+##### Column headers
+
+If one of your rows contains column headers, you can read them to make the rows
+associative arrays:
+
+```php
+$reader->setHeaderRowNumber(0);
+
+foreach ($reader as $row) {
+    // $row will now be an associative array:
+    // array(
+    //   'firstName' => 'James',
+    //   'lastName'  => 'Bond'
+    //   etc...
+    // )
+}
+```
+
+##### Strict mode
+
+The CSV reader operates in strict mode by default. If the reader encounters a
+row where the number of values differs from the number of column headers, an
+error is logged and the row is skipped. Retrieve the errors with `getErrors()`.
+
+To disable strict mode, set `$reader->setStrict(false)` after you instantiate
+the reader.
+
+Disabling strict mode means:
+
+1. Any rows that contain fewer values than the column headers are simply
+   padded with null values.
+2. Any additional values in a row that contain more values than the
+   column headers are ignored.
+
+Examples where this is useful:
+
+- **Outlook 2010:** which omits trailing blank values
+- **Google Contacts:** which exports more values than there are column headers
+
+##### Duplicate headers
 
 Sometimes a CSV file contains duplicate column headers, for instance:
 
@@ -140,68 +216,127 @@ one of three ways:
   to merge duplicate values into arrays; in this case, the first row’s values
   will become: `[ 'id' => 1, 'details' => [ 'bla', 'more bla' ] ]`.
 
-* A `DbalReader` to read data through [Doctrine’s DBAL](http://www.doctrine-project.org/projects/dbal.html):
-    ```php
-    use Ddeboer\DataImport\Reader\DbalReader;
+#### DbalReader
 
-    $reader = new DbalReader(
-        $connection, // Instance of \Doctrine\DBAL\Connection
-        'SELECT u.id, u.username, g.name FROM `user` u INNER JOIN groups g ON u.group_id = g.id'
-    );
-    ```
-* A `DoctrineReader` to read data through the [Doctrine ORM](http://www.doctrine-project.org/projects/orm.html):
-    ```php
-    use Ddeboer\DataImport\Reader\DoctrineReader;
+Reads data through [Doctrine’s DBAL](http://www.doctrine-project.org/projects/dbal.html):
 
-    $reader = new DoctrineReader($entityManager, 'Your\Namespace\Entity\User');
-    ```
-* An `ExcelReader` that acts as an adapter for the [PHPExcel library](http://phpexcel.codeplex.com/):
-    ```php
-    use Ddeboer\DataImport\Reader\ExcelReader;
-
-    $reader = new ExcelReader(new \SplFileObject('/path/to/ecxel_file.xls'));
-    ```
-* You can create your own data reader by implementing the [ReaderInterface](/src/Ddeboer/DataImport/Reader/ReaderInterface.php).
-
-After you’ve set up your reader, construct the workflow from it:
 ```php
-$workflow = new Workflow($reader);
+use Ddeboer\DataImport\Reader\DbalReader;
+
+$reader = new DbalReader(
+    $connection, // Instance of \Doctrine\DBAL\Connection
+    'SELECT u.id, u.username, g.name FROM `user` u INNER JOIN groups g ON u.group_id = g.id'
+);
 ```
+
+#### DoctrineReader
+
+Reads data through the [Doctrine ORM](http://www.doctrine-project.org/projects/orm.html):
+
+```php
+use Ddeboer\DataImport\Reader\DoctrineReader;
+
+$reader = new DoctrineReader($entityManager, 'Your\Namespace\Entity\User');
+```
+
+#### ExcelReader
+
+Acts as an adapter for the [PHPExcel library](http://phpexcel.codeplex.com/):
+
+```php
+use Ddeboer\DataImport\Reader\ExcelReader;
+
+$file = new \SplFileObject('path/to/ecxel_file.cls');
+$reader = new ExcelReader($file);
+```
+
+#### Create a reader
+
+You can create your own data reader by implementing the
+[ReaderInterface](/src/Ddeboer/DataImport/Reader/ReaderInterface.php).
 
 ### Writers
 
-Many of the data writers closely resemble their reader counterparts:
-* An `ArrayWriter`.
-* A `CsvWriter`.
-* A `DoctrineWriter`.
+#### ArrayWriter
 
-Also available are:
-* A `ConsoleProgressWriter` that displays import progress when you start the
-  workflow from the command-line:
-    ```
-    use Ddeboer\DataImport\Writer\ConsoleProgressWriter;
-    use Symfony\Component\Console\Output\ConsoleOutput;
+Resembles the [ArrayReader](#arrayreader). Probably most useful for testing
+your workflow.
 
-    $output = new ConsoleOutput(...);
-    $progressWriter = new ConsoleProgressWriter($output, $reader);
-    ```
+#### CsvWriter
 
-Build your own writer by implementing the [WriterInterface](/src/Ddeboer/DataImport/Reader/WriterInterface.php).
-
-If you want, you can use multiple writers:
+Writes CSV files:
 
 ```php
-$workflow
-    ->addWriter($progressWriter)
-    ->addWriter($csvWriter)
-;
+use Ddeboer\DataImport\Writer\CsvWriter;
+
+$file = new \SplFileObject('output.csv', 'w');
+$writer = new CsvWriter($file);
+
+// Write column headers:
+$writer->writeItem(array('first', 'last'));
+
+$writer
+    ->writeItem(array('James', 'Bond'))
+    ->writeItem(array('Auric', 'Goldfinger'))
+    ->finish();
 ```
+
+#### DoctrineWriter
+
+Writes data through Doctrine:
+
+```php
+use Ddeboer\DataImport\Writer\DoctrineWriter;
+
+$writer = new DoctrineWriter($entityManager, 'YourNamespace:Employee');
+$writer
+->prepare()
+    ->writeItem(
+        array(
+            'first' => 'James',
+            'last'  => 'Bond'
+        )
+    )
+    ->finish();
+
+#### ConsoleProgressWriter
+
+Displays import progress when you start the workflow from the command-line:
+
+```php
+use Ddeboer\DataImport\Writer\ConsoleProgressWriter;
+use Symfony\Component\Console\Output\ConsoleOutput;
+
+$output = new ConsoleOutput(...);
+$progressWriter = new ConsoleProgressWriter($output, $reader);
+
+// Most useful when adding to a workflow
+$workflow->addWriter($progressWriter);
+```
+
+#### CallbackWriter
+
+Instead of implementing your own writer, you can use the quick solution the
+CallbackWriter offers:
+
+```php
+use Ddeboer\DataImport\Writer\CallbackWriter;
+
+$workflow->addWriter(new CallbackWriter(function ($row) use ($storage) {
+    $storage->store($row);
+}));
+```
+
+#### Create a writer
+
+Build your own writer by implementing the
+[WriterInterface](/src/Ddeboer/DataImport/Reader/WriterInterface.php).
 
 ### Filters
 
 A filter decides whether data input is accepted into the import process. 
 
-#### [CallbackFilter](/src/Ddeboer/DataImport/Filter/CallBackFilter.php)
+#### CallbackFilter
 
 ```php
 use Ddeboer\DataImport\Filter\CallbackFilter;
@@ -218,17 +353,17 @@ $filter = new CallbackFilter(function ($data) {
 $workflow->addFilter($filter);
 ```
 
-#### [OffsetFilter](/src/Ddeboer/DataImport/Filter/OffsetFilter.php)
+#### OffsetFilter
 
 OffsetFilter allows you to
 
-* skip certain amount of items from the beginning
+* skip a certain amount of items from the beginning
 * process only specified amount of items (and skip the rest)
 
 You can combine these two parameters to process a slice from the middle of the
-data: like rows 5-7 of a CSV file with ten rows.
+data, like rows 5-7 of a CSV file with ten rows.
 
-OffsetFilter is configured by it's constructor:
+OffsetFilter is configured by its constructor:
 `new OffsetFilter($offset = 0, $limit = null)`. Note: `$offset` is a 0-based index.
 
 ```php
@@ -249,12 +384,13 @@ $filter = new OffsetFilter(0, 3);
 $filter = new OffsetFilter(2, 5);
 ```
 
-#### [ValidatorFilter](/src/Ddeboer/DataImport/Filter/ValidatorFilter.php)
+#### ValidatorFilter
 
-Its a common use case to validate the data before you save it to the database.
+It’s a common use case to validate the data before you save it to the database.
 Exactly for this use case we created the ValidatorFilter. See how it works:
 
 ```php
+use Ddeboer\DataImport\Filter\ValidatorFilter;
 
 $filter = new ValidatorFilter($validator);
 $filter->add('email', new Assert\Email());
@@ -262,41 +398,162 @@ $filter->add('sku', new Assert\NotBlank());
 ```
 
 The default behaviour for the validator is to collect all violations and skip
-each row which isn't valid. If you want to stop on the first failing row you can
-call `ValidatorFilter::throwExceptions()`. 
-Now the filter will throw a [ValidationException](/src/Ddeboer/Exception/ValidationException] 
-which contains the line number and the violation list.
+each invalid row. If you want to stop on the first failing row you can call
+`ValidatorFilter::throwExceptions()`. which throws a
+[ValidationException](/src/Ddeboer/Exception/ValidationException]
+containing the line number and the violation list.
 
-_Note_
-Its recommend to add the ValidatorFilter before you add all other filters.
-For a detailed explanation see https://github.com/ddeboer/data-import/pull/47#issuecomment-31969949.
+It’s recommend to [add the ValidatorFilter before you add all other filters](pull/47#issuecomment-31969949).
 
 ### Item converters
+
+#### CallbackItemConverter
+
+### MappingItemConverter
+
+Use the MappingItemConverter to add mappings to your workflow. Your keys from
+the input data will be renamed according to these mappings. Say you have input data:
+
+```php
+$data = array(
+    array(
+        'foo' => 'bar',
+        'baz' => array(
+            'some' => 'value'
+        )
+    )
+);
+```
+
+You can map the keys `foo` and `baz` in the following way:
+
+```php
+
+use Ddeboer\DataImport\ItemConverter\MappingItemConverter;
+
+$converter = new MappingItemConverter();
+$converter
+    ->addMapping('foo', 'fooloo')
+    ->addMapping('baz', array('some' => 'else'));
+
+$workflow->addItemConverter($converter)
+    ->process();
+```
+
+Your output data will now be:
+
+```php
+array(
+    array(
+        'fooloo' => 'bar',
+        'baz'    => array(
+            'else' => 'value'
+        )
+    )
+);
+```
+
+### CallbackItemConverter
 
 ### Value converters
 
 Value converters are used to convert specific fields (e.g., columns in database).
 
-* A `DateTimeValueConverter` that converts a date representation in a format you
-  specify into a `DateTime` object:
-      ```php
-      use Ddeboer\DataImport\ValueConverter\DateTimeValueConverter;
+#### DateTimeValueConverter
 
-      $converter = new DateTimeValueConverter('d/m/Y H:i:s');
-      $workflow->addValueConverter('my_date_field', $converter);
-      ```
+Converts a date representation in a format you specify into a `DateTime` object:
 
-* A `StringToObjectConverter` that looks up an object in the database based
-  on a string value:
-    ```php
-    use Ddeboer\DataImport\ValueConverter\StringToObjectConverter;
+```php
+use Ddeboer\DataImport\ValueConverter\DateTimeValueConverter;
 
-    $converter = new StringToObjectConverter($repository, 'name');
-    $workflow->addValueConverter('input_name', $converter);
-    ```
+$converter = new DateTimeValueConverter('d/m/Y H:i:s');
+$workflow->addValueConverter('my_date_field', $converter);
+```
 
-An example
-----------
+#### ObjectConverter
+
+Converts an object into a scalar value. Let’s say you have a `Villain` object:
+
+##### Using __toString()
+
+If your object has a `__toString()` method, that value will be used:
+
+```php
+use Ddeboer\DataImport\ValueConverter\ObjectConverter;
+
+class SecretAgent
+{
+    public function __toString()
+    {
+        return '007';
+    }
+}
+
+$converter = new ObjectConverter();
+$string = $converter->convert(new SecretAgent());   // $string will be '007'
+```
+
+##### Using object accessors
+
+If your object has no `__toString()` method, its accessors will be called
+instead:
+
+```php
+class Villain
+{
+    public function getName()
+    {
+        return 'Bad Guy';
+    }
+}
+
+class Organization()
+{
+    public funtion getVillain()
+    {
+        return new Villain();
+    }
+}
+
+use Ddeboer\DataImport\ValueConverter\ObjectConverter;
+
+$converter = new ObjectConverter('villain.name');
+$string = $converter->convert(new Organization());   // $string will be 'Bad Guy'
+
+#### StringToObjectConverter
+
+Looks up an object in the database based on a string value:
+
+```php
+use Ddeboer\DataImport\ValueConverter\StringToObjectConverter;
+
+$converter = new StringToObjectConverter($repository, 'name');
+$workflow->addValueConverter('input_name', $converter);
+```
+
+#### CallbackValueConverter
+
+Use this if you want to save the trouble of writing a dedicating class:
+
+```php
+use Ddeboer\DataImport\ValueConverter\CallbackValueConverter;
+
+$callable = function ($item) {
+    return implode(',', $item);
+};
+
+$converter = new CallbackValueConverter($callable);
+$output = $converter->convert(array('foo', 'bar'));
+
+// $output will be "foo,bar"
+```
+
+### Examples
+
+#### Import CSV file and write to database
+
+This example shows how you can read data from a CSV file and write that to the
+database.
 
 ```php
 use Ddeboer\DataImport\Workflow;
@@ -319,21 +576,22 @@ $source->addFilter(new Unzip('nummers.csv'));
 $file = $source->getFile();
 
 // Create and configure the reader
+$file = new \SplFileObject('input.csv');
 $csvReader = new CsvReader($file);
 $csvReader->setHeaderRowNumber(0);
 
-// Create the workflow
+// Create the workflow from the reader
 $workflow = new Workflow($csvReader);
 $dateTimeConverter = new DateTimeValueConverter();
 
 // Add converters to the workflow
 $workflow
-    ->addValueConverter('twn_datumbeschikking', $dateTimeConverter)
-    ->addValueConverter('twn_datumeind', $dateTimeConverter)
-    ->addValueConverter('datummutatie', $dateTimeConverter)
+    ->addValueConverter('beginDate', $dateTimeConverter)
+    ->addValueConverter('endDate', $dateTimeConverter)
+    ->addValueConverter('modifiedDate', $dateTimeConverter)
 
-    // You can also add closures as converters
-    ->addValueConverter('twn_nummertm', new CallbackValueConverter(function ($input) {
+    // You can also add closures as converters:
+    ->addValueConverter('number', new CallbackValueConverter(function ($input) {
         return str_replace('-', '', $input);
     }))
     ->addValueConverter('twn_nummervan', new CallbackValueConverter(function ($input) {
@@ -348,6 +606,58 @@ $workflow
 
 // Process the workflow
 $workflow->process();
+```
+
+#### Export to CSV file
+
+This example shows how you can export data to a CSV file.
+
+```php
+use Ddeboer\DataImport\Workflow;
+use Ddeboer\DataImport\Reader\ArrayReader;
+use Ddeboer\DataImport\Writer\CsvWriter;
+use Ddeboer\DataImport\ValueConverter\CallbackValueConverter;
+
+// Your input data
+$reader = new ArrayReader(array(
+    array(
+        'first',        // This is for the CSV header
+        'last',
+    array(
+        'first' => 'james',
+        'last'  => 'Bond'
+    ),
+    array(
+        'first' => 'hugo',
+        'last'  => 'Drax'
+    )
+);
+
+// Create the workflow from the reader
+$workflow = new Workflow($reader);
+
+// Add the writer to the workflow
+$file = new \SplFileObject('output.csv', 'w');
+$writer = new Writer($file);
+$workflow->addWriter($writer);
+
+// As you can see, the first names are not capitalized correctly. Let's fix
+// that with a value converter:
+$converter = new CallbackValueConverter(function ($input) {
+    return ucfirst($input);
+});
+$workflow->addValueConverter('first', $converter);
+
+// Process the workflow
+$workflow->process();
+```
+
+This will write a CSV file `output.csv` where the first names are capitalized:
+
+```csv
+first;last
+James;Bond
+Hugo;Drax
 ```
 
 ArrayValueConverterMap
@@ -399,70 +709,20 @@ The converters defined in the list are applied on every data-item's value that m
     );
 ```
 
-GlobalMapping
--------------
+Running the tests
+-----------------
 
-The global-mapping allows you to define an array that is used to rename fields of an item.
+Install dev dependencies:
 
-Using global-mapping can be used to add renaming-rules for a multi-level array and is applied
-after the standard-mapping rules are applied.
-
-```php
-    //...
-    $data = array(
-        0 => array(
-            'foo' => 'bar',
-            'baz' => array(
-                'some' => 'value',
-                'some2' => 'value'
-            )
-        )
-    );
-
-    // ...
-    // create the workflow and reader etc.
-    // ...
-
-    // this defines a single mapping
-    $workflow->addMapping('baz', 'bazinga');
-
-    // this defines renaming global rules
-    $workflow->setGlobalMapping(array(
-        'foo' => 'fooloo',
-
-        // we need to use the new name here because global mapping is applied after standard mapping
-        'bazinga' => array(
-            'some' => 'something',
-            'some2' => 'somethingelse'
-        )
-    ));
-
-    // ..
-    // after filtering data looks as follows
-    $data = array(
-        0 => array(
-            'fooloo' => 'bar',
-            'bazinga' => array(
-                'something' => 'value',
-                'somethingelse' => 'value'
-            )
-        )
-    );
+```bash
+$ composer install --dev
 ```
 
-Troubleshooting
----------------
+And run PHPUnit:
 
-### CsvReader strict mode
-
-The `CsvReader` operates in 'strict mode' by default, this means that if there
-are any rows in the CSV provided that contain a different number of values than
-the column headers provided, then an error is logged and the row is skipped.
-
-To disable this functionality, you can set `$reader->setStrict(false)` after
-you instantiate the reader.
-
-Disabling strict mode means:
+```bash
+$ phpunit
+```
 
 1. Any rows that contain fewer values than the column headers are simply
    padded with null values.
@@ -478,4 +738,4 @@ Examples where this is useful:
 License
 -------
 
-DataImport is released under the MIT license. See the [LICENSE](#LICENSE) file for details.
+DataImport is released under the MIT license. See the [LICENSE](LICENSE) file for details.
