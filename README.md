@@ -36,6 +36,7 @@ Documentation
     - [ArrayWriter](#arraywriter)
     - [CsvWriter](#csvwriter)
     - [DoctrineWriter](#doctrinewriter)
+    - [ExcelWriter](#excelwriter)
     - [ConsoleProgressWriter](#consoleprogresswriter)
     - [CallbackWriter](#callbackwriter)
     - [Create a writer](#create-a-writer)
@@ -290,7 +291,7 @@ use Ddeboer\DataImport\Writer\DoctrineWriter;
 
 $writer = new DoctrineWriter($entityManager, 'YourNamespace:Employee');
 $writer
-->prepare()
+    ->prepare()
     ->writeItem(
         array(
             'first' => 'James',
@@ -298,6 +299,44 @@ $writer
         )
     )
     ->finish();
+```
+
+#### ExcelWriter
+
+Writes data to an Excel file.
+
+```php
+use Ddeboer\DataImport\Writer\ExcelWriter;
+
+$file = new \SplFileObject('data.xlsx', 'w');
+$writer = new ExcelWriter($file);
+
+$writer
+    ->prepare()
+    ->writeItem(array('first', 'last'))
+    ->writeItem(array('first' => 'James', 'last' => 'Bond'))
+    ->finish();
+```
+
+You can specify the name of the sheet to write to:
+
+```php
+$writer = new ExcelWriter($file, 'My sheet');
+```
+
+You can open an already existing file and add a sheet to it:
+
+```php
+$file = new \SplFileObject('data.xlsx', 'a');   // Open file with append mode
+$writer = new ExcelWriter($file, 'New sheet');
+```
+
+If you wish to overwrite an existing sheet instead, specify the name of the
+existing sheet:
+
+```php
+$writer = new ExcelWriter($file, 'Old sheet');
+```
 
 #### ConsoleProgressWriter
 
