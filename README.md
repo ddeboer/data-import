@@ -546,7 +546,7 @@ class Villain
     }
 }
 
-class Organization()
+class Organization
 {
     public funtion getVillain()
     {
