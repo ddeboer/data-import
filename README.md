@@ -558,6 +558,7 @@ use Ddeboer\DataImport\ValueConverter\ObjectConverter;
 
 $converter = new ObjectConverter('villain.name');
 $string = $converter->convert(new Organization());   // $string will be 'Bad Guy'
+```
 
 #### StringToObjectConverter
 
@@ -582,9 +583,7 @@ $callable = function ($item) {
 };
 
 $converter = new CallbackValueConverter($callable);
-$output = $converter->convert(array('foo', 'bar'));
-
-// $output will be "foo,bar"
+$output = $converter->convert(array('foo', 'bar')); // $output will be "foo,bar"
 ```
 
 ### Examples
@@ -594,54 +593,88 @@ $output = $converter->convert(array('foo', 'bar'));
 This example shows how you can read data from a CSV file and write that to the
 database.
 
+Assume we have the following CSV file:
+
+```csv
+event;beginDate;endDate
+Christmas;20131225;20131226
+New Year;20131231;20140101
+```
+
+And we want to write this data to a Doctrine entity:
+
+```php
+namespace MyApp;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity
+ */
+class Event
+{
+    /**
+     * @ORM\Column()
+     */
+    protected $event;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    protected $beginDate;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    protected $endDate;
+
+    public function setEvent($event)
+    {
+        $this->event = $event;
+    }
+
+    public function setBeginDate($date)
+    {
+        $this->beginDate = $date;
+    }
+
+    public function setEndDate($date)
+    {
+        $this->endDate = $date;
+    }
+
+    // And some getters
+}
+```
+
+Then you can import the CSV and save it as your entity in the following way.
+
 ```php
 use Ddeboer\DataImport\Workflow;
-use Ddeboer\DataImport\Source\HttpSource;
-use Ddeboer\DataImport\Source\Filter\Unzip;
 use Ddeboer\DataImport\Reader\CsvReader;
+use Ddeboer\DataImport\Writer\DoctrineWriter;
 use Ddeboer\DataImport\ValueConverter\DateTimeValueConverter;
-use Ddeboer\DataImport\ValueConverter\CallbackValueConverter;
-use Ddeboer\DataImport\Writer\CallbackWriter;
-
-(...)
-
-// Create the source; here we use an HTTP one
-$source = new HttpSource('http://www.opta.nl/download/registers/nummers_csv.zip');
-
-// As the source file is zipped, we add an unzip filter
-$source->addFilter(new Unzip('nummers.csv'));
-
-// Retrieve the \SplFileObject from the source
-$file = $source->getFile();
 
 // Create and configure the reader
 $file = new \SplFileObject('input.csv');
 $csvReader = new CsvReader($file);
+
+// Tell the reader that the first row in the CSV file contains column headers
 $csvReader->setHeaderRowNumber(0);
 
 // Create the workflow from the reader
 $workflow = new Workflow($csvReader);
-$dateTimeConverter = new DateTimeValueConverter();
 
-// Add converters to the workflow
+// Create a writer: you need Doctrine’s EntityManager.
+$doctrineWriter = new DoctrineWriter($entityManager, 'MyApp:Event');
+$workflow->addWriter($doctrineWriter);
+
+// Add a converter to the workflow that will convert `beginDate` and `endDate`
+// to \DateTime objects
+$dateTimeConverter = new DateTimeValueConverter('Ymd');
 $workflow
     ->addValueConverter('beginDate', $dateTimeConverter)
-    ->addValueConverter('endDate', $dateTimeConverter)
-    ->addValueConverter('modifiedDate', $dateTimeConverter)
-
-    // You can also add closures as converters:
-    ->addValueConverter('number', new CallbackValueConverter(function ($input) {
-        return str_replace('-', '', $input);
-    }))
-    ->addValueConverter('twn_nummervan', new CallbackValueConverter(function ($input) {
-        return str_replace('-', '', $input);
-    }))
-
-    // Use one of the writers supplied with this bundle, implement your own, or use a closure:
-    ->addWriter(new CallbackWriter(function ($csvLine) {
-        var_dump($csvLine);
-    }))
-;
+    ->addValueConverter('endDate', $dateTimeConverter);
 
 // Process the workflow
 $workflow->process();
