@@ -88,8 +88,6 @@ Broadly speaking, you can use this library in two ways:
 * use one or more of the components on their own, such as [readers](#readers),
   [writers](#writers) or [converters](#converters).
 
-This library enable you to configure a data import
-
 ### The workflow
 
 Each data import revolves around the workflow and takes place along the following lines:
