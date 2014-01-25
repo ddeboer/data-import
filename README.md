@@ -442,8 +442,6 @@ each invalid row. If you want to stop on the first failing row you can call
 [ValidationException](/src/Ddeboer/Exception/ValidationException]
 containing the line number and the violation list.
 
-It’s recommend to [add the ValidatorFilter before you add all other filters](pull/47#issuecomment-31969949).
-
 ### Item converters
 
 #### CallbackItemConverter

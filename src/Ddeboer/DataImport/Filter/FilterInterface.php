@@ -15,4 +15,11 @@ interface FilterInterface
      * @return boolean If false is returned, the workflow will skip the input
      */
     public function filter(array $item);
+
+    /**
+     * Get filter priority (higher number means higher priority)
+     *
+     * @return int
+     */
+    public function getPriority();
 }

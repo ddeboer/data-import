@@ -80,4 +80,12 @@ class OffsetFilter implements FilterInterface
         
         return false;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPriority()
+    {
+        return 128;
+    }
 }
