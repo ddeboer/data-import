@@ -176,11 +176,62 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
         $workflow->process();
     }
 
+    public function testFilterPriority()
+    {
+        $offsetFilter = $this->getMockBuilder('\Ddeboer\DataImport\Filter\OffsetFilter')
+            ->disableOriginalConstructor()
+            ->setMethods(array('filter'))
+            ->getMock();
+        $offsetFilter->expects($this->never())->method('filter');
+
+        $validatorFilter = $this->getMockBuilder('\Ddeboer\DataImport\Filter\ValidatorFilter')
+            ->disableOriginalConstructor()
+            ->setMethods(array('filter'))
+            ->getMock();
+        $validatorFilter->expects($this->exactly(2))
+            ->method('filter')
+            ->will($this->returnValue(false));
+
+        $this->getWorkflow()
+            ->addFilter($offsetFilter)
+            ->addFilter($validatorFilter)
+            ->process();
+    }
+
+    public function testFilterPriorityOverride()
+    {
+        $offsetFilter = $this->getMockBuilder('\Ddeboer\DataImport\Filter\OffsetFilter')
+            ->disableOriginalConstructor()
+            ->setMethods(array('filter'))
+            ->getMock();
+        $offsetFilter->expects($this->exactly(2))
+            ->method('filter')
+            ->will($this->returnValue(false));
+
+        $validatorFilter = $this->getMockBuilder('\Ddeboer\DataImport\Filter\ValidatorFilter')
+            ->disableOriginalConstructor()
+            ->setMethods(array('filter'))
+            ->getMock();
+        $validatorFilter->expects($this->never())->method('filter');
+
+        $this->getWorkflow()
+            ->addFilter($offsetFilter, 257)
+            ->addFilter($validatorFilter)
+            ->process();
+    }
+
     protected function getWorkflow()
     {
-        $reader = $this->getMockBuilder('\Ddeboer\DataImport\Reader\CsvReader')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $reader = new ArrayReader(array(
+            array(
+                'first' => 'James',
+                'last'  => 'Bond'
+            ),
+            array(
+                'first' => 'Miss',
+                'last'  => 'Moneypenny'
+            )
+        ));
 
         return new Workflow($reader);
     }

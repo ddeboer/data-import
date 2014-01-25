@@ -67,6 +67,7 @@ class Workflow
     public function __construct(ReaderInterface $reader)
     {
         $this->reader = $reader;
+        $this->filters = $this->afterConversionFilters = new \SplPriorityQueue();
     }
 
     /**
@@ -74,13 +75,14 @@ class Workflow
      *
      * A filter decides whether an item is accepted into the import process.
      *
-     * @param FilterInterface $filter
+     * @param FilterInterface $filter   Filter
+     * @param int             $priority Priority (optional)
      *
      * @return Workflow
      */
-    public function addFilter(FilterInterface $filter)
+    public function addFilter(FilterInterface $filter, $priority = null)
     {
-        $this->filters[] = $filter;
+        $this->filters->insert($filter, $priority ?: $filter->getPriority());
 
         return $this;
     }
@@ -88,13 +90,14 @@ class Workflow
     /**
      * Add after conversion filter
      *
-     * @param FilterInterface $filter
+     * @param FilterInterface $filter   Filter
+     * @param int             $priority Priority (optional)
      *
      * @return Workflow
      */
-    public function addFilterAfterConversion(FilterInterface $filter)
+    public function addFilterAfterConversion(FilterInterface $filter, $priority = null)
     {
-        $this->afterConversionFilters[] = $filter;
+        $this->afterConversionFilters->insert($filter, $priority ?: $filter->getPriority());
 
         return $this;
     }
@@ -225,15 +228,15 @@ class Workflow
     }
 
     /**
-     * Apply the filter chain to the input; if at least one filter fails, the
-     * chain fails
+     * Apply the filter chain to the input; if at least one filter fails,
+     * the chain fails
      *
-     * @param array                   $item    Item
-     * @param array|FilterInterface[] $filters Array of filters
+     * @param mixed                               $item    Item
+     * @param \SplPriorityQueue|FilterInterface[] $filters Filters
      *
      * @return boolean
      */
-    protected function filterItem($item, array $filters)
+    protected function filterItem($item, \SplPriorityQueue $filters)
     {
         foreach ($filters as $filter) {
             if (false == $filter->filter($item)) {

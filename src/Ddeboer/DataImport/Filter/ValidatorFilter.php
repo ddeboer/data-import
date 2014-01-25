@@ -60,4 +60,12 @@ class ValidatorFilter implements FilterInterface
 
         return 0 === count($list);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPriority()
+    {
+        return 256;
+    }
 }

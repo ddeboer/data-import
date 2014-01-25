@@ -35,4 +35,12 @@ class CallbackFilter implements FilterInterface
     {
         return call_user_func($this->callback, $item);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPriority()
+    {
+        return 0;
+    }
 }
