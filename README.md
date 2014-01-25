@@ -47,6 +47,7 @@ Documentation
   * [Converters](#converters)
     - [Item converters](#item-converters)
       - [MappingItemConverter](#mappingitemconverter)
+      - [Create an item converter](#create-an-item-converter)
       - [CallbackItemConverter](#callbackitemconverter)
     - [Value converters](#value-converters)
       - [DateTimeValueConverter](#datetimevalueconverter)
@@ -444,9 +445,7 @@ It’s recommend to [add the ValidatorFilter before you add all other filters](p
 
 ### Item converters
 
-#### CallbackItemConverter
-
-### MappingItemConverter
+#### MappingItemConverter
 
 Use the MappingItemConverter to add mappings to your workflow. Your keys from
 the input data will be renamed according to these mappings. Say you have input data:
@@ -490,7 +489,39 @@ array(
 );
 ```
 
-### CallbackItemConverter
+#### Create an item converter
+
+Implement `ItemConverterInterface` to create your own item converter:
+
+```php
+use Ddeboer\DataImport\ItemConverter\ItemConverterInterface;
+
+class MyItemConverter implements ItemConverterInterface 
+{
+  public function convert($item)
+  {
+    // Do your conversion and return updated $item
+    return $changedItem;
+  }
+}
+```
+
+#### CallbackItemConverter
+
+Instead of implementing your own item converter, you can use a callback:
+
+```php
+use Ddeboer\DataImport\ItemConverter\CallbackItemConverter;
+
+// Use a fictional $translator service to translate each value
+$converter = new CallbackItemConverter(function ($item) use ($translator) {
+  foreach ($item as $key => $value) {
+    $item[$key] = $translator->translate($value);
+  }
+  
+  return $row;
+}
+```
 
 ### Value converters
 
