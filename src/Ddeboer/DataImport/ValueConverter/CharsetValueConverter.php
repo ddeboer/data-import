@@ -45,7 +45,7 @@ class CharsetValueConverter implements ValueConverterInterface
         if (function_exists('mb_convert_encoding')) {
             return mb_convert_encoding($input, $this->charset, $this->inCharset);
         }
-        
+
         if (function_exists('iconv')) {
             return iconv($this->inCharset, $this->charset, $input);
         }

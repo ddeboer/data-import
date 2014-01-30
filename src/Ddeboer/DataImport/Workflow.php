@@ -48,14 +48,14 @@ class Workflow
     /**
      * Array of filters
      *
-     * @var array|FilterInterface[]
+     * @var \SplPriorityQueue|FilterInterface[]
      */
     protected $filters = array();
 
     /**
      * Array of filters that will be checked after data conversion
      *
-     * @var array|FilterInterface[]
+     * @var \SplPriorityQueue|FilterInterface[]
      */
     protected $afterConversionFilters = array();
 
@@ -253,7 +253,7 @@ class Workflow
      *
      * @param string $item Original item values
      *
-     * @return array Converted item values
+     * @return array                   Converted item values
      * @throws UnexpectedTypeException
      */
     protected function convertItem($item)
@@ -310,5 +310,4 @@ class Workflow
 
         return $converter;
     }
-
 }

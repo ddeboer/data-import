@@ -33,6 +33,7 @@ class StringToObjectConverter implements ValueConverterInterface
     public function convert($input)
     {
         $method = 'findOneBy'.ucfirst($this->property);
+
         return $this->repository->$method($input);
     }
 }

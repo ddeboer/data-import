@@ -19,12 +19,12 @@ class OffsetFilter implements FilterInterface
      * @var int|null
      */
     protected $limit = null;
-    
+
     /**
      * @var int
      */
     protected $offsetCount = 0;
-    
+
     /**
      * @var int
      */
@@ -63,7 +63,7 @@ class OffsetFilter implements FilterInterface
         if ($this->offsetCount < $this->offset + 1) {
             return false;
         }
-        
+
         // There is no maximum limit, so we'll return always true
         if (null === $this->limit) {
             return true;
@@ -75,9 +75,10 @@ class OffsetFilter implements FilterInterface
             return true;
         } elseif ($this->sliceCount == $this->limit) {
             $this->maxLimitHit = true;
+
             return true;
         }
-        
+
         return false;
     }
 

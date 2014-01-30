@@ -175,10 +175,10 @@ class CsvReader implements ReaderInterface, \SeekableIterator
      * @param int $rowNumber  Number of the row that contains column header names
      * @param int $duplicates How to handle duplicates (optional). One of:
      *                        - CsvReader::DUPLICATE_HEADERS_INCREMENT;
-     *                          increments duplicates (dup, dup1, dup2 etc.)
+     *                        increments duplicates (dup, dup1, dup2 etc.)
      *                        - CsvReader::DUPLICATE_HEADERS_MERGE; merges
-     *                          values for duplicate headers into an array
-     *                          (dup => [value1, value2, value3])
+     *                        values for duplicate headers into an array
+     *                        (dup => [value1, value2, value3])
      *
      * @return CsvReader
      * @throws DuplicateHeadersException If duplicate headers are encountered
@@ -302,7 +302,6 @@ class CsvReader implements ReaderInterface, \SeekableIterator
         return count($this->getErrors()) > 0;
     }
 
-
     /**
      * Should the reader use strict parsing?
      *
@@ -332,7 +331,7 @@ class CsvReader implements ReaderInterface, \SeekableIterator
      *
      * @param int $rowNumber Row number
      *
-     * @return array Column headers
+     * @return array                     Column headers
      * @throws DuplicateHeadersException
      */
     protected function readHeaderRow($rowNumber)
