@@ -18,6 +18,8 @@ class CallbackFilter implements FilterInterface
      * Constructor
      *
      * @param callable $callback
+     *
+     * @throws \RuntimeException If $callback is not callable
      */
     public function __construct($callback)
     {
