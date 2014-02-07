@@ -238,7 +238,9 @@ class Workflow
      */
     protected function filterItem($item, \SplPriorityQueue $filters)
     {
-        foreach ($filters as $filter) {
+        // SplPriorityQueue must be cloned because it is a stack and thus drops
+        // elements each time it is iterated over.
+        foreach (clone $filters as $filter) {
             if (false == $filter->filter($item)) {
                 return false;
             }

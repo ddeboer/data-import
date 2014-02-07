@@ -220,6 +220,21 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
             ->process();
     }
 
+    public function testFilterExecution()
+    {
+        $result = array();
+        $workflow = $this->getWorkflow();
+        $workflow
+            ->addWriter(new ArrayWriter($result))
+            ->addFilter(new CallbackFilter(function ($item) {
+                return 'James' === $item['first'];
+            }))
+            ->process()
+        ;
+
+        $this->assertCount(1, $result);
+    }
+
     protected function getWorkflow()
     {
         $reader = new ArrayReader(array(
