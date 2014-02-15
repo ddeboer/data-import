@@ -465,8 +465,8 @@ $filter->add('sku', new Assert\NotBlank());
 
 The default behaviour for the validator is to collect all violations and skip
 each invalid row. If you want to stop on the first failing row you can call
-`ValidatorFilter::throwExceptions()`. which throws a
-[ValidationException](/src/Ddeboer/Exception/ValidationException]
+`ValidatorFilter::throwExceptions()`, which throws a
+[ValidationException](/src/Ddeboer/DataImport/Exception/ValidationException.php)
 containing the line number and the violation list.
 
 ### Item converters
