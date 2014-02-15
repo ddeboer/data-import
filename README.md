@@ -844,6 +844,13 @@ The converters defined in the list are applied on every data-item's value that m
 Running the tests
 -----------------
 
+Clone this repository:
+
+```bash
+$ git clone https://github.com/ddeboer/data-import.git
+$ cd data-import
+```
+
 Install dev dependencies:
 
 ```bash
