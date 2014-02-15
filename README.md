@@ -218,7 +218,12 @@ one of three ways:
 
 #### DbalReader
 
-Reads data through [Doctrine’s DBAL](http://www.doctrine-project.org/projects/dbal.html):
+Reads data through [Doctrine’s DBAL](http://www.doctrine-project.org/projects/dbal.html).
+Your project should include Doctrine’s DBAL package:
+
+```bash
+$ composer require doctrine/dbal
+```
 
 ```php
 use Ddeboer\DataImport\Reader\DbalReader;
@@ -241,12 +246,19 @@ $reader = new DoctrineReader($entityManager, 'Your\Namespace\Entity\User');
 
 #### ExcelReader
 
-Acts as an adapter for the [PHPExcel library](http://phpexcel.codeplex.com/):
+Acts as an adapter for the [PHPExcel library](http://phpexcel.codeplex.com/). Make sure
+to incude that library in your project:
+
+```bash
+$ composer require phpoffice/phpexcel
+```
+
+Then use the reader to open an Excel file:
 
 ```php
 use Ddeboer\DataImport\Reader\ExcelReader;
 
-$file = new \SplFileObject('path/to/ecxel_file.cls');
+$file = new \SplFileObject('path/to/ecxel_file.xls');
 $reader = new ExcelReader($file);
 ```
 
@@ -302,7 +314,11 @@ $writer
 
 #### ExcelWriter
 
-Writes data to an Excel file.
+Writes data to an Excel file. It requires the PHPExcel package:
+
+```bash
+$ composer require phpoffice/phpexcel
+```
 
 ```php
 use Ddeboer\DataImport\Writer\ExcelWriter;
@@ -339,7 +355,12 @@ $writer = new ExcelWriter($file, 'Old sheet');
 
 #### ConsoleProgressWriter
 
-Displays import progress when you start the workflow from the command-line:
+This writer displays import progress when you start the workflow from the 
+command-line. It requires Symfony’s Console component:
+
+```bash
+$ composer require symfony/console
+```
 
 ```php
 use Ddeboer\DataImport\Writer\ConsoleProgressWriter;
@@ -348,7 +369,7 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 $output = new ConsoleOutput(...);
 $progressWriter = new ConsoleProgressWriter($output, $reader);
 
-// Most useful when adding to a workflow
+// Most useful when added to a workflow
 $workflow->addWriter($progressWriter);
 ```
 
@@ -425,7 +446,14 @@ $filter = new OffsetFilter(2, 5);
 #### ValidatorFilter
 
 It’s a common use case to validate the data before you save it to the database.
-Exactly for this use case we created the ValidatorFilter. See how it works:
+This is exactly what the ValidatorFilter does. To use it, include Symfony’s
+Validator component in your project:
+
+```bash
+$ compose require symfony/validator
+```
+
+The ValidatorFilter works as follows:
 
 ```php
 use Ddeboer\DataImport\Filter\ValidatorFilter;
@@ -538,7 +566,12 @@ $workflow->addValueConverter('my_date_field', $converter);
 
 #### ObjectConverter
 
-Converts an object into a scalar value. Let’s say you have a `Villain` object:
+Converts an object into a scalar value. To use this converter, you must include
+Symfony’s PropertyAccess component in your project:
+
+```bash
+$ composer require symfony/property-access
+```
 
 ##### Using __toString()
 
