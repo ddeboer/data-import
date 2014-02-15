@@ -823,17 +823,6 @@ And run PHPUnit:
 $ phpunit
 ```
 
-1. Any rows that contain fewer values than the column headers are simply
-   padded with null values.
-2. Any additional values in a row that contain more values than the
-   column headers are ignored.
-
-Examples where this is useful:
-
-- **Outlook 2010:** which omits trailing blank values
-- **Google Contacts:** which exports more values than there are column headers
-
-
 License
 -------
 
