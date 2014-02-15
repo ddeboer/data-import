@@ -376,16 +376,16 @@ A filter decides whether data input is accepted into the import process.
 
 #### CallbackFilter
 
+The CallbackFilter wraps your callback function that determines whether
+data should be accepted. The data input is accepted only if the function 
+returns `true`.
+
 ```php
 use Ddeboer\DataImport\Filter\CallbackFilter;
 
 // Don’t import The Beatles
 $filter = new CallbackFilter(function ($data) {
-    if ('The Beatles' == $data['name']) {
-        return false;
-    } else {
-        return true;
-    }
+    return ('The Beatles' != $data['name']);
 });
 
 $workflow->addFilter($filter);
