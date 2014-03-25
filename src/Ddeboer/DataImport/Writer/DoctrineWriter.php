@@ -193,7 +193,8 @@ class DoctrineWriter extends AbstractWriter
             $entity = $this->getNewInstance($className, $item);
         }
 
-        foreach ($this->entityMetadata->getFieldNames() as $fieldName) {
+        $fieldNames = array_merge($this->entityMetadata->getFieldNames(), $this->entityMetadata->getAssociationNames());
+        foreach ($fieldNames as $fieldName) {
 
             $value = null;
             if (isset($item[$fieldName])) {
