@@ -8,6 +8,8 @@ class TestEntity
 
     private $secondProperty;
 
+    private $firstAssociation;
+
     public function getFirstProperty()
     {
         return $this->firstProperty;
@@ -27,4 +29,14 @@ class TestEntity
     {
         $this->secondProperty = $secondProperty;
     }
+
+    public function getFirstAssociation() {
+        return $this->firstAssociation;
+    }
+
+    public function setFirstAssociation($firstAssociation)
+    {
+        $this->firstAssociation = $firstAssociation;
+    }
+
 }

@@ -16,9 +16,11 @@ class DoctrineWriterTest extends \PHPUnit_Framework_TestCase
 
         $writer = new DoctrineWriter($em, 'DdeboerDataImport:TestEntity');
 
+        $association = new TestEntity();
         $item = array(
-            'firstProperty' => 'some value',
-            'secondProperty'=> 'some other value'
+            'firstProperty'   => 'some value',
+            'secondProperty'  => 'some other value',
+            'firstAssociation'=> $association
         );
         $writer->writeItem($item);
     }
@@ -38,9 +40,11 @@ class DoctrineWriterTest extends \PHPUnit_Framework_TestCase
         $writer->setBatchSize(3);
         $this->assertEquals(3, $writer->getBatchSize());
 
+        $association = new TestEntity();
         $item = array(
-            'firstProperty' => 'some value',
-            'secondProperty'=> 'some other value'
+            'firstProperty'   => 'some value',
+            'secondProperty'  => 'some other value',
+            'firstAssociation'=> $association
         );
 
         for ($i = 0; $i < 11; $i++) {
@@ -62,7 +66,7 @@ class DoctrineWriterTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $metadata = $this->getMockBuilder('Doctrine\ORM\Mapping\ClassMetadata')
-            ->setMethods(array('getName', 'getFieldNames', 'setFieldValue'))
+            ->setMethods(array('getName', 'getFieldNames', 'getAssociationNames', 'setFieldValue'))
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -73,6 +77,10 @@ class DoctrineWriterTest extends \PHPUnit_Framework_TestCase
         $metadata->expects($this->any())
             ->method('getFieldNames')
             ->will($this->returnValue(array('firstProperty', 'secondProperty')));
+
+        $metadata->expects($this->any())
+            ->method('getAssociationNames')
+            ->will($this->returnValue(array('firstAssociation')));
 
         $configuration = $this->getMockBuilder('Doctrine\DBAL\Configuration')
             ->setMethods(array('getConnection'))
@@ -111,6 +119,14 @@ class DoctrineWriterTest extends \PHPUnit_Framework_TestCase
         $em->expects($this->any())
             ->method('getConnection')
             ->will($this->returnValue($connection));
+
+        $self = $this;
+        $em->expects($this->any())
+            ->method('persist')
+            ->will($this->returnCallback(function ($argument) use ($self) {
+                $self->assertNotNull($argument->getFirstAssociation());
+                return true;
+            }));
 
         return $em;
     }
