@@ -235,6 +235,30 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $result);
     }
 
+    public function testAddFilterAfterConversion()
+    {
+        $filterCalledIncrementor = 0;
+        $afterConversionFilterCalledIncrementor = 0;
+
+        $workflow = $this->getWorkflow();
+
+        $workflow->addFilter(new CallbackFilter(function () use (&$filterCalledIncrementor) {
+            ++$filterCalledIncrementor;
+            return true;
+        }));
+
+        $workflow->addFilterAfterConversion(new CallbackFilter(function () use (&$afterConversionFilterCalledIncrementor) {
+            ++$afterConversionFilterCalledIncrementor;
+            return true;
+        }));
+
+        $workflow->process();
+
+        //there are two rows in reader, so every filter should be called twice
+        $this->assertEquals(2, $filterCalledIncrementor);
+        $this->assertEquals(2, $afterConversionFilterCalledIncrementor);
+    }
+
     protected function getWorkflow()
     {
         $reader = new ArrayReader(array(

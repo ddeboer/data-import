@@ -67,7 +67,8 @@ class Workflow
     public function __construct(ReaderInterface $reader)
     {
         $this->reader = $reader;
-        $this->filters = $this->afterConversionFilters = new \SplPriorityQueue();
+        $this->filters = new \SplPriorityQueue();
+        $this->afterConversionFilters =  new \SplPriorityQueue();
     }
 
     /**
