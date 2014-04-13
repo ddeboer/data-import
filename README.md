@@ -524,11 +524,11 @@ use Ddeboer\DataImport\ItemConverter\ItemConverterInterface;
 
 class MyItemConverter implements ItemConverterInterface 
 {
-  public function convert($item)
-  {
-    // Do your conversion and return updated $item
-    return $changedItem;
-  }
+    public function convert($item)
+    {
+        // Do your conversion and return updated $item
+        return $changedItem;
+    }
 }
 ```
 
@@ -541,11 +541,11 @@ use Ddeboer\DataImport\ItemConverter\CallbackItemConverter;
 
 // Use a fictional $translator service to translate each value
 $converter = new CallbackItemConverter(function ($item) use ($translator) {
-  foreach ($item as $key => $value) {
-    $item[$key] = $translator->translate($value);
-  }
+    foreach ($item as $key => $value) {
+        $item[$key] = $translator->translate($value);
+    }
   
-  return $row;
+    return $row;
 }
 ```
 
@@ -800,45 +800,45 @@ The ArrayValueConverterMap is used to filter values of a multi-level array.
 The converters defined in the list are applied on every data-item's value that match the defined array_keys.
 
 ```php
-    //...
-    $data = array(
-        'products' => array(
-            0 => array(
-                'name' => 'some name',
-                'price' => '€12,16',
-            ),
-            1 => array(
-                'name' => 'some name',
-                'price' => '€12,16',
-            )
+//...
+$data = array(
+    'products' => array(
+        0 => array(
+            'name' => 'some name',
+            'price' => '€12,16',
+        ),
+        1 => array(
+            'name' => 'some name',
+            'price' => '€12,16',
         )
-    );
+    )
+);
 
-    // ...
-    // create the workflow and reader etc.
-    // ...
+// ...
+// create the workflow and reader etc.
+// ...
 
-    $workflow->addValueConverter(new ArrayValueConverterMap(array(
-        'name' => array(new CharsetValueConverter('UTF-8', 'UTF-16')), // encode to UTF-8
-        'price' => array(new CallbackValueConverter(function ($input) {
-            return str_replace('€', '', $intput); // remove € char
-        }),
-    )));
+$workflow->addValueConverter(new ArrayValueConverterMap(array(
+    'name' => array(new CharsetValueConverter('UTF-8', 'UTF-16')), // encode to UTF-8
+    'price' => array(new CallbackValueConverter(function ($input) {
+        return str_replace('€', '', $intput); // remove € char
+    }),
+)));
 
-    // ..
-    // after filtering data looks as follows
-    $data = array(
-        'products' => array(
-            0 => array(
-                'name' => 'some name', // in UTF-8
-                'price' => '12,16',
-            ),
-            1 => array(
-                'name' => 'some name',
-                'price' => '12,16',
-            )
+// ..
+// after filtering data looks as follows
+$data = array(
+    'products' => array(
+        0 => array(
+            'name' => 'some name', // in UTF-8
+            'price' => '12,16',
+        ),
+        1 => array(
+            'name' => 'some name',
+            'price' => '12,16',
         )
-    );
+    )
+);
 ```
 
 Running the tests
