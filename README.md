@@ -546,7 +546,7 @@ $converter = new CallbackItemConverter(function ($item) use ($translator) {
     }
   
     return $row;
-}
+});
 ```
 
 ### Value converters
