@@ -389,7 +389,7 @@ $workflow->addWriter(new CallbackWriter(function ($row) use ($storage) {
 #### Create a writer
 
 Build your own writer by implementing the
-[WriterInterface](/src/Ddeboer/DataImport/Reader/WriterInterface.php).
+[WriterInterface](/src/Ddeboer/DataImport/Writer/WriterInterface.php).
 
 ### Filters
 
