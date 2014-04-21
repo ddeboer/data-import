@@ -11,7 +11,7 @@
 
 namespace Ddeboer\DataImport\Exception;
 
-class UnexpectedTypeException extends \UnexpectedValueException
+class UnexpectedTypeException extends \UnexpectedValueException implements ExceptionInterface
 {
     public function __construct($value, $expectedType)
     {

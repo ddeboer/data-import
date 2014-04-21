@@ -2,6 +2,6 @@
 
 namespace Ddeboer\DataImport\Exception;
 
-class ReaderException extends \UnexpectedValueException
+class ReaderException extends UnexpectedValueException implements ExceptionInterface
 {
 }

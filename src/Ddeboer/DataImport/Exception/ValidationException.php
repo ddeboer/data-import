@@ -4,7 +4,7 @@ namespace Ddeboer\DataImport\Exception;
 
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
-class ValidationException extends \Exception
+class ValidationException extends \Exception implements ExceptionInterface
 {
     private $violations;
 

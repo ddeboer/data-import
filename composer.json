@@ -18,7 +18,8 @@
         "source": "https://github.com/ddeboer/data-import"
     },
     "require": {
-        "php": ">=5.3.0"
+        "php": ">=5.3.0",
+        "psr/log": "1.0.0"
     },
     "require-dev": {
         "ext-iconv": "*",
