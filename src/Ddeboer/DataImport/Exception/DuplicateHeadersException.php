@@ -2,7 +2,7 @@
 
 namespace Ddeboer\DataImport\Exception;
 
-class DuplicateHeadersException extends ReaderException
+class DuplicateHeadersException extends ReaderException implements ExceptionInterface
 {
     public function __construct(array $duplicates)
     {

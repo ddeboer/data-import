@@ -94,8 +94,8 @@ Broadly speaking, you can use this library in two ways:
 Each data import revolves around the workflow and takes place along the following lines:
 
 1. Construct a [reader](#readers).
-2. Construct a workflow and pass the reader to it. Add at least one
-   [writer](#writers) to the workflow.
+2. Construct a workflow and pass the reader to it, optionaly pass a logger as second argument.
+   Add at least one [writer](#writers) to the workflow.
 3. Optionally, add [filters](#filters), item converters and
    [value converters](#value-converters) to the workflow.
 4. Process the workflow. This will read the data from the reader, filter and
@@ -103,6 +103,9 @@ Each data import revolves around the workflow and takes place along the followin
 
 In other words, the workflow acts as a [mediator](#http://en.wikipedia.org/wiki/Mediator_pattern)
 between a reader and one or more writers, filters and converters.
+
+Optionally you can skip items on failure like this `$workflow->setSkipItemOnFailure(true)`.
+Errors will be logged if you have passed a logger to the workflow constructor.
 
 Schematically:
 
@@ -113,11 +116,12 @@ use Ddeboer\DataImport\Writer;
 use Ddeboer\DataImport\Filter;
 
 $reader = new Reader\...;
-$workflow = new Workflow($reader);
+$workflow = new Workflow($reader, $logger);
 $workflow
     ->addWriter(new Writer\...())
     ->addWriter(new Writer\...())
     ->addFilter(new Filter\CallbackFilter(...))
+    ->setSkipItemOnFailure(true)
     ->process()
 ;
 ```

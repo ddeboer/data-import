@@ -2,7 +2,11 @@
 
 namespace Ddeboer\DataImport;
 
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
+
 use Ddeboer\DataImport\Exception\UnexpectedTypeException;
+use Ddeboer\DataImport\Exception\Exception;
 use Ddeboer\DataImport\ItemConverter\MappingItemConverter;
 use Ddeboer\DataImport\Reader\ReaderInterface;
 use Ddeboer\DataImport\Writer\WriterInterface;
@@ -23,6 +27,20 @@ class Workflow
      * @var ReaderInterface
      */
     protected $reader;
+
+    /**
+     * logger
+     *
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
+     * skipItemOnError
+     *
+     * @var boolean
+     */
+    protected $skipItemOnFailure = false;
 
     /**
      * Array of writers
@@ -63,10 +81,12 @@ class Workflow
      * Construct a workflow
      *
      * @param ReaderInterface $reader
+     * @param LoggerInterface $logger
      */
-    public function __construct(ReaderInterface $reader)
+    public function __construct(ReaderInterface $reader, LoggerInterface $logger = null)
     {
         $this->reader = $reader;
+        $this->logger = $logger ? $logger : new NullLogger();
         $this->filters = new \SplPriorityQueue();
         $this->afterConversionFilters =  new \SplPriorityQueue();
     }
@@ -198,26 +218,34 @@ class Workflow
         // Read all items
         foreach ($this->reader as $item) {
 
-            // Apply filters before conversion
-            if (!$this->filterItem($item, $this->filters)) {
-                continue;
-            }
+            try {
+                // Apply filters before conversion
+                if (!$this->filterItem($item, $this->filters)) {
+                    continue;
+                }
 
-            $convertedItem = $this->convertItem($item);
-            if (!$convertedItem) {
-                continue;
-            }
+                $convertedItem = $this->convertItem($item);
+                if (!$convertedItem) {
+                    continue;
+                }
 
-            // Apply filters after conversion
-            if (!$this->filterItem($convertedItem, $this->afterConversionFilters)) {
-                continue;
-            }
+                // Apply filters after conversion
+                if (!$this->filterItem($convertedItem, $this->afterConversionFilters)) {
+                    continue;
+                }
 
-            foreach ($this->writers as $writer) {
-                $writer->writeItem($convertedItem, $item);
-            }
+                foreach ($this->writers as $writer) {
+                    $writer->writeItem($convertedItem, $item);
+                }
 
-            $count++;
+                $count++;
+            } catch(ExceptionInterface $e) {
+                if ($this->skipItemOnFailure) {
+                    $this->logger->error($e->getMessage());
+                } else {
+                    throw $e;
+                }
+            }
         }
 
         // Finish writers
@@ -312,5 +340,19 @@ class Workflow
         }
 
         return $converter;
+    }
+
+    /**
+     * Set skipItemOnFailure.
+     *
+     * @param boolean $skipItemOnFailure then true skip current item on process exception and log the error
+     *
+     * @return $this
+     */
+    public function setSkipItemOnFailure($skipItemOnFailure)
+    {
+        $this->skipItemOnFailure = $skipItemOnFailure;
+
+        return $this;
     }
 }
