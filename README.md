@@ -612,7 +612,7 @@ class Villain
 
 class Organization
 {
-    public funtion getVillain()
+    public function getVillain()
     {
         return new Villain();
     }
@@ -759,14 +759,15 @@ $reader = new ArrayReader(array(
     array(
         'first',        // This is for the CSV header
         'last',
-    array(
-        'first' => 'james',
-        'last'  => 'Bond'
-    ),
-    array(
-        'first' => 'hugo',
-        'last'  => 'Drax'
-    )
+        array(
+            'first' => 'james',
+            'last'  => 'Bond'
+        ),
+        array(
+            'first' => 'hugo',
+            'last'  => 'Drax'
+        )
+    ))
 );
 
 // Create the workflow from the reader
@@ -825,7 +826,7 @@ $data = array(
 $workflow->addValueConverter(new ArrayValueConverterMap(array(
     'name' => array(new CharsetValueConverter('UTF-8', 'UTF-16')), // encode to UTF-8
     'price' => array(new CallbackValueConverter(function ($input) {
-        return str_replace('€', '', $intput); // remove € char
+        return str_replace('€', '', $input); // remove € char
     }),
 )));
 
