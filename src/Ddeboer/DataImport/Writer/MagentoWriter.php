@@ -10,7 +10,6 @@ class MagentoWriter extends AbstractWriter
 {
     /**
      * @var
-     * @author Adam Paterson <hello@adampaterson.co.uk>
      */
     private $model;
 
@@ -19,7 +18,7 @@ class MagentoWriter extends AbstractWriter
      */
     public function __construct(Mage_Core_Model_Abstract $model)
     {
-        $this->model;
+        $this->model = $model;
     }
 
     /**
