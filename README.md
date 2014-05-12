@@ -559,12 +559,44 @@ Value converters are used to convert specific fields (e.g., columns in database)
 
 #### DateTimeValueConverter
 
-Converts a date representation in a format you specify into a `DateTime` object:
+There are two uses for the DateTimeValueConverter:
+
+1. Convert a date representation in a format you specify into a `DateTime` object.
+2. Convert a date representation in a format you specify into a different format.
+
+##### Convert a date into a `DateTime` object.
 
 ```php
 use Ddeboer\DataImport\ValueConverter\DateTimeValueConverter;
 
 $converter = new DateTimeValueConverter('d/m/Y H:i:s');
+$workflow->addValueConverter('my_date_field', $converter);
+```
+
+If your date string is in a format specified at: http://www.php.net/manual/en/datetime.formats.date.php then you can omit the format parameter.
+
+```php
+use Ddeboer\DataImport\ValueConverter\DateTimeValueConverter;
+
+$converter = new DateTimeValueConverter();
+$workflow->addValueConverter('my_date_field', $converter);
+```
+
+##### Convert a date string into a differently formatted date string.
+
+```php
+use Ddeboer\DataImport\ValueConverter\DateTimeValueConverter;
+
+$converter = new DateTimeValueConverter('d/m/Y H:i:s', 'd-M-Y');
+$workflow->addValueConverter('my_date_field', $converter);
+```
+
+If your date is in a format specified at: http://www.php.net/manual/en/datetime.formats.date.php you can pass `null` as the first argument.
+
+```php
+use Ddeboer\DataImport\ValueConverter\DateTimeValueConverter;
+
+$converter = new DateTimeValueConverter(null, 'd-M-Y');
 $workflow->addValueConverter('my_date_field', $converter);
 ```
 
