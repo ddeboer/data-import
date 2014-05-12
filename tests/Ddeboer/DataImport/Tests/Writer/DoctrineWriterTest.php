@@ -3,7 +3,7 @@
 namespace Ddeboer\DataImport\Tests\Writer;
 
 use Ddeboer\DataImport\Writer\DoctrineWriter;
-use Ddeboer\DataImport\Tests\Fixtures\TestEntity;
+use Ddeboer\DataImport\Tests\Fixtures\Entity\TestEntity;
 
 class DoctrineWriterTest extends \PHPUnit_Framework_TestCase
 {
@@ -72,7 +72,7 @@ class DoctrineWriterTest extends \PHPUnit_Framework_TestCase
 
         $metadata->expects($this->any())
             ->method('getName')
-            ->will($this->returnValue('Ddeboer\DataImport\Tests\Fixtures\TestEntity'));
+            ->will($this->returnValue('Ddeboer\DataImport\Tests\Fixtures\Entity\TestEntity'));
 
         $metadata->expects($this->any())
             ->method('getFieldNames')
