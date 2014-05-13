@@ -78,6 +78,13 @@ class Workflow
     protected $afterConversionFilters = array();
 
     /**
+     * Number of filtered items
+     *
+     * @var int
+     */
+    protected  $filteredItems = 0;
+    
+    /**
      * Construct a workflow
      *
      * @param ReaderInterface $reader
@@ -221,6 +228,7 @@ class Workflow
             try {
                 // Apply filters before conversion
                 if (!$this->filterItem($item, $this->filters)) {
+                    $this->filteredItems++;
                     continue;
                 }
 
@@ -231,6 +239,7 @@ class Workflow
 
                 // Apply filters after conversion
                 if (!$this->filterItem($convertedItem, $this->afterConversionFilters)) {
+                    $this->filteredItems++;
                     continue;
                 }
 
@@ -354,5 +363,13 @@ class Workflow
         $this->skipItemOnFailure = $skipItemOnFailure;
 
         return $this;
+    }
+    
+     /**
+     * @return int
+     */
+    public function getFilteredItems()
+    {
+        return $this->filteredItems;
     }
 }
