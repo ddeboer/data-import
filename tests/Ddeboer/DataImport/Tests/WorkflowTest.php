@@ -9,6 +9,7 @@ use Ddeboer\DataImport\Filter\CallbackFilter;
 use Ddeboer\DataImport\ValueConverter\CallbackValueConverter;
 use Ddeboer\DataImport\ItemConverter\CallbackItemConverter;
 use Ddeboer\DataImport\Writer\CallbackWriter;
+use Ddeboer\DataImport\Exception\SourceNotFoundException;
 
 class WorkflowTest extends \PHPUnit_Framework_TestCase
 {
@@ -257,6 +258,33 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
         //there are two rows in reader, so every filter should be called twice
         $this->assertEquals(2, $filterCalledIncrementor);
         $this->assertEquals(2, $afterConversionFilterCalledIncrementor);
+    }
+
+    public function testExceptionInterfaceThrownFromWriterIsCaught()
+    {
+        $originalData = array(array('foo' => 'bar'));
+        $reader = new ArrayReader($originalData);
+
+        $array = array();
+        $writer = $this->getMock('Ddeboer\DataImport\Writer\ArrayWriter', array(), array(&$array));
+
+        $exception = new SourceNotFoundException("Log me!");
+
+        $writer->expects($this->once())
+            ->method('writeItem')
+            ->with($originalData[0])
+            ->will($this->throwException($exception));
+
+        $logger = $this->getMock('Psr\Log\LoggerInterface');
+        $logger->expects($this->once())
+            ->method('error')
+            ->with($exception->getMessage());
+
+
+        $workflow = new Workflow($reader, $logger);
+        $workflow->setSkipItemOnFailure(true);
+        $workflow->addWriter($writer);
+        $workflow->process();
     }
 
     protected function getWorkflow()
