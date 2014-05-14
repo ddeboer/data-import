@@ -6,7 +6,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 use Ddeboer\DataImport\Exception\UnexpectedTypeException;
-use Ddeboer\DataImport\Exception\Exception;
+use Ddeboer\DataImport\Exception\ExceptionInterface;
 use Ddeboer\DataImport\ItemConverter\MappingItemConverter;
 use Ddeboer\DataImport\Reader\ReaderInterface;
 use Ddeboer\DataImport\Writer\WriterInterface;
