@@ -3,8 +3,9 @@
 namespace Ddeboer\DataImport\ValueConverter;
 
 /**
- * Convert an input value to a PHP \DateTime object
- *
+ * Convert an date string into another date string
+ * Eg. You want to change the format of a string OR
+ * If no output specified, return DateTime instance
  */
 class DateTimeValueConverter implements ValueConverterInterface
 {
@@ -14,24 +15,37 @@ class DateTimeValueConverter implements ValueConverterInterface
      * @var string
      * @see http://php.net/manual/en/datetime.createfromformat.php
      */
-    protected $format;
+    protected $inputFormat;
 
     /**
-     * Construct a DateTime converter
+     * Date time format
      *
-     * @param string $format Optional
+     * @var string
+     * @see http://php.net/manual/en/datetime.createfromformat.php
      */
-    public function __construct($format = null)
+    protected $outputFormat;
+
+    /**
+     * @param string $inputFormat
+     * @param string $outputFormat
+     */
+    public function __construct($inputFormat = null, $outputFormat = null)
     {
-        $this->format = $format;
+        $this->inputFormat  = $inputFormat;
+        $this->outputFormat = $outputFormat;
     }
 
     /**
      * Convert string to date time object
+     * + then convert back to a string
+     * using specified format
      *
-     * @param string $input
+     * If no output format specified then return
+     * the \DateTime instance
      *
-     * @return \DateTime
+     * @param mixed $input
+     * @return \DateTime|string
+     * @throws UnexpectedValueException
      */
     public function convert($input)
     {
@@ -39,16 +53,22 @@ class DateTimeValueConverter implements ValueConverterInterface
             return;
         }
 
-        if ($this->format) {
-            $date = \DateTime::createFromFormat($this->format, $input);
+        if ($this->inputFormat) {
+            $date = \DateTime::createFromFormat($this->inputFormat, $input);
             if (false === $date) {
                 throw new \UnexpectedValueException(
-                    $input . ' is not a valid date/time according to format ' . $this->format);
+                    $input . ' is not a valid date/time according to format ' . $this->inputFormat
+                );
             }
-
-            return $date;
+        } else {
+            $date = new \DateTime($input);
         }
 
-        return new \DateTime($input);
+        if ($this->outputFormat) {
+            return $date->format($this->outputFormat);
+        }
+
+        //if no output format specified we just return the \DateTime instance
+        return $date;
     }
 }
