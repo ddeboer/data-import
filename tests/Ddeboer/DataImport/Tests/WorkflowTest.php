@@ -2,6 +2,7 @@
 
 namespace Ddeboer\DataImport\Tests;
 
+use Ddeboer\DataImport\Exception\WriterException;
 use Ddeboer\DataImport\Reader\ArrayReader;
 use Ddeboer\DataImport\Writer\ArrayWriter;
 use Ddeboer\DataImport\Workflow;
@@ -296,6 +297,61 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
         $valueConverter->expects($this->exactly(3))->method('convert');
         $workflow->addValueConverter('first', $valueConverter);
         $workflow->process();
+    }
+
+    public function testWorkflowThrowsExceptionIfNameNotString()
+    {
+        $reader = $this->getMock('Ddeboer\DataImport\Reader\ReaderInterface');
+        $this->setExpectedException("InvalidArgumentException", "Name identifier should be a string. Given: 'stdClass'");
+        $workflow = new Workflow($reader, null, new \stdClass);
+    }
+
+    public function testWorkflowResultWhenAllSuccessful()
+    {
+        $workflow   = $this->getWorkflow();
+        $result     = $workflow->process();
+
+        $this->assertInstanceOf('Ddeboer\DataImport\Result', $result);
+        $this->assertInstanceOf('DateTime', $result->getStartTime());
+        $this->assertInstanceOf('DateTime', $result->getEndTime());
+        $this->assertInstanceOf('DateInterval', $result->getElapsed());
+        $this->assertInstanceOf('Ddeboer\DataImport\Result', $result);
+        $this->assertSame(3, $result->getTotalProcessedCount());
+        $this->assertSame(3, $result->getSuccessCount());
+        $this->assertSame(0, $result->getErrorCount());
+        $this->assertFalse($result->hasErrors());
+        $this->assertSame(array(), $result->getExceptions());
+        $this->assertSame(null, $result->getName());
+    }
+
+    public function testWorkflowResultWithExceptionThrowFromWriter()
+    {
+        $workflow   = $this->getWorkflow();
+        $workflow->setSkipItemOnFailure(true);
+        $writer     = $this->getMock('Ddeboer\DataImport\Writer\WriterInterface');
+
+        $e = new WriterException();
+
+        $writer
+            ->expects($this->at(1))
+            ->method('writeItem')
+            ->with(array('first' => 'James', 'last'  => 'Bond'))
+            ->will($this->throwException($e));
+
+        $workflow->addWriter($writer);
+        $result = $workflow->process();
+
+        $this->assertInstanceOf('Ddeboer\DataImport\Result', $result);
+        $this->assertInstanceOf('DateTime', $result->getStartTime());
+        $this->assertInstanceOf('DateTime', $result->getEndTime());
+        $this->assertInstanceOf('DateInterval', $result->getElapsed());
+        $this->assertInstanceOf('Ddeboer\DataImport\Result', $result);
+        $this->assertSame(3, $result->getTotalProcessedCount());
+        $this->assertSame(2, $result->getSuccessCount());
+        $this->assertSame(1, $result->getErrorCount());
+        $this->assertTrue($result->hasErrors());
+        $this->assertSame(array($e), $result->getExceptions());
+        $this->assertSame(null, $result->getName());
     }
 
     protected function getWorkflow()

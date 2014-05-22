@@ -25,6 +25,7 @@ Documentation
 * [Installation](#installation)
 * [Usage](#usage)
   * [The workflow](#the-workflow)
+  * [The workflow result](#the-workflow-result)
   * [Readers](#readers)
     - [ArrayReader](#arrayreader)
     - [CsvReader](#csvreader)
@@ -103,7 +104,8 @@ Each data import revolves around the workflow and takes place along the followin
 3. Optionally, add [filters](#filters), item converters and
    [value converters](#value-converters) to the workflow.
 4. Process the workflow. This will read the data from the reader, filter and
-   convert the data, and write the output to each of the writers.
+   convert the data, and write the output to each of the writers. The process method also
+   returns a `Result` object which contains various information about the import.
 
 In other words, the workflow acts as a [mediator](#http://en.wikipedia.org/wiki/Mediator_pattern)
 between a reader and one or more writers, filters and converters.
@@ -121,7 +123,7 @@ use Ddeboer\DataImport\Filter;
 
 $reader = new Reader\...;
 $workflow = new Workflow($reader, $logger);
-$workflow
+$result = $workflow
     ->addWriter(new Writer\...())
     ->addWriter(new Writer\...())
     ->addFilter(new Filter\CallbackFilter(...))
@@ -129,6 +131,51 @@ $workflow
     ->process()
 ;
 ```
+### The workflow Result
+
+The Workflow Result object exposes various methods which you can use to decide what to do after an import.
+The result will be an instance of `Ddeboer\DataImport\Result`. It is automatically created and populated by the
+`Workflow`. It will be returned to you after calling the `process()` method on the `Workflow`
+
+The `Result` provides the following methods:
+
+```php
+//the name of the import - which is an optional 3rd parameter to
+//the Workflow class. Returns null by default.
+public function getName();
+
+//DateTime instance created at the start of the import.
+public function getStartTime();
+
+//DateTime instance created at the end of the import.
+public function getEndTime();
+
+//DateInterval instance. Diff off the start + end times.
+public function getElapsed();
+
+//Count of exceptions which caught by the Workflow.
+public function getErrorCount();
+
+//Count of processed items minus the count of exceptions caught.
+public function getSuccessCount();
+
+//Count of items processed
+//This will not include any filtered items or items which fail conversion.
+public function getTotalProcessedCount();
+
+//bool to indicate whether any exceptions were caught.
+public function hasErrors();
+
+//An array of exceptions caught by the Workflow.
+public function getExceptions();
+
+```
+
+Example use cases:
+ * You want to send an e-mail with the results of the import
+ * You want to send a Text alert if a particular file failed
+ * You want to move an import file to a failed directory if there were errors
+ * You want to log how long imports are taking
 
 ### Readers
 
