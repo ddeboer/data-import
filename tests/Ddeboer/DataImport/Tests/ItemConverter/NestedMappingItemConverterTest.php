@@ -26,7 +26,7 @@ class NestedMappingItemConverterTest extends \PHPUnit_Framework_TestCase
             )
         );
 
-        $converter = new NestedMappingItemConverter($mappings, 'baz');
+        $converter = new NestedMappingItemConverter('baz', $mappings);
         $output = $converter->convert($input);
 
         $expected = array(
