@@ -4,8 +4,9 @@ namespace Ddeboer\DataImport\ItemConverter;
 use Ddeboer\DataImport\ItemConverter\MappingItemConverter;
 
 /**
- * Class NestedMappingItemConverter
- * @package Ddeboer\DataImport\ItemConverter
+ * An item converter that takes an input containing nested arrays from a reader, and returns a modified item based on
+ * mapped keys.
+ *
  * @author Adam Paterson <hello@adampaterson.co.uk>
  */
 class NestedMappingItemConverter extends MappingItemConverter
@@ -13,16 +14,16 @@ class NestedMappingItemConverter extends MappingItemConverter
     /**
      * @var string
      */
-    protected $nestedKey;
+    protected $nestKey;
 
     /**
      * @param array $mappings
-     * @param $nestedKey
+     * @param string $nestKey
      */
-    public function __construct(array $mappings, $nestedKey)
+    public function __construct($nestKey, array $mappings = array())
     {
         parent::__construct($mappings);
-        $this->nestedKey = $nestedKey;
+        $this->nestKey = $nestKey;
     }
 
     /**
@@ -40,11 +41,11 @@ class NestedMappingItemConverter extends MappingItemConverter
         }
 
         foreach ($to as $nestedFrom => $nestedTo) {
-            if (!array_key_exists($this->nestedKey, $item)) {
+            if (!array_key_exists($this->nestKey, $item)) {
                 return $item;
             }
 
-            foreach ($item[$this->nestedKey] as $nestedItem) {
+            foreach ($item[$this->nestKey] as $nestedItem) {
                 $this->applyMapping($nestedItem, $from, $to);
             }
         }
