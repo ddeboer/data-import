@@ -1,8 +1,8 @@
 Ddeboer Data Import library
 ===========================
-[![Build Status](https://travis-ci.org/ddeboer/data-import.png?branch=master)](https://travis-ci.org/ddeboer/data-import) 
-[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/ddeboer/data-import/badges/quality-score.png?s=41129c80140adc6931288c9df15fb87ec6ea6f8a)](https://scrutinizer-ci.com/g/ddeboer/data-import/) 
-[![Code Coverage](https://scrutinizer-ci.com/g/ddeboer/data-import/badges/coverage.png?s=724267091a6d02f83b6c435a431e71d467b361f8)](https://scrutinizer-ci.com/g/ddeboer/data-import/) 
+[![Build Status](https://travis-ci.org/ddeboer/data-import.png?branch=master)](https://travis-ci.org/ddeboer/data-import)
+[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/ddeboer/data-import/badges/quality-score.png?s=41129c80140adc6931288c9df15fb87ec6ea6f8a)](https://scrutinizer-ci.com/g/ddeboer/data-import/)
+[![Code Coverage](https://scrutinizer-ci.com/g/ddeboer/data-import/badges/coverage.png?s=724267091a6d02f83b6c435a431e71d467b361f8)](https://scrutinizer-ci.com/g/ddeboer/data-import/)
 [![Latest Stable Version](https://poser.pugx.org/ddeboer/data-import/v/stable.png)](https://packagist.org/packages/ddeboer/data-import)
 
 Introduction
@@ -36,6 +36,7 @@ Documentation
     - [ArrayWriter](#arraywriter)
     - [CsvWriter](#csvwriter)
     - [DoctrineWriter](#doctrinewriter)
+    - [PdoWriter](#pdowriter)
     - [ExcelWriter](#excelwriter)
     - [ConsoleProgressWriter](#consoleprogresswriter)
     - [CallbackWriter](#callbackwriter)
@@ -59,7 +60,7 @@ Documentation
     - [Import CSV file and write to database](#import-csv-file-and-write-to-database)
     - [Export to CSV file](#export-to-csv-file)
 * [Running the tests](#running-the-tests)
-* [License](#license) 
+* [License](#license)
 
 Installation
 ------------
@@ -316,6 +317,20 @@ $writer
     ->finish();
 ```
 
+#### PdoWriter
+
+Use the PDO writer for importing data into a relational database (such as
+MySQL, SQLite or MS SQL) without using Doctrine.
+
+```php
+use Ddeboer\DataImport\Writer\PdoWriter;
+
+$pdo = new \PDO('sqlite::memory:');
+$pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+
+$writer = new PdoWriter($pdo, 'my_table');
+```
+
 #### ExcelWriter
 
 Writes data to an Excel file. It requires the PHPExcel package:
@@ -359,7 +374,7 @@ $writer = new ExcelWriter($file, 'Old sheet');
 
 #### ConsoleProgressWriter
 
-This writer displays import progress when you start the workflow from the 
+This writer displays import progress when you start the workflow from the
 command-line. It requires Symfony’s Console component:
 
 ```bash
@@ -397,12 +412,12 @@ Build your own writer by implementing the
 
 ### Filters
 
-A filter decides whether data input is accepted into the import process. 
+A filter decides whether data input is accepted into the import process.
 
 #### CallbackFilter
 
 The CallbackFilter wraps your callback function that determines whether
-data should be accepted. The data input is accepted only if the function 
+data should be accepted. The data input is accepted only if the function
 returns `true`.
 
 ```php
@@ -526,7 +541,7 @@ Implement `ItemConverterInterface` to create your own item converter:
 ```php
 use Ddeboer\DataImport\ItemConverter\ItemConverterInterface;
 
-class MyItemConverter implements ItemConverterInterface 
+class MyItemConverter implements ItemConverterInterface
 {
     public function convert($item)
     {
@@ -548,7 +563,7 @@ $converter = new CallbackItemConverter(function ($item) use ($translator) {
     foreach ($item as $key => $value) {
         $item[$key] = $translator->translate($value);
     }
-  
+
     return $row;
 });
 ```
