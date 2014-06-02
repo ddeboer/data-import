@@ -305,7 +305,10 @@ class Workflow
         }
 
         foreach ($this->valueConverters as $property => $converters) {
-            if (isset($item[$property])) {
+            // isset() returns false when value is null, so we need
+            // array_key_exists() too. Combine both to have best performance,
+            // as isset() is much faster.
+            if (isset($item[$property]) || array_key_exists($property, $item)) {
                 foreach ($converters as $converter) {
                     $item[$property] = $converter->convert($item[$property]);
                 }

@@ -189,7 +189,7 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->setMethods(array('filter'))
             ->getMock();
-        $validatorFilter->expects($this->exactly(2))
+        $validatorFilter->expects($this->exactly(3))
             ->method('filter')
             ->will($this->returnValue(false));
 
@@ -205,7 +205,7 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->setMethods(array('filter'))
             ->getMock();
-        $offsetFilter->expects($this->exactly(2))
+        $offsetFilter->expects($this->exactly(3))
             ->method('filter')
             ->will($this->returnValue(false));
 
@@ -255,9 +255,9 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
 
         $workflow->process();
 
-        //there are two rows in reader, so every filter should be called twice
-        $this->assertEquals(2, $filterCalledIncrementor);
-        $this->assertEquals(2, $afterConversionFilterCalledIncrementor);
+        //there are two rows in reader, so every filter should be called thrice
+        $this->assertEquals(3, $filterCalledIncrementor);
+        $this->assertEquals(3, $afterConversionFilterCalledIncrementor);
     }
 
     public function testExceptionInterfaceThrownFromWriterIsCaught()
@@ -287,6 +287,17 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
         $workflow->process();
     }
 
+    public function testNullValueIsConverted()
+    {
+        $workflow = $this->getWorkflow();
+        $valueConverter = $this->getMockBuilder('Ddeboer\DataImport\ValueConverter\ValueConverterInterface')
+            ->getMock()
+        ;
+        $valueConverter->expects($this->exactly(3))->method('convert');
+        $workflow->addValueConverter('first', $valueConverter);
+        $workflow->process();
+    }
+
     protected function getWorkflow()
     {
         $reader = new ArrayReader(array(
@@ -297,6 +308,10 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
             array(
                 'first' => 'Miss',
                 'last'  => 'Moneypenny'
+            ),
+            array(
+                'first' => null,
+                'last'  => 'Doe'
             )
         ));
 
