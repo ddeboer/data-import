@@ -31,6 +31,7 @@ Documentation
     - [DbalReader](#dbalreader)
     - [DoctrineReader](#doctrinereader)
     - [ExcelReader](#excelreader)
+    - [One To Many Reader](#onetomanyreader)
     - [Create a reader](#create-a-reader)
   * [Writers](#writers)
     - [ArrayWriter](#arraywriter)
@@ -265,6 +266,82 @@ use Ddeboer\DataImport\Reader\ExcelReader;
 
 $file = new \SplFileObject('path/to/ecxel_file.xls');
 $reader = new ExcelReader($file);
+```
+
+###OneToManyReader
+
+Allows for merging of two data sources (using existing readers), for example you have one CSV with orders and another with order items. 
+
+Imagine two CSV's like the following:
+
+```
+OrderId,Price
+1,30
+2,15
+```
+
+```
+OrderId,Name
+1,"Super Cool Item 1"
+1,"Super Cool Item 2"
+2,"Super Cool Item 3"
+```
+
+You want to associate the items to the order. Using the OneToMany reader we can nest these rows in the order using a key
+which you specify in the OneToManyReader.  
+
+The code would look something like:
+
+```php
+$orderFile = new \SplFileObject("orders.csv");
+$orderReader = new CsvReader($file, $orderFile);
+$orderReader->setHeaderRowNumber(0);
+
+$orderItemFile = new \SplFileObject("order_items.csv");
+$orderItemReader = new CsvReader($file, $orderFile);
+$orderItemReader->setHeaderRowNumber(0);
+
+$oneToManyReader = new OneToManyReader($orderReader, $orderItemReader, 'items', 'OrderId', 'OrderId');
+```
+
+The third parameter is the key which the order item data will be nested under. This will be an array of order items. 
+The fourth and fifth parameters are "primary" and "foreign" keys of the data. The OneToMany reader will try to match the data using these keys.
+Take for example the CSV's given above, you would expect that Order "1" has the first 2 Order Items associated to it due to their Order Id's also 
+being "1".
+
+Note: You can omit the last parameter, if both files have the same field. Eg if parameter 4 is 'OrderId' and you don't specify
+paramater 5, the reader will look for the foreign key using 'OrderId'
+
+The resulting data will look like:
+
+```php
+//Row 1
+array(
+	'OrderId' => 1,
+	'Price' => 30,
+	'items' => array(
+		array(
+			'OrderId' => 1,
+			'Name' => 'Super Cool Item 1',
+		),
+		array(
+			'OrderId' => 1,
+			'Name' => 'Super Cool Item 2',
+		),
+	),
+);
+
+//Row2
+array(
+	'OrderId' => 2,
+	'Price' => 15,
+	'items' => array(
+		array(
+			'OrderId' => 2,
+			'Name' => 'Super Cool Item 1',
+		),
+	)
+);
 ```
 
 #### Create a reader
