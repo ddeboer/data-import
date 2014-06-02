@@ -21,8 +21,18 @@ class ConsoleProgressWriterTest extends \PHPUnit_Framework_TestCase
         );
         $reader = new ArrayReader($data);
 
-        $output = $this->getMockBuilder('\Symfony\Component\Console\Output\ConsoleOutput')
+        $output = $this->getMockBuilder('Symfony\Component\Console\Output\OutputInterface')
             ->getMock();
+
+        $outputFormatter = $this->getMock('Symfony\Component\Console\Formatter\OutputFormatterInterface');
+        $output->expects($this->once())
+            ->method('isDecorated')
+            ->will($this->returnValue(true));
+
+        $output->expects($this->atLeastOnce())
+            ->method('getFormatter')
+            ->will($this->returnValue($outputFormatter));
+
         $output->expects($this->atLeastOnce())
             ->method('write');
         $writer = new ConsoleProgressWriter($output, $reader);
@@ -30,5 +40,7 @@ class ConsoleProgressWriterTest extends \PHPUnit_Framework_TestCase
         $workflow = new Workflow($reader);
         $workflow->addWriter($writer)
             ->process();
+
+        $this->assertEquals('debug', $writer->getVerbosity());
     }
 }
