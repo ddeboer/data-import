@@ -1,6 +1,6 @@
 Ddeboer Data Import library
 ===========================
-[![Build Status](https://travis-ci.org/ddeboer/data-import.png?branch=master)](https://travis-ci.org/ddeboer/data-import)
+[![Build Status](https://travis-ci.org/ddeboer/data-import.svg?branch=master)](https://travis-ci.org/ddeboer/data-import)
 [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/ddeboer/data-import/badges/quality-score.png?s=41129c80140adc6931288c9df15fb87ec6ea6f8a)](https://scrutinizer-ci.com/g/ddeboer/data-import/)
 [![Code Coverage](https://scrutinizer-ci.com/g/ddeboer/data-import/badges/coverage.png?s=724267091a6d02f83b6c435a431e71d467b361f8)](https://scrutinizer-ci.com/g/ddeboer/data-import/)
 [![Latest Stable Version](https://poser.pugx.org/ddeboer/data-import/v/stable.png)](https://packagist.org/packages/ddeboer/data-import)
