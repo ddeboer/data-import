@@ -80,7 +80,7 @@ class CsvReader implements ReaderInterface, \SeekableIterator
      * @param string         $enclosure Enclosure
      * @param string         $escape    Escape characters
      */
-    public function __construct(\SplFileObject $file, $delimiter = ';', $enclosure = '"', $escape = '\\')
+    public function __construct(\SplFileObject $file, $delimiter = ',', $enclosure = '"', $escape = '\\')
     {
         ini_set('auto_detect_line_endings', true);
 

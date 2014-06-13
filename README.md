@@ -152,7 +152,18 @@ use Ddeboer\DataImport\Reader\CsvReader;
 
 $file = new \SplFileObject('/path/to/csv_file.csv');
 $reader = new CsvReader($file);
+```
 
+Optionally construct with different delimiter, enclosure and/or escape
+character:
+
+```php
+$reader = new CsvReader($file, ';');
+```
+
+Then iterate over the CSV file:
+
+```php
 foreach ($reader as $row) {
     // $row will be an array containing the comma-separated elements of the line:
     // array(
