@@ -2,8 +2,8 @@
 
 namespace Ddeboer\DataImport\Writer;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 
 /**
  * A bulk Doctrine writer
@@ -16,30 +16,30 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 class DoctrineWriter extends AbstractWriter
 {
     /**
-     * Doctrine entity manager
+     * Doctrine object manager
      *
-     * @var EntityManager
+     * @var ObjectManager
      */
-    protected $entityManager;
+    protected $objectManager;
 
     /**
-     * Fully qualified entity name
+     * Fully qualified model name
      *
      * @var string
      */
-    protected $entityName;
+    protected $objectName;
 
     /**
-     * Doctrine entity repository
+     * Doctrine object repository
      *
-     * @var EntityRepository
+     * @var ObjectRepository
      */
-    protected $entityRepository;
+    protected $objectRepository;
 
     /**
      * @var ClassMetadata
      */
-    protected $entityMetadata;
+    protected $objectMetadata;
 
     /**
      * Number of entities to be persisted per flush
@@ -70,18 +70,25 @@ class DoctrineWriter extends AbstractWriter
     protected $truncate = true;
 
     /**
+     * Index field name.
+     *
+     * @var null|string
+     */
+    protected $index;
+
+    /**
      * Constructor
      *
-     * @param EntityManager $entityManager
-     * @param string        $entityName
+     * @param ObjectManager $objectManager
+     * @param string        $objectName
      * @param string        $index         Index to find current entities by
      */
-    public function __construct(EntityManager $entityManager, $entityName, $index = null)
+    public function __construct(ObjectManager $objectManager, $objectName, $index = null)
     {
-        $this->entityManager = $entityManager;
-        $this->entityName = $entityName;
-        $this->entityRepository = $entityManager->getRepository($entityName);
-        $this->entityMetadata = $entityManager->getClassMetadata($entityName);
+        $this->objectManager = $objectManager;
+        $this->objectName = $objectName;
+        $this->objectRepository = $objectManager->getRepository($objectName);
+        $this->objectMetadata = $objectManager->getClassMetadata($objectName);
         $this->index = $index;
     }
 
@@ -138,7 +145,7 @@ class DoctrineWriter extends AbstractWriter
         return $this;
     }
 
-    protected function getNewInstance($className, array $item)
+    protected function getNewInstance($className)
     {
         if (class_exists($className) === false) {
             throw new \Exception('Unable to create new instance of ' . $className);
@@ -147,10 +154,10 @@ class DoctrineWriter extends AbstractWriter
         return new $className;
     }
 
-    protected function setValue($entity, $value, $setter)
+    protected function setValue($object, $value, $setter)
     {
-        if (method_exists($entity, $setter)) {
-            $entity->$setter($value);
+        if (method_exists($object, $setter)) {
+            $object->$setter($value);
         }
     }
 
@@ -161,8 +168,8 @@ class DoctrineWriter extends AbstractWriter
      */
     public function finish()
     {
-        $this->entityManager->flush();
-        $this->entityManager->clear();
+        $this->objectManager->flush();
+        $this->objectManager->clear();
         $this->reEnableLogging();
 
         return $this;
@@ -174,26 +181,27 @@ class DoctrineWriter extends AbstractWriter
     public function writeItem(array $item)
     {
         $this->counter++;
-        $entity = null;
+        $object = null;
 
         // If the table was not truncated to begin with, find current entities
         // first
         if (false === $this->truncate) {
             if ($this->index) {
-                $entity = $this->entityRepository->findOneBy(
+                $object = $this->objectRepository->findOneBy(
                     array($this->index => $item[$this->index])
                 );
             } else {
-                $entity = $this->entityRepository->find(current($item));
+                //TODO: it's better to set index field explicitly.
+                $object = $this->objectRepository->find(current($item));
             }
         }
 
-        if (!$entity) {
-            $className = $this->entityMetadata->getName();
-            $entity = $this->getNewInstance($className, $item);
+        if (!$object) {
+            $className = $this->objectMetadata->getName();
+            $object = $this->getNewInstance($className);
         }
 
-        $fieldNames = array_merge($this->entityMetadata->getFieldNames(), $this->entityMetadata->getAssociationNames());
+        $fieldNames = array_merge($this->objectMetadata->getFieldNames(), $this->objectMetadata->getAssociationNames());
         foreach ($fieldNames as $fieldName) {
 
             $value = null;
@@ -208,18 +216,18 @@ class DoctrineWriter extends AbstractWriter
             }
 
             if (!($value instanceof \DateTime)
-                || $value != $this->entityMetadata->getFieldValue($entity, $fieldName)
+                || $value != $this->objectMetadata->getFieldValue($object, $fieldName)
             ) {
                 $setter = 'set' . ucfirst($fieldName);
-                $this->setValue($entity, $value, $setter);
+                $this->setValue($object, $value, $setter);
             }
         }
 
-        $this->entityManager->persist($entity);
+        $this->objectManager->persist($object);
 
         if (($this->counter % $this->batchSize) == 0) {
-            $this->entityManager->flush();
-            $this->entityManager->clear();
+            $this->objectManager->flush();
+            $this->objectManager->clear();
         }
 
         return $this;
@@ -231,10 +239,16 @@ class DoctrineWriter extends AbstractWriter
      */
     protected function truncateTable()
     {
-        $tableName = $this->entityMetadata->table['name'];
-        $connection = $this->entityManager->getConnection();
-        $query = $connection->getDatabasePlatform()->getTruncateTableSQL($tableName);
-        $connection->executeQuery($query);
+        if ($this->objectManager instanceof \Doctrine\ORM\EntityManager) {
+            $tableName = $this->objectMetadata->table['name'];
+            $connection = $this->objectManager->getConnection();
+            $query = $connection->getDatabasePlatform()->getTruncateTableSQL($tableName);
+            $connection->executeQuery($query);
+        } elseif ($this->objectManager instanceof \Doctrine\ODM\MongoDB\DocumentManager) {
+            $this->objectManager->getDocumentCollection($this->objectName)->remove([]);
+        } else {
+            throw new UnsupportedDatabaseTypeException();
+        }
     }
 
     /**
@@ -242,7 +256,10 @@ class DoctrineWriter extends AbstractWriter
      */
     protected function disableLogging()
     {
-        $config = $this->entityManager->getConnection()->getConfiguration();
+        //TODO: add support for MongoDB logging
+        if (!($this->objectManager instanceof \Doctrine\ORM\EntityManager)) return;
+
+        $config = $this->objectManager->getConnection()->getConfiguration();
         $this->originalLogger = $config->getSQLLogger();
         $config->setSQLLogger(null);
     }
@@ -252,7 +269,10 @@ class DoctrineWriter extends AbstractWriter
      */
     protected function reEnableLogging()
     {
-        $config = $this->entityManager->getConnection()->getConfiguration();
+        //TODO: add support for MongoDB logging
+        if (!($this->objectManager instanceof \Doctrine\ORM\EntityManager)) return;
+
+        $config = $this->objectManager->getConnection()->getConfiguration();
         $config->setSQLLogger($this->originalLogger);
     }
 }
