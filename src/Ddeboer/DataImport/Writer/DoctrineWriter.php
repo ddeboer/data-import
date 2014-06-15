@@ -245,7 +245,7 @@ class DoctrineWriter extends AbstractWriter
             $query = $connection->getDatabasePlatform()->getTruncateTableSQL($tableName);
             $connection->executeQuery($query);
         } elseif ($this->objectManager instanceof \Doctrine\ODM\MongoDB\DocumentManager) {
-            $this->objectManager->getDocumentCollection($this->objectName)->remove([]);
+            $this->objectManager->getDocumentCollection($this->objectName)->remove(array());
         } else {
             throw new UnsupportedDatabaseTypeException();
         }
