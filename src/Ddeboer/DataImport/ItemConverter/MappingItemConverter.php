@@ -76,7 +76,7 @@ class MappingItemConverter implements ItemConverterInterface
     protected function applyMapping(array $item, $from, $to)
     {
         // skip fields that dont exist
-        if (!isset($item[$from])) {
+        if (!isset($item[$from]) && !array_key_exists($from, $item)) {
             return $item;
         }
 
