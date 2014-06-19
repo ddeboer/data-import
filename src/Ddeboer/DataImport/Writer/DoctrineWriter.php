@@ -247,7 +247,11 @@ class DoctrineWriter extends AbstractWriter
         } elseif ($this->objectManager instanceof \Doctrine\ODM\MongoDB\DocumentManager) {
             $this->objectManager->getDocumentCollection($this->objectName)->remove(array());
         } else {
-            throw new UnsupportedDatabaseTypeException();
+            $message = sprintf(
+                'Unknown Object Manager type. Expected \Doctrine\ORM\EntityManager or \Doctrine\ODM\MongoDB\DocumentManager, %s given',
+                get_class($this->objectManager)
+            );
+            throw new UnsupportedDatabaseTypeException($message);
         }
     }
 
