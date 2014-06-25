@@ -10,6 +10,7 @@ class CsvWriter extends AbstractWriter
 {
     private $delimiter = ';';
     private $enclosure = '"';
+    private $headers = array();
 
     /**
      * Constructor
@@ -42,5 +43,28 @@ class CsvWriter extends AbstractWriter
     public function finish()
     {
         fclose($this->fp);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function prepare()
+    {
+        foreach ($this->headers as $header) {
+            $this->writeItem($header);
+        }
+    }
+
+    /**
+     * Add header line in the first lines of the csv
+     *
+     * @param array $header
+     *
+     * @return \Ddeboer\DataImport\Writer\CsvWriter
+     */
+    public function addHeader($header)
+    {
+        $this->headers[] = $header;
+        return $this;
     }
 }
