@@ -33,4 +33,14 @@ class CsvWriterTest extends \PHPUnit_Framework_TestCase
 
         $writer->finish();
     }
+
+    public function testFluentInterface()
+    {
+        $outputFile = new \SplFileObject(tempnam('/tmp', null));
+        $writer = new CsvWriter($outputFile);
+
+        $this->assertSame($writer, $writer->prepare());
+        $this->assertSame($writer, $writer->writeItem(array('foo' => 'bar', 'bar' => 'foo')));
+        $this->assertSame($writer, $writer->finish());
+    }
 }

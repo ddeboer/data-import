@@ -42,5 +42,7 @@ class CsvWriter extends AbstractWriter
     public function finish()
     {
         fclose($this->fp);
+
+        return $this;
     }
 }
