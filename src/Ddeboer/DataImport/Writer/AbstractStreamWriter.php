@@ -2,6 +2,11 @@
 
 namespace Ddeboer\DataImport\Writer;
 
+/**
+ * Base class to write into streams
+ *
+ * @author Benoît Burnichon <bburnichon@gmail.com>
+ */
 abstract class AbstractStreamWriter implements WriterInterface
 {
     private $stream;

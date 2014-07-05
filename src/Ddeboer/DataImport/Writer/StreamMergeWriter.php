@@ -2,6 +2,11 @@
 
 namespace Ddeboer\DataImport\Writer;
 
+/**
+ * Class allowing multiple writers to write in same stream
+ *
+ * @author Benoît Burnichon <bburnichon@gmail.com>
+ */
 class StreamMergeWriter extends AbstractStreamWriter
 {
     /** @var string */
