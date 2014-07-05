@@ -55,6 +55,13 @@ class AbstractStreamWriterTest extends StreamWriterTest
         $this->assertTrue($this->writer->closeStreamOnFinish());
     }
 
+    public function testCloseOnFinishIsFalseForAutoOpenedStreams()
+    {
+        $this->writer->closeStreamOnFinish(true);
+        $this->writer->getStream();
+        $this->assertFalse($this->writer->closeStreamOnFinish());
+    }
+
     public function testFinishCloseStreamAccordingToCloseOnFinishState()
     {
         $stream = $this->getStream();

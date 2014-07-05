@@ -52,6 +52,7 @@ abstract class AbstractStreamWriter implements WriterInterface
     {
         if (null === $this->stream) {
             $this->setStream(fopen('php://temp', 'r+'));
+            $this->closeStreamOnFinish(false);
         }
 
         return $this->stream;
