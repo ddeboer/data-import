@@ -12,7 +12,6 @@ class DbalReader implements ReaderInterface
     /** @var Connection */
     private $connection;
 
-    /** @var array */
     private $data;
 
     /** @var Statement */
@@ -48,6 +47,7 @@ class DbalReader implements ReaderInterface
      * Do calculate row count?
      *
      * @param null|bool $calculate
+     *
      * @return bool
      */
     public function calculateRowCount($calculate = null)
@@ -70,14 +70,16 @@ class DbalReader implements ReaderInterface
         if (false === $this->data) {
             return array();
         }
-        return array_keys($this->data);
+
+        return array_keys((array) $this->data);
     }
 
     /**
      * Set Query string with Parameters
      *
      * @param string $sql
-     * @param array $params
+     * @param array  $params
+     *
      * @return $this
      */
     public function setSql($sql, array $params = array())
@@ -101,6 +103,7 @@ class DbalReader implements ReaderInterface
         if (null === $this->data) {
             $this->rewind();
         }
+
         return $this->data;
     }
 
@@ -172,14 +175,15 @@ class DbalReader implements ReaderInterface
         $statement = $this->prepare('SELECT COUNT(*) FROM ('.$this->sql.')', $this->params);
         $statement->execute();
 
-        $this->rowCount = $statement->fetchColumn(0);
+        $this->rowCount = (int) $statement->fetchColumn(0);
     }
 
     /**
      * Prepare given statement
      *
      * @param string $sql
-     * @param array $params
+     * @param array  $params
+     *
      * @return Statement
      */
     private function prepare($sql, array $params)

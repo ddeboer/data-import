@@ -4,6 +4,7 @@ namespace Ddeboer\DataImport\Tests\Reader;
 
 use Ddeboer\DataImport\Reader\DbalReader;
 use Doctrine\DBAL\Configuration;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Platforms\SqlitePlatform;
 use Doctrine\DBAL\Schema\Schema;
@@ -174,7 +175,22 @@ class DbalReaderTest extends \PHPUnit_Framework_TestCase
     protected function getReader()
     {
         $connection = $this->getConnection();
+        $this->loadFixtures($connection);
 
+        return new DbalReader($connection, implode(' ', array(
+            'SELECT u.id, u.username, g.name',
+            'FROM `user` u INNER JOIN groups g ON u.group_id = g.id',
+            'WHERE g.name LIKE :name',
+        )), array(
+            'name' => 'name 4',
+        ));
+    }
+
+    /**
+     * @param Connection $connection
+     */
+    protected function loadFixtures($connection)
+    {
         $counter = 1;
         for ($i = 1; $i <= 10; $i++) {
             $connection->insert('groups', array('name' => "name {$i}"));
@@ -189,14 +205,5 @@ class DbalReaderTest extends \PHPUnit_Framework_TestCase
                 $counter++;
             }
         }
-
-        return new DbalReader(
-            $connection, implode(' ', array(
-            'SELECT u.id, u.username, g.name',
-            'FROM `user` u INNER JOIN groups g ON u.group_id = g.id',
-            'WHERE g.name LIKE :name',
-        )), array(
-            'name' => 'name 4',
-        ));
     }
 }
