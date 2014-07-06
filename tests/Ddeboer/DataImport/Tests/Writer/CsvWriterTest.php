@@ -4,12 +4,11 @@ namespace Ddeboer\DataImport\Tests\Writer;
 
 use Ddeboer\DataImport\Writer\CsvWriter;
 
-class CsvWriterTest extends \PHPUnit_Framework_TestCase
+class CsvWriterTest extends StreamWriterTest
 {
     public function testWriteItem()
     {
-        $outputFile = new \SplFileObject(tempnam('/tmp', null));
-        $writer = new CsvWriter($outputFile);
+        $writer = new CsvWriter(';', '"', $this->getStream());
 
         $writer->writeItem(array('first', 'last'));
 
@@ -25,10 +24,9 @@ class CsvWriterTest extends \PHPUnit_Framework_TestCase
             )
         );
 
-        $fileContents = file_get_contents($outputFile->getPathname());
-        $this->assertEquals(
+        $this->assertContentsEquals(
             "first;last\nJames;Bond\n;\"Dr. No\"\n",
-            $fileContents
+            $writer
         );
 
         $writer->finish();
@@ -36,8 +34,7 @@ class CsvWriterTest extends \PHPUnit_Framework_TestCase
 
     public function testFluentInterface()
     {
-        $outputFile = new \SplFileObject(tempnam('/tmp', null));
-        $writer = new CsvWriter($outputFile);
+        $writer = new CsvWriter(';', '"', $this->getStream());
 
         $this->assertSame($writer, $writer->prepare());
         $this->assertSame($writer, $writer->writeItem(array('foo' => 'bar', 'bar' => 'foo')));

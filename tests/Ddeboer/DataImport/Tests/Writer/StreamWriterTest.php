@@ -3,6 +3,8 @@
 namespace Ddeboer\DataImport\Tests\Writer;
 
 use Ddeboer\DataImport\Writer\AbstractStreamWriter;
+use PHPUnit_Framework_Assert;
+use PHPUnit_Framework_Constraint_IsEqual;
 
 abstract class StreamWriterTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,5 +28,19 @@ abstract class StreamWriterTest extends \PHPUnit_Framework_TestCase
         }
 
         return $this->stream;
+    }
+
+    /**
+     * @param string               $expected
+     * @param AbstractStreamWriter $actual
+     * @param string               $message
+     */
+    public static function assertContentsEquals($expected, $actual, $message = '')
+    {
+        $stream = $actual->getStream();
+        rewind($stream);
+        $actual = stream_get_contents($stream);
+
+        self::assertEquals($expected, $actual, $message);
     }
 }
