@@ -59,7 +59,7 @@ class StreamMergeWriterTest extends AbstractStreamWriterTest
         $fooWriter = $this->getMockBuilder('Ddeboer\DataImport\Writer\AbstractStreamWriter')
             ->getMockForAbstractClass();
 
-        $this->assertFalse($this->writer->hasStreamWriter('foo', 'no foo stream writer should be registered'));
+        $this->assertFalse($this->writer->hasStreamWriter('foo'), 'no foo stream writer should be registered');
         $this->writer->setStreamWriter('foo', $fooWriter);
         $this->assertTrue($this->writer->hasStreamWriter('foo'), 'foo stream writer should be registered');
     }
