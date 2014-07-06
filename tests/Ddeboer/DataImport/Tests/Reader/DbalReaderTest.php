@@ -15,13 +15,14 @@ class DbalReaderTest extends \PHPUnit_Framework_TestCase
     {
         $reader = $this->getReader();
 
-        $this->assertTrue($reader->calculateRowCount());
+        $this->assertSame($reader, $reader->setRowCountCalculated());
+        $this->assertTrue($reader->isRowCountCalculated());
 
-        $this->assertFalse($reader->calculateRowCount(false));
-        $this->assertFalse($reader->calculateRowCount());
+        $this->assertSame($reader, $reader->setRowCountCalculated(false));
+        $this->assertFalse($reader->isRowCountCalculated());
 
-        $this->assertTrue($reader->calculateRowCount(true));
-        $this->assertTrue($reader->calculateRowCount());
+        $this->assertSame($reader, $reader->setRowCountCalculated(true));
+        $this->assertTrue($reader->isRowCountCalculated());
     }
 
     public function testGetFields()
@@ -39,7 +40,7 @@ class DbalReaderTest extends \PHPUnit_Framework_TestCase
     public function testCountInhibited()
     {
         $reader = $this->getReader();
-        $reader->calculateRowCount(false);
+        $reader->setRowCountCalculated(false);
 
         $this->assertEquals(null, $reader->count());
     }

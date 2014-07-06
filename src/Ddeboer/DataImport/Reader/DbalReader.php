@@ -25,7 +25,7 @@ class DbalReader implements ReaderInterface
     /** @var integer */
     private $rowCount;
     /** @var bool */
-    private $doCalcRowCount = true;
+    private $rowCountCalculated = true;
 
     private $key;
 
@@ -46,17 +46,25 @@ class DbalReader implements ReaderInterface
     /**
      * Do calculate row count?
      *
-     * @param null|bool $calculate
+     * @param bool $calculate
+     *
+     * @return $this
+     */
+    public function setRowCountCalculated($calculate = true)
+    {
+        $this->rowCountCalculated = (bool) $calculate;
+
+        return $this;
+    }
+
+    /**
+     * Is row count calculated?
      *
      * @return bool
      */
-    public function calculateRowCount($calculate = null)
+    public function isRowCountCalculated()
     {
-        if (null !== $calculate) {
-            $this->doCalcRowCount = (bool) $calculate;
-        }
-
-        return $this->doCalcRowCount;
+        return $this->rowCountCalculated;
     }
 
     /**
@@ -157,7 +165,7 @@ class DbalReader implements ReaderInterface
     public function count()
     {
         if (null === $this->rowCount) {
-            if ($this->doCalcRowCount) {
+            if ($this->rowCountCalculated) {
                 $this->doCalcRowCount();
             } else {
                 if (null === $this->stmt) {
