@@ -50,6 +50,7 @@ class PdoWriter implements WriterInterface
      */
     public function prepare()
     {
+        return $this;
     }
 
     /**
@@ -80,6 +81,8 @@ class PdoWriter implements WriterInterface
             //convert exception so the abstracton doesn't leak
             throw new WriterException('Write failed ('.$e->getMessage().').', null, $e);
         }
+
+        return $this;
     }
 
     /**
@@ -87,5 +90,6 @@ class PdoWriter implements WriterInterface
      */
     public function finish()
     {
+        return $this;
     }
 }

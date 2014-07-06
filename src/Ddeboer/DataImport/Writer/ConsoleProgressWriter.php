@@ -28,16 +28,22 @@ class ConsoleProgressWriter extends AbstractWriter
         $this->progress = new ProgressBar($this->output, $this->reader->count());
         $this->progress->setFormat($this->verbosity);
         $this->progress->start();
+
+        return $this;
     }
 
     public function writeItem(array $item)
     {
         $this->progress->advance();
+
+        return $this;
     }
 
     public function finish()
     {
         $this->progress->finish();
+
+        return $this;
     }
 
     public function getVerbosity()
