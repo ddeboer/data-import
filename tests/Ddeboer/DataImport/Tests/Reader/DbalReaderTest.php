@@ -54,16 +54,6 @@ class DbalReaderTest extends \PHPUnit_Framework_TestCase
         $this->assertAttributeEquals(array('id' => 2), 'params', $reader);
     }
 
-    public function testSettingSqlToEmptyAllowsChangingParams()
-    {
-        $reader = $this->getReader();
-
-        $reader->setSql('SELECT * FROM groups WHERE id = :id', array('id' => 2));
-        $reader->setSql('', array('id' => 4));
-        $this->assertAttributeEquals('SELECT * FROM groups WHERE id = :id', 'sql', $reader);
-        $this->assertAttributeEquals(array('id' => 4), 'params', $reader);
-    }
-
     public function testChangeSqlOrParamsClearsNumRowsAndStatement()
     {
         $reader = $this->getReader();

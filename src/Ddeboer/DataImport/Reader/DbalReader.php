@@ -92,9 +92,22 @@ class DbalReader implements ReaderInterface
      */
     public function setSql($sql, array $params = array())
     {
-        if (! empty($sql)) {
-            $this->sql = (string) $sql;
-        }
+        $this->sql = (string) $sql;
+
+        $this->setSqlParameters($params);
+
+        return $this;
+    }
+
+    /**
+     * Set SQL parameters
+     *
+     * @param array  $params
+     *
+     * @return $this
+     */
+    public function setSqlParameters(array $params)
+    {
         $this->params = $params;
 
         $this->stmt = null;
