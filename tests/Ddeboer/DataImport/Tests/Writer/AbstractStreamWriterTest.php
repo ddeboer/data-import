@@ -48,18 +48,18 @@ class AbstractStreamWriterTest extends StreamWriterTest
 
     public function testCloseOnFinishIsInhibitable()
     {
-        $this->assertTrue($this->writer->closeStreamOnFinish());
-        $this->assertFalse($this->writer->closeStreamOnFinish(false));
-        $this->assertFalse($this->writer->closeStreamOnFinish());
-        $this->assertTrue($this->writer->closeStreamOnFinish(true));
-        $this->assertTrue($this->writer->closeStreamOnFinish());
+        $this->assertTrue($this->writer->getCloseStreamOnFinish());
+        $this->assertSame($this->writer, $this->writer->setCloseStreamOnFinish(false));
+        $this->assertFalse($this->writer->getCloseStreamOnFinish());
+        $this->assertSame($this->writer, $this->writer->setCloseStreamOnFinish(true));
+        $this->assertTrue($this->writer->getCloseStreamOnFinish());
     }
 
     public function testCloseOnFinishIsFalseForAutoOpenedStreams()
     {
-        $this->writer->closeStreamOnFinish(true);
+        $this->writer->setCloseStreamOnFinish(true);
         $this->writer->getStream();
-        $this->assertFalse($this->writer->closeStreamOnFinish());
+        $this->assertFalse($this->writer->getCloseStreamOnFinish());
     }
 
     public function testFinishCloseStreamAccordingToCloseOnFinishState()
@@ -68,11 +68,11 @@ class AbstractStreamWriterTest extends StreamWriterTest
         $this->writer->setStream($stream);
         $this->writer->prepare();
 
-        $this->writer->closeStreamOnFinish(false);
+        $this->writer->setCloseStreamOnFinish(false);
         $this->writer->finish();
         $this->assertTrue(is_resource($stream));
 
-        $this->writer->closeStreamOnFinish(true);
+        $this->writer->setCloseStreamOnFinish(true);
         $this->writer->finish();
         $this->assertFalse(is_resource($stream));
     }

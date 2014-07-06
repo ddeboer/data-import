@@ -57,7 +57,7 @@ abstract class AbstractStreamWriter implements WriterInterface
     {
         if (null === $this->stream) {
             $this->setStream(fopen('php://temp', 'r+'));
-            $this->closeStreamOnFinish(false);
+            $this->setCloseStreamOnFinish(false);
         }
 
         return $this->stream;
@@ -98,7 +98,7 @@ abstract class AbstractStreamWriter implements WriterInterface
      */
     public function finish()
     {
-        if (is_resource($this->stream) && $this->closeStreamOnFinish()) {
+        if (is_resource($this->stream) && $this->getCloseStreamOnFinish()) {
             fclose($this->stream);
         }
 
@@ -108,16 +108,24 @@ abstract class AbstractStreamWriter implements WriterInterface
     /**
      * Should underlying stream be closed on finish?
      *
-     * @param null|bool $closeStreamOnFinish
+     * @param bool $closeStreamOnFinish
      *
      * @return bool
      */
-    public function closeStreamOnFinish($closeStreamOnFinish = null)
+    public function setCloseStreamOnFinish($closeStreamOnFinish = true)
     {
-        if (null !== $closeStreamOnFinish) {
-            $this->closeStreamOnFinish = (bool) $closeStreamOnFinish;
-        }
+        $this->closeStreamOnFinish = (bool) $closeStreamOnFinish;
 
+        return $this;
+    }
+
+    /**
+     * Is Stream closed on finish?
+     *
+     * @return bool
+     */
+    public function getCloseStreamOnFinish()
+    {
         return $this->closeStreamOnFinish;
     }
 }

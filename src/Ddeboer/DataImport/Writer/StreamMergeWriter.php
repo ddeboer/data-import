@@ -76,7 +76,7 @@ class StreamMergeWriter extends AbstractStreamWriter
     public function setStreamWriter($key, AbstractStreamWriter $writer)
     {
         $writer->setStream($this->getStream());
-        $writer->closeStreamOnFinish(false);
+        $writer->setCloseStreamOnFinish(false);
         $this->writers[$key] = $writer;
 
         return $this;

@@ -128,12 +128,12 @@ class StreamMergeWriterTest extends AbstractStreamWriterTest
     public function testSetWriterShouldInhibitStreamClose()
     {
         $fooWriter = $this->getMockBuilder('Ddeboer\DataImport\Writer\AbstractStreamWriter')
-            ->setMethods(array('closeStreamOnFinish'))
+            ->setMethods(array('setCloseStreamOnFinish'))
             ->getMockForAbstractClass();
 
         $fooWriter
             ->expects($this->once())
-            ->method('closeStreamOnFinish')->with(false)
+            ->method('setCloseStreamOnFinish')->with(false)
             ->will($this->returnArgument(0));
 
         $this->writer->setStreamWriter('foo', $fooWriter);

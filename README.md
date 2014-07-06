@@ -511,7 +511,7 @@ class MyStreamWriter extends AbstractStreamWriter
 }
 
 $writer = new MyStreamWriter(fopen('php://temp', 'r+'));
-$writer->closeStreamOnFinish();
+$writer->setCloseStreamOnFinish(false);
 
 $workflow->addWriter(new MyStreamWriter());
 $workflow->process();
