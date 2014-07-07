@@ -15,9 +15,12 @@ abstract class AbstractWriter implements WriterInterface
      * This template method can be overridden in concrete writer
      * implementations.
      *
-     * @return WriterInterface
+     * @return $this
      */
-    public function prepare() {}
+    public function prepare()
+    {
+        return $this;
+    }
 
     /**
      * Wrap up the writer after all items have been written
@@ -25,7 +28,10 @@ abstract class AbstractWriter implements WriterInterface
      * This template method can be overridden in concrete writer
      * implementations.
      *
-     * @return WriterInterface
+     * @return $this
      */
-    public function finish() {}
+    public function finish()
+    {
+        return $this;
+    }
 }
