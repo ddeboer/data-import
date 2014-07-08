@@ -622,6 +622,52 @@ array(
 );
 ```
 
+#### NestedMappingItemConverter
+Use the NestedMappingItemConverter to add mappings to your workflow if the input data contains nested arrays. Your keys from
+the input data will be renamed according to these mappings. Say you have input data:
+
+```php
+$data = array(
+            'foo'   => 'bar',
+            'baz' => array(
+                'foobar' => array(
+                    'another'   => 'thing'
+                )
+            )
+        );
+```
+
+You can map the keys `another` in the following way.
+
+```
+use Ddeboer\DataImport\ItemConverter\NestedMappingItemConverter;
+
+$mappings = array(
+            'foo'   => 'foobar',
+            'baz' => array(
+                array(
+                    'another'   => 'different_thing',
+                )
+            )
+        );
+
+$converter = new NestedItemMappingConverter();
+$converter->addMapping($mappings);
+
+$workflow->addItemConverter($converter)
+	->process();
+```
+Your output data will now be:
+```
+array(
+            'foobar'   => 'bar',
+            'baz' => array(
+                array('different_thing' => 'thing'),
+            )
+        );
+```
+
+
 #### Create an item converter
 
 Implement `ItemConverterInterface` to create your own item converter:
