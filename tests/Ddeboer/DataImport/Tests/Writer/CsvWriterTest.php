@@ -12,18 +12,15 @@ class CsvWriterTest extends StreamWriterTest
 
         $writer->writeItem(array('first', 'last'));
 
-        $writer->writeItem(
-            array(
+        $writer
+            ->writeItem(array(
                 'first' => 'James',
                 'last'  => 'Bond'
-            )
-        )->writeItem(
-            array(
+            ))
+            ->writeItem(array(
                 'first' => '',
                 'last'  => 'Dr. No'
-            )
-        );
-
+            ));
         $this->assertContentsEquals(
             "first;last\nJames;Bond\n;\"Dr. No\"\n",
             $writer

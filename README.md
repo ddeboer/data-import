@@ -376,8 +376,8 @@ Writes CSV files:
 ```php
 use Ddeboer\DataImport\Writer\CsvWriter;
 
-$file = new \SplFileObject('output.csv', 'w');
-$writer = new CsvWriter($file);
+$writer = new CsvWriter();
+$writer->setStream(fopen('output.csv', 'w'));
 
 // Write column headers:
 $writer->writeItem(array('first', 'last'));

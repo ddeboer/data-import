@@ -3,8 +3,6 @@
 namespace Ddeboer\DataImport\Tests\Writer;
 
 use Ddeboer\DataImport\Writer\AbstractStreamWriter;
-use PHPUnit_Framework_Assert;
-use PHPUnit_Framework_Constraint_IsEqual;
 
 abstract class StreamWriterTest extends \PHPUnit_Framework_TestCase
 {
