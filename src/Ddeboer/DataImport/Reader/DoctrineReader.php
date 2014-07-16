@@ -5,7 +5,6 @@ namespace Ddeboer\DataImport\Reader;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Internal\Hydration\IterableResult;
 use Doctrine\ORM\Query;
-use Doctrine\ORM\QueryBuilder;
 
 /**
  * Reads entities through the Doctrine ORM
@@ -26,6 +25,7 @@ class DoctrineReader implements ReaderInterface
      *
      * @param ObjectManager $objectManager Doctrine object manager
      * @param string        $objectName    Doctrine object name, e.g.
+     *                                     YourBundle:YourEntity
      */
     public function __construct(ObjectManager $objectManager, $objectName)
     {
@@ -39,7 +39,7 @@ class DoctrineReader implements ReaderInterface
     public function getFields()
     {
         return $this->objectManager->getClassMetadata($this->objectName)
-            ->getFieldNames();
+                ->getFieldNames();
     }
 
     /**
