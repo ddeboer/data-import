@@ -1,40 +1,34 @@
 <?php
 
 namespace Ddeboer\DataImport\Exception;
+use Exception;
 
 /**
  * WorkflowException
  *
- * @author  Guillaume Petit <guillaume.petit@sword-group.com>
  * @package Ddeboer\DataImport
+ * @author  Guillaume Petit <guillaume.petit@sword-group.com>
  */
 class WorkflowException extends \Exception implements ExceptionInterface
 {
     /**
      * @var integer
      */
-    protected $itemIndex;
-    
+    private $itemIndex;
+
     /**
-     * Get ItemIndex
+     * Constructor
      *
-     * @return integer
+     * @param string    $itemIndex index of the item that failed
+     * @param string    $message   [optional] The Exception message to throw.
+     * @param int       $code      [optional] The Exception code.
+     * @param Exception $previous  [optional] The previous exception used for the exception chaining. Since 5.3.0
      */
-    public function getItemIndex()
+    public function __construct($itemIndex, $message = "", $code = 0, Exception $previous = null)
     {
-        return $this->itemIndex;
-    }
-    
-    /**
-     * Set ItemIndex
-     *
-     * @param integer $itemIndex the itemIndex
-     *
-     * @return void
-     */
-    public function setItemIndex($itemIndex)
-    {
+        parent::__construct($message, $code, $previous);
         $this->itemIndex = $itemIndex;
     }
-    
+
+
 }

@@ -70,12 +70,6 @@ class DoctrineWriter extends AbstractWriter
     protected $truncate = true;
 
     /**
-     *
-     * @var array
-     */
-    protected $defaults = array();
-
-    /**
      * Constructor
      *
      * @param EntityManager $entityManager
@@ -207,8 +201,6 @@ class DoctrineWriter extends AbstractWriter
                 $value = $item[$fieldName];
             } elseif (method_exists($item, 'get' . ucfirst($fieldName))) {
                 $value = $item->{'get' . ucfirst($fieldName)};
-            } elseif (array_key_exists($fieldName, $this->defaults)) {
-                $value = $this->defaults[$fieldName];
             }
 
             if (null === $value) {
@@ -261,17 +253,5 @@ class DoctrineWriter extends AbstractWriter
     {
         $config = $this->entityManager->getConnection()->getConfiguration();
         $config->setSQLLogger($this->originalLogger);
-    }
-
-    public function addDefault($field, $value)
-    {
-        $this->defaults[$field] = $value;
-
-        return $this;
-    }
-
-    public function getDefaults()
-    {
-        return $this->defaults;
     }
 }

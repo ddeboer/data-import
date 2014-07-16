@@ -244,8 +244,7 @@ class Workflow
                 if ($this->skipItemOnFailure) {
                     $this->logger->error($e->getMessage());
                 } else {
-                    $ex = new WorkflowException('Process failed at item number ' . $count, null, $e);
-                    $ex->setItemIndex($count);
+                    $ex = new WorkflowException($count, 'Process failed at item number ' . $count, null, $e);
                     throw $ex;
                 }
             }
