@@ -135,7 +135,7 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Ddeboer\DataImport\Exception\UnexpectedTypeException
+     * @expectedException \Ddeboer\DataImport\Exception\WorkflowException
      */
     public function testItemConverterWhichReturnObjects()
     {
@@ -158,7 +158,7 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Ddeboer\DataImport\Exception\UnexpectedTypeException
+     * @expectedException \Ddeboer\DataImport\Exception\WorkflowException
      */
     public function testItemConverterWithObjectsAndNoItemConverters()
     {

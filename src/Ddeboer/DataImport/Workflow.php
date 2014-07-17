@@ -13,6 +13,7 @@ use Ddeboer\DataImport\Writer\WriterInterface;
 use Ddeboer\DataImport\Filter\FilterInterface;
 use Ddeboer\DataImport\ValueConverter\ValueConverterInterface;
 use Ddeboer\DataImport\ItemConverter\ItemConverterInterface;
+use Ddeboer\DataImport\Exception\WorkflowException;
 
 /**
  * A mediator between a reader and one or more writers and converters
@@ -243,7 +244,8 @@ class Workflow
                 if ($this->skipItemOnFailure) {
                     $this->logger->error($e->getMessage());
                 } else {
-                    throw $e;
+                    $ex = new WorkflowException($count, 'Process failed at item number ' . $count, null, $e);
+                    throw $ex;
                 }
             }
         }

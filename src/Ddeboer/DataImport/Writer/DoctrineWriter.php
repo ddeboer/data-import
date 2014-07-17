@@ -219,7 +219,6 @@ class DoctrineWriter extends AbstractWriter
 
         if (($this->counter % $this->batchSize) == 0) {
             $this->entityManager->flush();
-            $this->entityManager->clear();
         }
 
         return $this;
