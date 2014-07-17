@@ -39,7 +39,7 @@ class DoctrineReader implements ReaderInterface
     public function getFields()
     {
         return $this->objectManager->getClassMetadata($this->objectName)
-                ->getFieldNames();
+                 ->getFieldNames();
     }
 
     /**
