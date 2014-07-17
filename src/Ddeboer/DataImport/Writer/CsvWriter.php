@@ -53,6 +53,8 @@ class CsvWriter extends AbstractWriter
         foreach ($this->headers as $header) {
             $this->writeItem($header);
         }
+        
+        return $this;
     }
 
     /**
