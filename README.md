@@ -41,6 +41,8 @@ Documentation
     - [ExcelWriter](#excelwriter)
     - [ConsoleProgressWriter](#consoleprogresswriter)
     - [CallbackWriter](#callbackwriter)
+    - [AbstractStreamWriter](#abstractstreamwriter)
+    - [StreamMergeWriter](#streammergewriter)
     - [Create a writer](#create-a-writer)
   * [Filters](#filters)
     - [CallbackFilter](#callbackfilter)
@@ -374,8 +376,8 @@ Writes CSV files:
 ```php
 use Ddeboer\DataImport\Writer\CsvWriter;
 
-$file = new \SplFileObject('output.csv', 'w');
-$writer = new CsvWriter($file);
+$writer = new CsvWriter();
+$writer->setStream(fopen('output.csv', 'w'));
 
 // Write column headers:
 $writer->writeItem(array('first', 'last'));
@@ -491,6 +493,49 @@ use Ddeboer\DataImport\Writer\CallbackWriter;
 $workflow->addWriter(new CallbackWriter(function ($row) use ($storage) {
     $storage->store($row);
 }));
+```
+#### AbstractStreamWriter
+
+Instead of implementing your own writer from scratch, you can use AbstractStreamWriter as a basis,
+implemented the ```writeItem``` method and you're done:
+
+```php
+use Ddeboer\DataImport\Writer\AbstractStreamWriter;
+
+class MyStreamWriter extends AbstractStreamWriter
+{
+    public function writeItem(array $item)
+    {
+        fputs($this->getStream(), implode(',', $item));
+    }
+}
+
+$writer = new MyStreamWriter(fopen('php://temp', 'r+'));
+$writer->setCloseStreamOnFinish(false);
+
+$workflow->addWriter(new MyStreamWriter());
+$workflow->process();
+
+$stream = $writer->getStream();
+rewind($stream);
+
+echo stream_get_contents($stream);
+```
+
+#### StreamMergeWriter
+
+Suppose you have 2 stream writers handling fields differently according to one of the fields.
+You should then use ```StreamMergeWriter``` to call the appropriate Writer for you.
+
+The default field name is ```discr``` but could be changed with the ```setDiscriminantField()``` method.
+
+```php
+use Ddeboer\DataImport\Writer\StreamMergeWriter;
+
+$writer = new StreamMergeWriter();
+
+$writer->addWriter('first writer', new MyStreamWriter());
+$writer->addWriter('second writer', new MyStreamWriter());
 ```
 
 #### Create a writer
