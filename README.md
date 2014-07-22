@@ -480,7 +480,31 @@ $progressWriter = new ConsoleProgressWriter($output, $reader);
 
 // Most useful when added to a workflow
 $workflow->addWriter($progressWriter);
+
 ```
+
+There are various optional arguments you can pass to the `ConsoleProgressWriter`. These include the output format and
+the redraw frequency. You can read more about the options [here](http://symfony.com/doc/current/components/console/helpers/progressbar.html).
+
+You might want to set the redraw rate higher than the default as it can slow down the import/export process quite a bit
+as it will update the console text after every record has been processed by the `Workflow`.
+
+```php
+$output = new ConsoleOutput(...);
+$progressWriter = new ConsoleProgressWriter($output, $reader, 'debug', 100);
+```
+
+Above we set the output format to 'debug' and the redraw rate to 100. This will only re-draw the console progress text
+after every 100 records.
+
+The `debug` format is default as it displays ETA's and Memory Usage. You can use a more simple formatter if you wish:
+
+```php
+$output = new ConsoleOutput(...);
+$progressWriter = new ConsoleProgressWriter($output, $reader, 'normal', 100);
+```
+
+
 
 #### CallbackWriter
 
