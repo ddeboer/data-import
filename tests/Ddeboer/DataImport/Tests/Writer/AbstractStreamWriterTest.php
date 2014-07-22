@@ -39,13 +39,6 @@ class AbstractStreamWriterTest extends StreamWriterTest
         $this->assertSame($this->getStream(), $this->writer->getStream());
     }
 
-    public function testEol()
-    {
-        $this->assertSame("\n", $this->writer->getEol());
-        $this->assertSame($this->writer, $this->writer->setEol("\r\n"));
-        $this->assertSame("\r\n", $this->writer->getEol());
-    }
-
     public function testCloseOnFinishIsInhibitable()
     {
         $this->assertTrue($this->writer->getCloseStreamOnFinish());

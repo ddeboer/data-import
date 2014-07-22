@@ -12,9 +12,6 @@ abstract class AbstractStreamWriter implements WriterInterface
     private $stream;
     private $closeStreamOnFinish = true;
 
-    /** @var string */
-    private $eol = "\n";
-
     /**
      * Constructor
      *
@@ -61,28 +58,6 @@ abstract class AbstractStreamWriter implements WriterInterface
         }
 
         return $this->stream;
-    }
-
-    /**
-     * Set End Of Line string
-     * @param string $eol
-     * @return $this
-     */
-    public function setEol($eol)
-    {
-        $this->eol = (string) $eol;
-
-        return $this;
-    }
-
-    /**
-     * Get End Of Line string
-     *
-     * @return string
-     */
-    public function getEol()
-    {
-        return $this->eol;
     }
 
     /**
