@@ -14,6 +14,8 @@ use Ddeboer\DataImport\Filter\FilterInterface;
 use Ddeboer\DataImport\ValueConverter\ValueConverterInterface;
 use Ddeboer\DataImport\ItemConverter\ItemConverterInterface;
 
+use DateTime;
+
 /**
  * A mediator between a reader and one or more writers and converters
  *
@@ -78,13 +80,32 @@ class Workflow
     protected $afterConversionFilters = array();
 
     /**
+     * Identifier for the Import/Export
+     *
+     * @var string|null
+     */
+    protected $name = null;
+
+    /**
      * Construct a workflow
      *
      * @param ReaderInterface $reader
      * @param LoggerInterface $logger
+     * @param string $name
      */
-    public function __construct(ReaderInterface $reader, LoggerInterface $logger = null)
+    public function __construct(ReaderInterface $reader, LoggerInterface $logger = null, $name = null)
     {
+
+        if (null !== $name && !is_string($name)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    "Name identifier should be a string. Given: '%s'",
+                    (is_object($name) ? get_class($name) : gettype($name))
+                )
+            );
+        }
+
+        $this->name = $name;
         $this->reader = $reader;
         $this->logger = $logger ? $logger : new NullLogger();
         $this->filters = new \SplPriorityQueue();
@@ -204,11 +225,14 @@ class Workflow
      *    converters.
      * 5. Write the item to each of the writers.
      *
-     * @return int Number of items processed
+     * @throws ExceptionInterface
+     * @return Result Object Containing Workflow Results
      */
     public function process()
     {
-        $count = 0;
+        $count      = 0;
+        $exceptions = array();
+        $startTime  = new DateTime;
 
         // Prepare writers
         foreach ($this->writers as $writer) {
@@ -217,7 +241,6 @@ class Workflow
 
         // Read all items
         foreach ($this->reader as $item) {
-
             try {
                 // Apply filters before conversion
                 if (!$this->filterItem($item, $this->filters)) {
@@ -238,14 +261,15 @@ class Workflow
                     $writer->writeItem($convertedItem, $item);
                 }
 
-                $count++;
             } catch(ExceptionInterface $e) {
                 if ($this->skipItemOnFailure) {
+                    $exceptions[] = $e;
                     $this->logger->error($e->getMessage());
                 } else {
                     throw $e;
                 }
             }
+            $count++;
         }
 
         // Finish writers
@@ -253,7 +277,7 @@ class Workflow
             $writer->finish();
         }
 
-        return $count;
+        return new Result($this->name, $startTime, new DateTime, $count, $exceptions);
     }
 
     /**
