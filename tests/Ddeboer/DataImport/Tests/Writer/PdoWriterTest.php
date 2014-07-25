@@ -103,4 +103,14 @@ class PdoWriterTest extends \PHPUnit_Framework_TestCase
         $writer->writeItem(array('foo', 'bar', 'baz'));
         $writer->finish();
     }
+
+    public function testFluentInterface()
+    {
+        $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_SILENT);
+        $writer = new PdoWriter($this->pdo, 'example');
+
+        $this->assertSame($writer, $writer->prepare());
+        $this->assertSame($writer, $writer->writeItem(array('foo', 'bar')));
+        $this->assertSame($writer, $writer->finish());
+    }
 }

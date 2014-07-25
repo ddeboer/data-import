@@ -60,4 +60,14 @@ class ExcelWriterTest extends \PHPUnit_Framework_TestCase
             ->writeItem(array('first', 'last'))
             ->finish();
     }
+
+    public function testFluentInterface()
+    {
+        $outputFile = new \SplFileObject(tempnam(sys_get_temp_dir(), null));
+        $writer = new ExcelWriter($outputFile);
+
+        $this->assertSame($writer, $writer->prepare());
+        $this->assertSame($writer, $writer->writeItem(array('first', 'last')));
+        $this->assertSame($writer, $writer->finish());
+    }
 }

@@ -25,6 +25,7 @@ Documentation
 * [Installation](#installation)
 * [Usage](#usage)
   * [The workflow](#the-workflow)
+  * [The workflow result](#the-workflow-result)
   * [Readers](#readers)
     - [ArrayReader](#arrayreader)
     - [CsvReader](#csvreader)
@@ -41,6 +42,8 @@ Documentation
     - [ExcelWriter](#excelwriter)
     - [ConsoleProgressWriter](#consoleprogresswriter)
     - [CallbackWriter](#callbackwriter)
+    - [AbstractStreamWriter](#abstractstreamwriter)
+    - [StreamMergeWriter](#streammergewriter)
     - [Create a writer](#create-a-writer)
   * [Filters](#filters)
     - [CallbackFilter](#callbackfilter)
@@ -101,7 +104,8 @@ Each data import revolves around the workflow and takes place along the followin
 3. Optionally, add [filters](#filters), item converters and
    [value converters](#value-converters) to the workflow.
 4. Process the workflow. This will read the data from the reader, filter and
-   convert the data, and write the output to each of the writers.
+   convert the data, and write the output to each of the writers. The process method also
+   returns a `Result` object which contains various information about the import.
 
 In other words, the workflow acts as a [mediator](#http://en.wikipedia.org/wiki/Mediator_pattern)
 between a reader and one or more writers, filters and converters.
@@ -119,7 +123,7 @@ use Ddeboer\DataImport\Filter;
 
 $reader = new Reader\...;
 $workflow = new Workflow($reader, $logger);
-$workflow
+$result = $workflow
     ->addWriter(new Writer\...())
     ->addWriter(new Writer\...())
     ->addFilter(new Filter\CallbackFilter(...))
@@ -127,6 +131,51 @@ $workflow
     ->process()
 ;
 ```
+### The workflow Result
+
+The Workflow Result object exposes various methods which you can use to decide what to do after an import.
+The result will be an instance of `Ddeboer\DataImport\Result`. It is automatically created and populated by the
+`Workflow`. It will be returned to you after calling the `process()` method on the `Workflow`
+
+The `Result` provides the following methods:
+
+```php
+//the name of the import - which is an optional 3rd parameter to
+//the Workflow class. Returns null by default.
+public function getName();
+
+//DateTime instance created at the start of the import.
+public function getStartTime();
+
+//DateTime instance created at the end of the import.
+public function getEndTime();
+
+//DateInterval instance. Diff off the start + end times.
+public function getElapsed();
+
+//Count of exceptions which caught by the Workflow.
+public function getErrorCount();
+
+//Count of processed items minus the count of exceptions caught.
+public function getSuccessCount();
+
+//Count of items processed
+//This will not include any filtered items or items which fail conversion.
+public function getTotalProcessedCount();
+
+//bool to indicate whether any exceptions were caught.
+public function hasErrors();
+
+//An array of exceptions caught by the Workflow.
+public function getExceptions();
+
+```
+
+Example use cases:
+ * You want to send an e-mail with the results of the import
+ * You want to send a Text alert if a particular file failed
+ * You want to move an import file to a failed directory if there were errors
+ * You want to log how long imports are taking
 
 ### Readers
 
@@ -374,8 +423,8 @@ Writes CSV files:
 ```php
 use Ddeboer\DataImport\Writer\CsvWriter;
 
-$file = new \SplFileObject('output.csv', 'w');
-$writer = new CsvWriter($file);
+$writer = new CsvWriter();
+$writer->setStream(fopen('output.csv', 'w'));
 
 // Write column headers:
 $writer->writeItem(array('first', 'last'));
@@ -478,7 +527,31 @@ $progressWriter = new ConsoleProgressWriter($output, $reader);
 
 // Most useful when added to a workflow
 $workflow->addWriter($progressWriter);
+
 ```
+
+There are various optional arguments you can pass to the `ConsoleProgressWriter`. These include the output format and
+the redraw frequency. You can read more about the options [here](http://symfony.com/doc/current/components/console/helpers/progressbar.html).
+
+You might want to set the redraw rate higher than the default as it can slow down the import/export process quite a bit
+as it will update the console text after every record has been processed by the `Workflow`.
+
+```php
+$output = new ConsoleOutput(...);
+$progressWriter = new ConsoleProgressWriter($output, $reader, 'debug', 100);
+```
+
+Above we set the output format to 'debug' and the redraw rate to 100. This will only re-draw the console progress text
+after every 100 records.
+
+The `debug` format is default as it displays ETA's and Memory Usage. You can use a more simple formatter if you wish:
+
+```php
+$output = new ConsoleOutput(...);
+$progressWriter = new ConsoleProgressWriter($output, $reader, 'normal', 100);
+```
+
+
 
 #### CallbackWriter
 
@@ -491,6 +564,49 @@ use Ddeboer\DataImport\Writer\CallbackWriter;
 $workflow->addWriter(new CallbackWriter(function ($row) use ($storage) {
     $storage->store($row);
 }));
+```
+#### AbstractStreamWriter
+
+Instead of implementing your own writer from scratch, you can use AbstractStreamWriter as a basis,
+implemented the ```writeItem``` method and you're done:
+
+```php
+use Ddeboer\DataImport\Writer\AbstractStreamWriter;
+
+class MyStreamWriter extends AbstractStreamWriter
+{
+    public function writeItem(array $item)
+    {
+        fputs($this->getStream(), implode(',', $item));
+    }
+}
+
+$writer = new MyStreamWriter(fopen('php://temp', 'r+'));
+$writer->setCloseStreamOnFinish(false);
+
+$workflow->addWriter(new MyStreamWriter());
+$workflow->process();
+
+$stream = $writer->getStream();
+rewind($stream);
+
+echo stream_get_contents($stream);
+```
+
+#### StreamMergeWriter
+
+Suppose you have 2 stream writers handling fields differently according to one of the fields.
+You should then use ```StreamMergeWriter``` to call the appropriate Writer for you.
+
+The default field name is ```discr``` but could be changed with the ```setDiscriminantField()``` method.
+
+```php
+use Ddeboer\DataImport\Writer\StreamMergeWriter;
+
+$writer = new StreamMergeWriter();
+
+$writer->addWriter('first writer', new MyStreamWriter());
+$writer->addWriter('second writer', new MyStreamWriter());
 ```
 
 #### Create a writer
@@ -621,6 +737,59 @@ array(
     )
 );
 ```
+
+#### NestedMappingItemConverter
+Use the NestedMappingItemConverter to add mappings to your workflow if the input data contains nested arrays. Your keys from
+the input data will be renamed according to these mappings. Say you have input data:
+
+```php
+$data = array(
+    'foo'   => 'bar',
+    'baz' => array(
+        array(
+            'another' => 'thing'
+        ),
+        array(
+            'another' => 'thing2'
+        ),
+    )
+);
+```
+
+You can map the keys `another` in the following way.
+
+```php
+use Ddeboer\DataImport\ItemConverter\NestedMappingItemConverter;
+
+$mappings = array(
+    'foo'   => 'foobar',
+    'baz' => array(
+        'another' => 'different_thing'
+    )
+);
+
+$converter = new NestedItemMappingConverter('baz');
+$converter->addMapping($mappings);
+
+$workflow->addItemConverter($converter)
+    ->process();
+```
+
+Your output data will now be:
+```php
+array(
+    'foobar' => 'bar',
+    'baz' => array(
+        array(
+            'different_thing' => 'thing'
+        ),
+        array(
+            'different_thing' => 'thing2'
+        ),
+    )
+);
+```
+
 
 #### Create an item converter
 

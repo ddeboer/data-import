@@ -12,36 +12,96 @@ use Symfony\Component\Console\Helper\ProgressBar;
  */
 class ConsoleProgressWriter extends AbstractWriter
 {
+    /**
+     * @var OutputInterface
+     */
     protected $output;
-    protected $progress;
-    protected $workflow;
 
-    public function __construct(OutputInterface $output, ReaderInterface $reader, $verbosity = 'debug')
-    {
-        $this->output       = $output;
-        $this->reader       = $reader;
-        $this->verbosity    = $verbosity;
+    /**
+     * @var ProgressBar
+     */
+    protected $progress;
+
+    /**
+     * @var string
+     */
+    protected $verbosity;
+
+    /**
+     * @var ReaderInterface
+     */
+    protected $reader;
+
+    /**
+     * @var int
+     */
+    protected $redrawFrequency;
+
+    /**
+     * @param OutputInterface $output
+     * @param ReaderInterface $reader
+     * @param string $verbosity
+     * @param int $redrawFrequency
+     */
+    public function __construct(
+        OutputInterface $output,
+        ReaderInterface $reader,
+        $verbosity = 'debug',
+        $redrawFrequency = 1
+    ) {
+        $this->output           = $output;
+        $this->reader           = $reader;
+        $this->verbosity        = $verbosity;
+        $this->redrawFrequency  = $redrawFrequency;
     }
 
+    /**
+     * @return $this
+     */
     public function prepare()
     {
         $this->progress = new ProgressBar($this->output, $this->reader->count());
         $this->progress->setFormat($this->verbosity);
+        $this->progress->setRedrawFrequency($this->redrawFrequency);
         $this->progress->start();
+
+        return $this;
     }
 
+    /**
+     * @param array $item
+     * @return $this
+     */
     public function writeItem(array $item)
     {
         $this->progress->advance();
+
+        return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function finish()
     {
         $this->progress->finish();
+
+        return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getVerbosity()
     {
         return $this->verbosity;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRedrawFrequency()
+    {
+        return $this->redrawFrequency;
     }
 }

@@ -33,7 +33,9 @@ class ExcelReader implements ReaderInterface
      */
     public function __construct(\SplFileObject $file, $headerRowNumber = null, $activeSheet = null)
     {
-        $excel = \PHPExcel_IOFactory::load($file->getPathname());
+        $reader = \PHPExcel_IOFactory::createReaderForFile($file->getPathName());
+        $reader->setReadDataOnly(true);
+        $excel = $reader->load($file->getPathname());
 
         if (null !== $activeSheet) {
             $excel->setActiveSheetIndex($activeSheet);

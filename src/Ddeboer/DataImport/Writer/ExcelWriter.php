@@ -97,5 +97,7 @@ class ExcelWriter extends AbstractWriter
     {
         $writer = \PHPExcel_IOFactory::createWriter($this->excel, $this->type);
         $writer->save($this->filename);
+
+        return $this;
     }
 }
