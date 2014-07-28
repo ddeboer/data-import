@@ -10,6 +10,7 @@ class CsvWriterTest extends StreamWriterTest
     {
         $writer = new CsvWriter(';', '"', $this->getStream());
 
+        $writer->prepare();
         $writer->writeItem(array('first', 'last'));
 
         $writer
@@ -23,6 +24,21 @@ class CsvWriterTest extends StreamWriterTest
             ));
         $this->assertContentsEquals(
             "first;last\nJames;Bond\n;\"Dr. No\"\n",
+            $writer
+        );
+
+        $writer->finish();
+    }
+
+    public function testWriteUtf8Item()
+    {
+        $writer = new CsvWriter(';', '"', $this->getStream(), true);
+
+        $writer->prepare();
+        $writer->writeItem(array('Précédent', 'Suivant'));
+
+        $this->assertContentsEquals(
+            chr(0xEF) . chr(0xBB) . chr(0xBF) . "Précédent;Suivant\n",
             $writer
         );
 
