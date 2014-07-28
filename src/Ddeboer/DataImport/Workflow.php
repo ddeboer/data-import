@@ -359,7 +359,8 @@ class Workflow
 
         if (count($converters) > 0) {
             // Return first mapping item converter that we encounter
-            $converter = $converters[0];
+            reset($converters);
+            $converter = current($converters);
         } else {
             // Create default converter
             $converter = new MappingItemConverter();
