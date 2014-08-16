@@ -454,6 +454,9 @@ $writer
     ->finish();
 ```
 
+Doctrine Writer supports MongoDB too. To use Doctrine MongoDB Document Manager you just need to pass it instead of ```$entityManager``` parameter.
+
+
 #### PdoWriter
 
 Use the PDO writer for importing data into a relational database (such as
