@@ -302,7 +302,7 @@ $reader = new DbalReader(
 
 #### DoctrineReader
 
-Reads data through the [Doctrine ORM](http://www.doctrine-project.org/projects/orm.html):
+Reads data through the [Doctrine ORM](http://www.doctrine-project.org/projects/orm.html) or [Doctrine MongoDB ODM](http://www.doctrine-project.org/projects/mongodb-odm.html):
 
 ```php
 use Ddeboer\DataImport\Reader\DoctrineReader;
@@ -310,7 +310,7 @@ use Ddeboer\DataImport\Reader\DoctrineReader;
 $reader = new DoctrineReader($entityManager, 'Your\Namespace\Entity\User');
 ```
 
-Doctrine Reader supports MongoDB too. To use Doctrine MongoDB Document Manager you just need to pass it instead of ```$entityManager``` parameter.
+To use Doctrine MongoDB Document Manager you just need to pass it instead of ```$entityManager``` parameter.
 
 #### ExcelReader
 
@@ -439,7 +439,7 @@ $writer
 
 #### DoctrineWriter
 
-Writes data through Doctrine:
+Writes data through [Doctrine ORM](http://www.doctrine-project.org/projects/orm.html) or [Doctrine MongoDB ODM](http://www.doctrine-project.org/projects/mongodb-odm.html)::
 
 ```php
 use Ddeboer\DataImport\Writer\DoctrineWriter;
@@ -456,7 +456,7 @@ $writer
     ->finish();
 ```
 
-Doctrine Writer supports MongoDB too. To use Doctrine MongoDB Document Manager you just need to pass it instead of ```$entityManager``` parameter.
+To use Doctrine MongoDB Document Manager you just need to pass it instead of ```$entityManager``` parameter.
 
 
 #### PdoWriter
