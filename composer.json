@@ -30,7 +30,9 @@
         "doctrine/dbal": "*",
         "doctrine/orm": "*",
         "symfony/console": "~2.5.0",
-        "symfony/validator": "~2.3.0"
+        "symfony/validator": "~2.3.0",
+        "doctrine/mongodb": "*",
+        "doctrine/mongodb-odm": "@dev"
     },
     "suggest": {
         "ext-iconv": "For the CharsetValueConverter",

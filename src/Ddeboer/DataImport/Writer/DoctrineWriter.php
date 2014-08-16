@@ -4,6 +4,7 @@ namespace Ddeboer\DataImport\Writer;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Ddeboer\DataImport\Exception\UnsupportedDatabaseTypeException;
 
 /**
  * A bulk Doctrine writer
@@ -260,7 +261,6 @@ class DoctrineWriter extends AbstractWriter
      */
     protected function disableLogging()
     {
-        //TODO: add support for MongoDB logging
         if (!($this->objectManager instanceof \Doctrine\ORM\EntityManager)) return;
 
         $config = $this->objectManager->getConnection()->getConfiguration();
