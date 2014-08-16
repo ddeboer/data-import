@@ -310,6 +310,8 @@ use Ddeboer\DataImport\Reader\DoctrineReader;
 $reader = new DoctrineReader($entityManager, 'Your\Namespace\Entity\User');
 ```
 
+Doctrine Reader supports MongoDB too. To use Doctrine MongoDB Document Manager you just need to pass it instead of ```$entityManager``` parameter.
+
 #### ExcelReader
 
 Acts as an adapter for the [PHPExcel library](http://phpexcel.codeplex.com/). Make sure
