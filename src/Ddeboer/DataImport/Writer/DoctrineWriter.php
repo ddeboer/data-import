@@ -138,8 +138,10 @@ class DoctrineWriter extends AbstractWriter
         return $this;
     }
 
-    protected function getNewInstance($className, array $item)
+    protected function getNewInstance()
     {
+        $className = $this->entityMetadata->getName();
+
         if (class_exists($className) === false) {
             throw new \Exception('Unable to create new instance of ' . $className);
         }
@@ -189,8 +191,7 @@ class DoctrineWriter extends AbstractWriter
         }
 
         if (!$entity) {
-            $className = $this->entityMetadata->getName();
-            $entity = $this->getNewInstance($className, $item);
+            $entity = $this->getNewInstance();
         }
 
         $fieldNames = array_merge($this->entityMetadata->getFieldNames(), $this->entityMetadata->getAssociationNames());
