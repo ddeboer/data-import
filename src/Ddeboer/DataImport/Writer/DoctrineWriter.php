@@ -162,7 +162,7 @@ class DoctrineWriter extends AbstractWriter
     public function finish()
     {
         $this->entityManager->flush();
-        $this->entityManager->clear();
+        $this->entityManager->clear($this->entityName);
         $this->reEnableLogging();
 
         return $this;
@@ -219,7 +219,7 @@ class DoctrineWriter extends AbstractWriter
 
         if (($this->counter % $this->batchSize) == 0) {
             $this->entityManager->flush();
-            $this->entityManager->clear();
+            $this->entityManager->clear($this->entityName);
         }
 
         return $this;
