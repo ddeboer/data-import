@@ -240,7 +240,7 @@ class Workflow
         }
 
         // Read all items
-        foreach ($this->reader as $item) {
+        foreach ($this->reader as $rowIndex => $item) {
             try {
                 // Apply filters before conversion
                 if (!$this->filterItem($item, $this->filters)) {
@@ -263,7 +263,7 @@ class Workflow
 
             } catch(ExceptionInterface $e) {
                 if ($this->skipItemOnFailure) {
-                    $exceptions[] = $e;
+                    $exceptions[$rowIndex] = $e;
                     $this->logger->error($e->getMessage());
                 } else {
                     throw $e;
