@@ -53,12 +53,12 @@ class DbalReaderTest extends \PHPUnit_Framework_TestCase
         $schema = new \Doctrine\DBAL\Schema\Schema();
 
         $table = $schema->createTable('groups');
-        $table->addColumn('id', 'integer');
+        $table->addColumn('id', 'integer', array('autoincrement' => true));
         $table->addColumn('name', 'string', array('length' => 45));
         $table->setPrimaryKey(array('id'));
 
         $myTable = $schema->createTable('user');
-        $myTable->addColumn('id', 'integer', array('unsigned' => true));
+        $myTable->addColumn('id', 'integer', array('autoincrement' => true));
         $myTable->addColumn('username', 'string', array('length' => 32));
         $myTable->addColumn('group_id', 'integer');
         $myTable->setPrimaryKey(array('id'));
