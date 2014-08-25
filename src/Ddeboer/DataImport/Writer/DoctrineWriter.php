@@ -181,7 +181,7 @@ class DoctrineWriter extends AbstractWriter
         // If the table was not truncated to begin with, find current entities
         // first
         if (false === $this->truncate) {
-            if ($this->index) {
+            if ($this->index && !empty($item[$this->index])) {
                 $entity = $this->entityRepository->findOneBy(
                     array($this->index => $item[$this->index])
                 );
