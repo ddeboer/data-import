@@ -324,6 +324,34 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(null, $result->getName());
     }
 
+    public function testMultipleMappingsForAnItemAfterAnotherItemConverterwasAdded()
+    {
+        $originalData = array(array('foo' => 'bar', 'baz' => 'value'));
+
+        $ouputTestData = array();
+
+        $writer = new ArrayWriter($ouputTestData);
+        $reader = new ArrayReader($originalData);
+
+        $workflow = new Workflow($reader);
+
+        // add a dummy item converter
+        $workflow->addItemConverter(new CallbackItemConverter(function($item) {
+                return $item;
+            }));
+
+        // add multiple mappings
+        $workflow
+            ->addMapping('foo', 'bar')
+            ->addMapping('baz', 'bazzoo')
+            ->addWriter($writer)
+            ->process()
+        ;
+
+        $this->assertArrayHasKey('bar', $ouputTestData[0]);
+        $this->assertArrayHasKey('bazzoo', $ouputTestData[0]);
+    }
+
     public function testWorkflowResultWithExceptionThrowFromWriter()
     {
         $workflow   = $this->getWorkflow();

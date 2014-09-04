@@ -146,8 +146,10 @@ class DoctrineWriter extends AbstractWriter
         return $this;
     }
 
-    protected function getNewInstance($className)
+    protected function getNewInstance()
     {
+        $className = $this->objectMetadata->getName();
+
         if (class_exists($className) === false) {
             throw new \Exception('Unable to create new instance of ' . $className);
         }
@@ -170,7 +172,7 @@ class DoctrineWriter extends AbstractWriter
     public function finish()
     {
         $this->objectManager->flush();
-        $this->objectManager->clear();
+        $this->objectManager->clear($this->objectName);
         $this->reEnableLogging();
 
         return $this;
@@ -197,9 +199,9 @@ class DoctrineWriter extends AbstractWriter
             }
         }
 
+
         if (!$object) {
-            $className = $this->objectMetadata->getName();
-            $object = $this->getNewInstance($className);
+            $object = $this->getNewInstance();
         }
 
         $fieldNames = array_merge($this->objectMetadata->getFieldNames(), $this->objectMetadata->getAssociationNames());
@@ -228,7 +230,7 @@ class DoctrineWriter extends AbstractWriter
 
         if (($this->counter % $this->batchSize) == 0) {
             $this->objectManager->flush();
-            $this->objectManager->clear();
+            $this->objectManager->clear($this->objectName);
         }
 
         return $this;

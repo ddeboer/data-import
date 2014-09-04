@@ -57,7 +57,7 @@ Documentation
     - [Value converters](#value-converters)
       - [DateTimeValueConverter](#datetimevalueconverter)
       - [ObjectConverter](#objectconverter)
-      - [StringToObjectValueConverter](#stringtoobjectvalueconverter)
+      - [StringToObjectConverter](#stringtoobjectconverter)
       - [ArrayValueConverterMap](#arrayvalueconvertermap)
       - [CallbackValueConverter](#callbackvalueconverter)
   * [Examples](#examples)
