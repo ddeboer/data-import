@@ -81,7 +81,7 @@ class DoctrineWriter extends AbstractWriter
      *
      * @var array
      */
-    private $compositeKey = false;
+    private $compositeKey = array();
     
 
     /**
