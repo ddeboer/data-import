@@ -70,19 +70,36 @@ class DoctrineWriter extends AbstractWriter
     protected $truncate = true;
 
     /**
+     * Index to find current entities by
+     *
+     * @var null|string
+     */
+    private $index = null;
+
+    /**
+     * Array to define the composite key
+     *
+     * @var array
+     */
+    private $compositeKey = false;
+    
+
+    /**
      * Constructor
      *
      * @param EntityManager $entityManager
      * @param string        $entityName
      * @param string        $index         Index to find current entities by
+     * @param array         $composite     Array to define the composite key
      */
-    public function __construct(EntityManager $entityManager, $entityName, $index = null)
+    public function __construct(EntityManager $entityManager, $entityName, $index = null, $composite = array())
     {
         $this->entityManager = $entityManager;
         $this->entityName = $entityName;
         $this->entityRepository = $entityManager->getRepository($entityName);
         $this->entityMetadata = $entityManager->getClassMetadata($entityName);
         $this->index = $index;
+        $this->compositeKey = $composite;
     }
 
     public function getBatchSize()
@@ -182,9 +199,22 @@ class DoctrineWriter extends AbstractWriter
         // first
         if (false === $this->truncate) {
             if ($this->index) {
+                // If the table has a composite key
+                if (!empty($this->compositeKey) && is_array($this->compositeKey)) {
+                    $composite = '';
+                    foreach($this->compositeKey as $key => $index) {
+                        $composite .= $item[$index] ;
+                    }
+
+                    $value = $composite;
+                } else {
+                    $value = $item[$this->index];
+                }
+
                 $entity = $this->entityRepository->findOneBy(
-                    array($this->index => $item[$this->index])
+                    array($this->index =>  $value)
                 );
+
             } else {
                 $entity = $this->entityRepository->find(current($item));
             }
