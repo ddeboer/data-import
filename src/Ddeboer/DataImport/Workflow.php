@@ -7,6 +7,7 @@ use Psr\Log\NullLogger;
 
 use Ddeboer\DataImport\Exception\UnexpectedTypeException;
 use Ddeboer\DataImport\Exception\ExceptionInterface;
+use Ddeboer\DataImport\Exception\ValueConversionException;
 use Ddeboer\DataImport\ItemConverter\MappingItemConverter;
 use Ddeboer\DataImport\Reader\ReaderInterface;
 use Ddeboer\DataImport\Writer\WriterInterface;
@@ -334,7 +335,11 @@ class Workflow
             // as isset() is much faster.
             if (isset($item[$property]) || array_key_exists($property, $item)) {
                 foreach ($converters as $converter) {
-                    $item[$property] = $converter->convert($item[$property]);
+                    try {
+                        $item[$property] = $converter->convert($item[$property]);
+                    } catch (ExceptionInterface $e) {
+                        throw new ValueConversionException("Unable to convert value for '$property'",null,$e);
+                    }
                 }
             }
         }
