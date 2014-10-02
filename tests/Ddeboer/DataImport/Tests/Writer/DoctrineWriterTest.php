@@ -3,7 +3,7 @@
 namespace Ddeboer\DataImport\Tests\Writer;
 
 use Ddeboer\DataImport\Writer\DoctrineWriter;
-use Ddeboer\DataImport\Tests\Fixtures\TestEntity;
+use Ddeboer\DataImport\Tests\Fixtures\Entity\TestEntity;
 
 class DoctrineWriterTest extends \PHPUnit_Framework_TestCase
 {
@@ -72,7 +72,7 @@ class DoctrineWriterTest extends \PHPUnit_Framework_TestCase
 
         $metadata->expects($this->any())
             ->method('getName')
-            ->will($this->returnValue('Ddeboer\DataImport\Tests\Fixtures\TestEntity'));
+            ->will($this->returnValue('Ddeboer\DataImport\Tests\Fixtures\Entity\TestEntity'));
 
         $metadata->expects($this->any())
             ->method('getFieldNames')
@@ -129,5 +129,21 @@ class DoctrineWriterTest extends \PHPUnit_Framework_TestCase
             }));
 
         return $em;
+    }
+
+    public function testFluentInterface()
+    {
+        $writer = new DoctrineWriter($this->getEntityManager(), 'DdeboerDataImport:TestEntity');
+
+        $association = new TestEntity();
+        $item = array(
+            'firstProperty'   => 'some value',
+            'secondProperty'  => 'some other value',
+            'firstAssociation'=> $association
+        );
+
+        $this->assertSame($writer, $writer->prepare());
+        $this->assertSame($writer, $writer->writeItem($item));
+        $this->assertSame($writer, $writer->finish());
     }
 }

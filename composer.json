@@ -29,7 +29,7 @@
         "phpoffice/phpexcel": "*",
         "doctrine/dbal": "*",
         "doctrine/orm": "*",
-        "symfony/console": ">=2.2",
+        "symfony/console": "~2.5.0",
         "symfony/validator": "~2.3.0"
     },
     "suggest": {

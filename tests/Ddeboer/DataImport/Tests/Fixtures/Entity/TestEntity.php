@@ -1,6 +1,6 @@
 <?php
 
-namespace Ddeboer\DataImport\Tests\Fixtures;
+namespace Ddeboer\DataImport\Tests\Fixtures\Entity;
 
 class TestEntity
 {

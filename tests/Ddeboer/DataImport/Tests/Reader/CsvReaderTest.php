@@ -241,6 +241,37 @@ class CsvReaderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $current);
     }
 
+    public function testMaximumNesting()
+    {
+        if (!function_exists('xdebug_is_enabled')) {
+            $this->markTestSkipped('xDebug is not installed');
+        }
+
+        $xdebug_start = !xdebug_is_enabled();
+        if ($xdebug_start) {
+            xdebug_enable();
+        }
+
+        ini_set('xdebug.max_nesting_level', 200);
+
+        $file = new \SplTempFileObject();
+        for($i = 0; $i < 500; $i++) {
+            $file->fwrite("1,2,3\n");
+        }
+
+        $reader = new CsvReader($file);
+        $reader->rewind();
+        $reader->setStrict(true);
+        $reader->setColumnHeaders(array('one','two'));
+
+        $current = $reader->current();
+        $this->assertEquals(null, $current);
+
+        if ($xdebug_start) {
+            xdebug_disable();
+        }
+    }
+
     protected function getReader($filename)
     {
         $file = new \SplFileObject(__DIR__.'/../Fixtures/'.$filename);

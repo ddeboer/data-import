@@ -2,6 +2,7 @@
 
 namespace Ddeboer\DataImport\Tests;
 
+use Ddeboer\DataImport\Exception\WriterException;
 use Ddeboer\DataImport\Reader\ArrayReader;
 use Ddeboer\DataImport\Writer\ArrayWriter;
 use Ddeboer\DataImport\Workflow;
@@ -9,6 +10,7 @@ use Ddeboer\DataImport\Filter\CallbackFilter;
 use Ddeboer\DataImport\ValueConverter\CallbackValueConverter;
 use Ddeboer\DataImport\ItemConverter\CallbackItemConverter;
 use Ddeboer\DataImport\Writer\CallbackWriter;
+use Ddeboer\DataImport\Exception\SourceNotFoundException;
 
 class WorkflowTest extends \PHPUnit_Framework_TestCase
 {
@@ -188,7 +190,7 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->setMethods(array('filter'))
             ->getMock();
-        $validatorFilter->expects($this->exactly(2))
+        $validatorFilter->expects($this->exactly(3))
             ->method('filter')
             ->will($this->returnValue(false));
 
@@ -204,7 +206,7 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->setMethods(array('filter'))
             ->getMock();
-        $offsetFilter->expects($this->exactly(2))
+        $offsetFilter->expects($this->exactly(3))
             ->method('filter')
             ->will($this->returnValue(false));
 
@@ -254,9 +256,130 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
 
         $workflow->process();
 
-        //there are two rows in reader, so every filter should be called twice
-        $this->assertEquals(2, $filterCalledIncrementor);
-        $this->assertEquals(2, $afterConversionFilterCalledIncrementor);
+        //there are two rows in reader, so every filter should be called thrice
+        $this->assertEquals(3, $filterCalledIncrementor);
+        $this->assertEquals(3, $afterConversionFilterCalledIncrementor);
+    }
+
+    public function testExceptionInterfaceThrownFromWriterIsCaught()
+    {
+        $originalData = array(array('foo' => 'bar'));
+        $reader = new ArrayReader($originalData);
+
+        $array = array();
+        $writer = $this->getMock('Ddeboer\DataImport\Writer\ArrayWriter', array(), array(&$array));
+
+        $exception = new SourceNotFoundException("Log me!");
+
+        $writer->expects($this->once())
+            ->method('writeItem')
+            ->with($originalData[0])
+            ->will($this->throwException($exception));
+
+        $logger = $this->getMock('Psr\Log\LoggerInterface');
+        $logger->expects($this->once())
+            ->method('error')
+            ->with($exception->getMessage());
+
+
+        $workflow = new Workflow($reader, $logger);
+        $workflow->setSkipItemOnFailure(true);
+        $workflow->addWriter($writer);
+        $workflow->process();
+    }
+
+    public function testNullValueIsConverted()
+    {
+        $workflow = $this->getWorkflow();
+        $valueConverter = $this->getMockBuilder('Ddeboer\DataImport\ValueConverter\ValueConverterInterface')
+            ->getMock()
+        ;
+        $valueConverter->expects($this->exactly(3))->method('convert');
+        $workflow->addValueConverter('first', $valueConverter);
+        $workflow->process();
+    }
+
+    public function testWorkflowThrowsExceptionIfNameNotString()
+    {
+        $reader = $this->getMock('Ddeboer\DataImport\Reader\ReaderInterface');
+        $this->setExpectedException("InvalidArgumentException", "Name identifier should be a string. Given: 'stdClass'");
+        $workflow = new Workflow($reader, null, new \stdClass);
+    }
+
+    public function testWorkflowResultWhenAllSuccessful()
+    {
+        $workflow   = $this->getWorkflow();
+        $result     = $workflow->process();
+
+        $this->assertInstanceOf('Ddeboer\DataImport\Result', $result);
+        $this->assertInstanceOf('DateTime', $result->getStartTime());
+        $this->assertInstanceOf('DateTime', $result->getEndTime());
+        $this->assertInstanceOf('DateInterval', $result->getElapsed());
+        $this->assertInstanceOf('Ddeboer\DataImport\Result', $result);
+        $this->assertSame(3, $result->getTotalProcessedCount());
+        $this->assertSame(3, $result->getSuccessCount());
+        $this->assertSame(0, $result->getErrorCount());
+        $this->assertFalse($result->hasErrors());
+        $this->assertSame(array(), $result->getExceptions());
+        $this->assertSame(null, $result->getName());
+    }
+
+    public function testMultipleMappingsForAnItemAfterAnotherItemConverterwasAdded()
+    {
+        $originalData = array(array('foo' => 'bar', 'baz' => 'value'));
+
+        $ouputTestData = array();
+
+        $writer = new ArrayWriter($ouputTestData);
+        $reader = new ArrayReader($originalData);
+
+        $workflow = new Workflow($reader);
+
+        // add a dummy item converter
+        $workflow->addItemConverter(new CallbackItemConverter(function($item) {
+                return $item;
+            }));
+
+        // add multiple mappings
+        $workflow
+            ->addMapping('foo', 'bar')
+            ->addMapping('baz', 'bazzoo')
+            ->addWriter($writer)
+            ->process()
+        ;
+
+        $this->assertArrayHasKey('bar', $ouputTestData[0]);
+        $this->assertArrayHasKey('bazzoo', $ouputTestData[0]);
+    }
+
+    public function testWorkflowResultWithExceptionThrowFromWriter()
+    {
+        $workflow   = $this->getWorkflow();
+        $workflow->setSkipItemOnFailure(true);
+        $writer     = $this->getMock('Ddeboer\DataImport\Writer\WriterInterface');
+
+        $e = new WriterException();
+
+        $writer
+            ->expects($this->at(1))
+            ->method('writeItem')
+            ->with(array('first' => 'James', 'last'  => 'Bond'))
+            ->will($this->throwException($e));
+
+        $workflow->addWriter($writer);
+        $result = $workflow->process();
+
+        $this->assertInstanceOf('Ddeboer\DataImport\Result', $result);
+        $this->assertInstanceOf('DateTime', $result->getStartTime());
+        $this->assertInstanceOf('DateTime', $result->getEndTime());
+        $this->assertInstanceOf('DateInterval', $result->getElapsed());
+        $this->assertInstanceOf('Ddeboer\DataImport\Result', $result);
+        $this->assertSame(3, $result->getTotalProcessedCount());
+        $this->assertSame(2, $result->getSuccessCount());
+        $this->assertSame(1, $result->getErrorCount());
+        $this->assertTrue($result->hasErrors());
+        $this->assertSame(array($e), $result->getExceptions());
+        $this->assertSame(null, $result->getName());
     }
 
     protected function getWorkflow()
@@ -269,6 +392,10 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
             array(
                 'first' => 'Miss',
                 'last'  => 'Moneypenny'
+            ),
+            array(
+                'first' => null,
+                'last'  => 'Doe'
             )
         ));
 

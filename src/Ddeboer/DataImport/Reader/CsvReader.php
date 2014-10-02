@@ -80,7 +80,7 @@ class CsvReader implements ReaderInterface, \SeekableIterator
      * @param string         $enclosure Enclosure
      * @param string         $escape    Escape characters
      */
-    public function __construct(\SplFileObject $file, $delimiter = ';', $enclosure = '"', $escape = '\\')
+    public function __construct(\SplFileObject $file, $delimiter = ',', $enclosure = '"', $escape = '\\')
     {
         ini_set('auto_detect_line_endings', true);
 
@@ -107,11 +107,15 @@ class CsvReader implements ReaderInterface, \SeekableIterator
      */
     public function current()
     {
-        $line = $this->file->current();
+        // If the CSV has no column headers just return the line
+        if (empty($this->columnHeaders)) {
+            return $this->file->current();
+        }
 
-        // If the CSV has column headers, use them to construct an associative
-        // array for the columns in this line
-        if (!empty($this->columnHeaders)) {
+        // Since the CSV has column headers use them to construct an associative array for the columns in this line
+        do {
+            $line = $this->file->current();
+
             // In non-strict mode pad/slice the line to match the column headers
             if (!$this->isStrict()) {
                 if ($this->headersCount > count($line)) {
@@ -135,13 +139,10 @@ class CsvReader implements ReaderInterface, \SeekableIterator
             if ($this->valid()) {
                 $this->errors[$this->key()] = $line;
                 $this->next();
-
-                return $this->current();
             }
-        }
+        } while($this->valid());
 
-        // Else just return the column values
-        return $line;
+        return null;
     }
 
     /**

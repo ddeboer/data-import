@@ -4,9 +4,8 @@ namespace Ddeboer\DataImport\Writer;
 
 /**
  * Writes to a CSV file
- *
  */
-class CsvWriter extends AbstractWriter
+class CsvWriter extends AbstractStreamWriter
 {
     private $delimiter = ';';
     private $enclosure = '"';
@@ -14,14 +13,14 @@ class CsvWriter extends AbstractWriter
     /**
      * Constructor
      *
-     * @param \SplFileObject $file      CSV file
-     * @param string         $mode      See http://php.net/manual/en/function.fopen.php
-     * @param string         $delimiter The delimiter
-     * @param string         $enclosure The enclosure
+     * @param string   $delimiter The delimiter
+     * @param string   $enclosure The enclosure
+     * @param resource $stream
      */
-    public function __construct(\SplFileObject $file, $mode = 'w', $delimiter = ';', $enclosure = '"')
+    public function __construct($delimiter = ';', $enclosure = '"', $stream = null)
     {
-        $this->fp = fopen($file->getPathname(), $mode);
+        parent::__construct($stream);
+
         $this->delimiter = $delimiter;
         $this->enclosure = $enclosure;
     }
@@ -31,16 +30,8 @@ class CsvWriter extends AbstractWriter
      */
     public function writeItem(array $item)
     {
-        fputcsv($this->fp, $item, $this->delimiter, $this->enclosure);
+        fputcsv($this->getStream(), $item, $this->delimiter, $this->enclosure);
 
         return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function finish()
-    {
-        fclose($this->fp);
     }
 }

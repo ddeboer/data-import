@@ -1,8 +1,8 @@
 Ddeboer Data Import library
 ===========================
-[![Build Status](https://travis-ci.org/ddeboer/data-import.png?branch=master)](https://travis-ci.org/ddeboer/data-import) 
-[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/ddeboer/data-import/badges/quality-score.png?s=41129c80140adc6931288c9df15fb87ec6ea6f8a)](https://scrutinizer-ci.com/g/ddeboer/data-import/) 
-[![Code Coverage](https://scrutinizer-ci.com/g/ddeboer/data-import/badges/coverage.png?s=724267091a6d02f83b6c435a431e71d467b361f8)](https://scrutinizer-ci.com/g/ddeboer/data-import/) 
+[![Build Status](https://travis-ci.org/ddeboer/data-import.svg?branch=master)](https://travis-ci.org/ddeboer/data-import)
+[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/ddeboer/data-import/badges/quality-score.png?s=41129c80140adc6931288c9df15fb87ec6ea6f8a)](https://scrutinizer-ci.com/g/ddeboer/data-import/)
+[![Code Coverage](https://scrutinizer-ci.com/g/ddeboer/data-import/badges/coverage.png?s=724267091a6d02f83b6c435a431e71d467b361f8)](https://scrutinizer-ci.com/g/ddeboer/data-import/)
 [![Latest Stable Version](https://poser.pugx.org/ddeboer/data-import/v/stable.png)](https://packagist.org/packages/ddeboer/data-import)
 
 Introduction
@@ -25,20 +25,25 @@ Documentation
 * [Installation](#installation)
 * [Usage](#usage)
   * [The workflow](#the-workflow)
+  * [The workflow result](#the-workflow-result)
   * [Readers](#readers)
     - [ArrayReader](#arrayreader)
     - [CsvReader](#csvreader)
     - [DbalReader](#dbalreader)
     - [DoctrineReader](#doctrinereader)
     - [ExcelReader](#excelreader)
+    - [One To Many Reader](#onetomanyreader)
     - [Create a reader](#create-a-reader)
   * [Writers](#writers)
     - [ArrayWriter](#arraywriter)
     - [CsvWriter](#csvwriter)
     - [DoctrineWriter](#doctrinewriter)
+    - [PdoWriter](#pdowriter)
     - [ExcelWriter](#excelwriter)
     - [ConsoleProgressWriter](#consoleprogresswriter)
     - [CallbackWriter](#callbackwriter)
+    - [AbstractStreamWriter](#abstractstreamwriter)
+    - [StreamMergeWriter](#streammergewriter)
     - [Create a writer](#create-a-writer)
   * [Filters](#filters)
     - [CallbackFilter](#callbackfilter)
@@ -52,14 +57,14 @@ Documentation
     - [Value converters](#value-converters)
       - [DateTimeValueConverter](#datetimevalueconverter)
       - [ObjectConverter](#objectconverter)
-      - [StringToObjectValueConverter](#stringtoobjectvalueconverter)
+      - [StringToObjectConverter](#stringtoobjectconverter)
       - [ArrayValueConverterMap](#arrayvalueconvertermap)
       - [CallbackValueConverter](#callbackvalueconverter)
   * [Examples](#examples)
     - [Import CSV file and write to database](#import-csv-file-and-write-to-database)
     - [Export to CSV file](#export-to-csv-file)
 * [Running the tests](#running-the-tests)
-* [License](#license) 
+* [License](#license)
 
 Installation
 ------------
@@ -99,7 +104,8 @@ Each data import revolves around the workflow and takes place along the followin
 3. Optionally, add [filters](#filters), item converters and
    [value converters](#value-converters) to the workflow.
 4. Process the workflow. This will read the data from the reader, filter and
-   convert the data, and write the output to each of the writers.
+   convert the data, and write the output to each of the writers. The process method also
+   returns a `Result` object which contains various information about the import.
 
 In other words, the workflow acts as a [mediator](#http://en.wikipedia.org/wiki/Mediator_pattern)
 between a reader and one or more writers, filters and converters.
@@ -117,7 +123,7 @@ use Ddeboer\DataImport\Filter;
 
 $reader = new Reader\...;
 $workflow = new Workflow($reader, $logger);
-$workflow
+$result = $workflow
     ->addWriter(new Writer\...())
     ->addWriter(new Writer\...())
     ->addFilter(new Filter\CallbackFilter(...))
@@ -125,6 +131,51 @@ $workflow
     ->process()
 ;
 ```
+### The workflow Result
+
+The Workflow Result object exposes various methods which you can use to decide what to do after an import.
+The result will be an instance of `Ddeboer\DataImport\Result`. It is automatically created and populated by the
+`Workflow`. It will be returned to you after calling the `process()` method on the `Workflow`
+
+The `Result` provides the following methods:
+
+```php
+//the name of the import - which is an optional 3rd parameter to
+//the Workflow class. Returns null by default.
+public function getName();
+
+//DateTime instance created at the start of the import.
+public function getStartTime();
+
+//DateTime instance created at the end of the import.
+public function getEndTime();
+
+//DateInterval instance. Diff off the start + end times.
+public function getElapsed();
+
+//Count of exceptions which caught by the Workflow.
+public function getErrorCount();
+
+//Count of processed items minus the count of exceptions caught.
+public function getSuccessCount();
+
+//Count of items processed
+//This will not include any filtered items or items which fail conversion.
+public function getTotalProcessedCount();
+
+//bool to indicate whether any exceptions were caught.
+public function hasErrors();
+
+//An array of exceptions caught by the Workflow.
+public function getExceptions();
+
+```
+
+Example use cases:
+ * You want to send an e-mail with the results of the import
+ * You want to send a Text alert if a particular file failed
+ * You want to move an import file to a failed directory if there were errors
+ * You want to log how long imports are taking
 
 ### Readers
 
@@ -150,7 +201,18 @@ use Ddeboer\DataImport\Reader\CsvReader;
 
 $file = new \SplFileObject('/path/to/csv_file.csv');
 $reader = new CsvReader($file);
+```
 
+Optionally construct with different delimiter, enclosure and/or escape
+character:
+
+```php
+$reader = new CsvReader($file, ';');
+```
+
+Then iterate over the CSV file:
+
+```php
 foreach ($reader as $row) {
     // $row will be an array containing the comma-separated elements of the line:
     // array(
@@ -266,6 +328,82 @@ $file = new \SplFileObject('path/to/ecxel_file.xls');
 $reader = new ExcelReader($file);
 ```
 
+###OneToManyReader
+
+Allows for merging of two data sources (using existing readers), for example you have one CSV with orders and another with order items. 
+
+Imagine two CSV's like the following:
+
+```
+OrderId,Price
+1,30
+2,15
+```
+
+```
+OrderId,Name
+1,"Super Cool Item 1"
+1,"Super Cool Item 2"
+2,"Super Cool Item 3"
+```
+
+You want to associate the items to the order. Using the OneToMany reader we can nest these rows in the order using a key
+which you specify in the OneToManyReader.  
+
+The code would look something like:
+
+```php
+$orderFile = new \SplFileObject("orders.csv");
+$orderReader = new CsvReader($file, $orderFile);
+$orderReader->setHeaderRowNumber(0);
+
+$orderItemFile = new \SplFileObject("order_items.csv");
+$orderItemReader = new CsvReader($file, $orderFile);
+$orderItemReader->setHeaderRowNumber(0);
+
+$oneToManyReader = new OneToManyReader($orderReader, $orderItemReader, 'items', 'OrderId', 'OrderId');
+```
+
+The third parameter is the key which the order item data will be nested under. This will be an array of order items. 
+The fourth and fifth parameters are "primary" and "foreign" keys of the data. The OneToMany reader will try to match the data using these keys.
+Take for example the CSV's given above, you would expect that Order "1" has the first 2 Order Items associated to it due to their Order Id's also 
+being "1".
+
+Note: You can omit the last parameter, if both files have the same field. Eg if parameter 4 is 'OrderId' and you don't specify
+paramater 5, the reader will look for the foreign key using 'OrderId'
+
+The resulting data will look like:
+
+```php
+//Row 1
+array(
+	'OrderId' => 1,
+	'Price' => 30,
+	'items' => array(
+		array(
+			'OrderId' => 1,
+			'Name' => 'Super Cool Item 1',
+		),
+		array(
+			'OrderId' => 1,
+			'Name' => 'Super Cool Item 2',
+		),
+	),
+);
+
+//Row2
+array(
+	'OrderId' => 2,
+	'Price' => 15,
+	'items' => array(
+		array(
+			'OrderId' => 2,
+			'Name' => 'Super Cool Item 1',
+		),
+	)
+);
+```
+
 #### Create a reader
 
 You can create your own data reader by implementing the
@@ -285,8 +423,8 @@ Writes CSV files:
 ```php
 use Ddeboer\DataImport\Writer\CsvWriter;
 
-$file = new \SplFileObject('output.csv', 'w');
-$writer = new CsvWriter($file);
+$writer = new CsvWriter();
+$writer->setStream(fopen('output.csv', 'w'));
 
 // Write column headers:
 $writer->writeItem(array('first', 'last'));
@@ -314,6 +452,20 @@ $writer
         )
     )
     ->finish();
+```
+
+#### PdoWriter
+
+Use the PDO writer for importing data into a relational database (such as
+MySQL, SQLite or MS SQL) without using Doctrine.
+
+```php
+use Ddeboer\DataImport\Writer\PdoWriter;
+
+$pdo = new \PDO('sqlite::memory:');
+$pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+
+$writer = new PdoWriter($pdo, 'my_table');
 ```
 
 #### ExcelWriter
@@ -359,7 +511,7 @@ $writer = new ExcelWriter($file, 'Old sheet');
 
 #### ConsoleProgressWriter
 
-This writer displays import progress when you start the workflow from the 
+This writer displays import progress when you start the workflow from the
 command-line. It requires Symfony’s Console component:
 
 ```bash
@@ -375,7 +527,31 @@ $progressWriter = new ConsoleProgressWriter($output, $reader);
 
 // Most useful when added to a workflow
 $workflow->addWriter($progressWriter);
+
 ```
+
+There are various optional arguments you can pass to the `ConsoleProgressWriter`. These include the output format and
+the redraw frequency. You can read more about the options [here](http://symfony.com/doc/current/components/console/helpers/progressbar.html).
+
+You might want to set the redraw rate higher than the default as it can slow down the import/export process quite a bit
+as it will update the console text after every record has been processed by the `Workflow`.
+
+```php
+$output = new ConsoleOutput(...);
+$progressWriter = new ConsoleProgressWriter($output, $reader, 'debug', 100);
+```
+
+Above we set the output format to 'debug' and the redraw rate to 100. This will only re-draw the console progress text
+after every 100 records.
+
+The `debug` format is default as it displays ETA's and Memory Usage. You can use a more simple formatter if you wish:
+
+```php
+$output = new ConsoleOutput(...);
+$progressWriter = new ConsoleProgressWriter($output, $reader, 'normal', 100);
+```
+
+
 
 #### CallbackWriter
 
@@ -389,6 +565,49 @@ $workflow->addWriter(new CallbackWriter(function ($row) use ($storage) {
     $storage->store($row);
 }));
 ```
+#### AbstractStreamWriter
+
+Instead of implementing your own writer from scratch, you can use AbstractStreamWriter as a basis,
+implemented the ```writeItem``` method and you're done:
+
+```php
+use Ddeboer\DataImport\Writer\AbstractStreamWriter;
+
+class MyStreamWriter extends AbstractStreamWriter
+{
+    public function writeItem(array $item)
+    {
+        fputs($this->getStream(), implode(',', $item));
+    }
+}
+
+$writer = new MyStreamWriter(fopen('php://temp', 'r+'));
+$writer->setCloseStreamOnFinish(false);
+
+$workflow->addWriter(new MyStreamWriter());
+$workflow->process();
+
+$stream = $writer->getStream();
+rewind($stream);
+
+echo stream_get_contents($stream);
+```
+
+#### StreamMergeWriter
+
+Suppose you have 2 stream writers handling fields differently according to one of the fields.
+You should then use ```StreamMergeWriter``` to call the appropriate Writer for you.
+
+The default field name is ```discr``` but could be changed with the ```setDiscriminantField()``` method.
+
+```php
+use Ddeboer\DataImport\Writer\StreamMergeWriter;
+
+$writer = new StreamMergeWriter();
+
+$writer->addWriter('first writer', new MyStreamWriter());
+$writer->addWriter('second writer', new MyStreamWriter());
+```
 
 #### Create a writer
 
@@ -397,12 +616,12 @@ Build your own writer by implementing the
 
 ### Filters
 
-A filter decides whether data input is accepted into the import process. 
+A filter decides whether data input is accepted into the import process.
 
 #### CallbackFilter
 
 The CallbackFilter wraps your callback function that determines whether
-data should be accepted. The data input is accepted only if the function 
+data should be accepted. The data input is accepted only if the function
 returns `true`.
 
 ```php
@@ -519,6 +738,59 @@ array(
 );
 ```
 
+#### NestedMappingItemConverter
+Use the NestedMappingItemConverter to add mappings to your workflow if the input data contains nested arrays. Your keys from
+the input data will be renamed according to these mappings. Say you have input data:
+
+```php
+$data = array(
+    'foo'   => 'bar',
+    'baz' => array(
+        array(
+            'another' => 'thing'
+        ),
+        array(
+            'another' => 'thing2'
+        ),
+    )
+);
+```
+
+You can map the keys `another` in the following way.
+
+```php
+use Ddeboer\DataImport\ItemConverter\NestedMappingItemConverter;
+
+$mappings = array(
+    'foo'   => 'foobar',
+    'baz' => array(
+        'another' => 'different_thing'
+    )
+);
+
+$converter = new NestedItemMappingConverter('baz');
+$converter->addMapping($mappings);
+
+$workflow->addItemConverter($converter)
+    ->process();
+```
+
+Your output data will now be:
+```php
+array(
+    'foobar' => 'bar',
+    'baz' => array(
+        array(
+            'different_thing' => 'thing'
+        ),
+        array(
+            'different_thing' => 'thing2'
+        ),
+    )
+);
+```
+
+
 #### Create an item converter
 
 Implement `ItemConverterInterface` to create your own item converter:
@@ -526,7 +798,7 @@ Implement `ItemConverterInterface` to create your own item converter:
 ```php
 use Ddeboer\DataImport\ItemConverter\ItemConverterInterface;
 
-class MyItemConverter implements ItemConverterInterface 
+class MyItemConverter implements ItemConverterInterface
 {
     public function convert($item)
     {
@@ -548,7 +820,7 @@ $converter = new CallbackItemConverter(function ($item) use ($translator) {
     foreach ($item as $key => $value) {
         $item[$key] = $translator->translate($value);
     }
-  
+
     return $row;
 });
 ```
@@ -559,12 +831,44 @@ Value converters are used to convert specific fields (e.g., columns in database)
 
 #### DateTimeValueConverter
 
-Converts a date representation in a format you specify into a `DateTime` object:
+There are two uses for the DateTimeValueConverter:
+
+1. Convert a date representation in a format you specify into a `DateTime` object.
+2. Convert a date representation in a format you specify into a different format.
+
+##### Convert a date into a `DateTime` object.
 
 ```php
 use Ddeboer\DataImport\ValueConverter\DateTimeValueConverter;
 
 $converter = new DateTimeValueConverter('d/m/Y H:i:s');
+$workflow->addValueConverter('my_date_field', $converter);
+```
+
+If your date string is in a format specified at: http://www.php.net/manual/en/datetime.formats.date.php then you can omit the format parameter.
+
+```php
+use Ddeboer\DataImport\ValueConverter\DateTimeValueConverter;
+
+$converter = new DateTimeValueConverter();
+$workflow->addValueConverter('my_date_field', $converter);
+```
+
+##### Convert a date string into a differently formatted date string.
+
+```php
+use Ddeboer\DataImport\ValueConverter\DateTimeValueConverter;
+
+$converter = new DateTimeValueConverter('d/m/Y H:i:s', 'd-M-Y');
+$workflow->addValueConverter('my_date_field', $converter);
+```
+
+If your date is in a format specified at: http://www.php.net/manual/en/datetime.formats.date.php you can pass `null` as the first argument.
+
+```php
+use Ddeboer\DataImport\ValueConverter\DateTimeValueConverter;
+
+$converter = new DateTimeValueConverter(null, 'd-M-Y');
 $workflow->addValueConverter('my_date_field', $converter);
 ```
 

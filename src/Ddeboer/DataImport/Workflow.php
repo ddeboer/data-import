@@ -6,13 +6,15 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 use Ddeboer\DataImport\Exception\UnexpectedTypeException;
-use Ddeboer\DataImport\Exception\Exception;
+use Ddeboer\DataImport\Exception\ExceptionInterface;
 use Ddeboer\DataImport\ItemConverter\MappingItemConverter;
 use Ddeboer\DataImport\Reader\ReaderInterface;
 use Ddeboer\DataImport\Writer\WriterInterface;
 use Ddeboer\DataImport\Filter\FilterInterface;
 use Ddeboer\DataImport\ValueConverter\ValueConverterInterface;
 use Ddeboer\DataImport\ItemConverter\ItemConverterInterface;
+
+use DateTime;
 
 /**
  * A mediator between a reader and one or more writers and converters
@@ -78,13 +80,32 @@ class Workflow
     protected $afterConversionFilters = array();
 
     /**
+     * Identifier for the Import/Export
+     *
+     * @var string|null
+     */
+    protected $name = null;
+
+    /**
      * Construct a workflow
      *
      * @param ReaderInterface $reader
      * @param LoggerInterface $logger
+     * @param string $name
      */
-    public function __construct(ReaderInterface $reader, LoggerInterface $logger = null)
+    public function __construct(ReaderInterface $reader, LoggerInterface $logger = null, $name = null)
     {
+
+        if (null !== $name && !is_string($name)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    "Name identifier should be a string. Given: '%s'",
+                    (is_object($name) ? get_class($name) : gettype($name))
+                )
+            );
+        }
+
+        $this->name = $name;
         $this->reader = $reader;
         $this->logger = $logger ? $logger : new NullLogger();
         $this->filters = new \SplPriorityQueue();
@@ -204,11 +225,14 @@ class Workflow
      *    converters.
      * 5. Write the item to each of the writers.
      *
-     * @return int Number of items processed
+     * @throws ExceptionInterface
+     * @return Result Object Containing Workflow Results
      */
     public function process()
     {
-        $count = 0;
+        $count      = 0;
+        $exceptions = array();
+        $startTime  = new DateTime;
 
         // Prepare writers
         foreach ($this->writers as $writer) {
@@ -216,8 +240,7 @@ class Workflow
         }
 
         // Read all items
-        foreach ($this->reader as $item) {
-
+        foreach ($this->reader as $rowIndex => $item) {
             try {
                 // Apply filters before conversion
                 if (!$this->filterItem($item, $this->filters)) {
@@ -238,14 +261,15 @@ class Workflow
                     $writer->writeItem($convertedItem, $item);
                 }
 
-                $count++;
             } catch(ExceptionInterface $e) {
                 if ($this->skipItemOnFailure) {
+                    $exceptions[$rowIndex] = $e;
                     $this->logger->error($e->getMessage());
                 } else {
                     throw $e;
                 }
             }
+            $count++;
         }
 
         // Finish writers
@@ -253,7 +277,7 @@ class Workflow
             $writer->finish();
         }
 
-        return $count;
+        return new Result($this->name, $startTime, new DateTime, $count, $exceptions);
     }
 
     /**
@@ -305,7 +329,10 @@ class Workflow
         }
 
         foreach ($this->valueConverters as $property => $converters) {
-            if (isset($item[$property])) {
+            // isset() returns false when value is null, so we need
+            // array_key_exists() too. Combine both to have best performance,
+            // as isset() is much faster.
+            if (isset($item[$property]) || array_key_exists($property, $item)) {
                 foreach ($converters as $converter) {
                     $item[$property] = $converter->convert($item[$property]);
                 }
@@ -332,7 +359,8 @@ class Workflow
 
         if (count($converters) > 0) {
             // Return first mapping item converter that we encounter
-            $converter = $converters[0];
+            reset($converters);
+            $converter = current($converters);
         } else {
             // Create default converter
             $converter = new MappingItemConverter();
