@@ -454,6 +454,24 @@ $writer
     ->finish();
 ```
 
+By default, DoctrineWriter will truncate your data before running the workflow.
+Call `disableTruncate()` if you don't want this.
+
+If you are not truncating data, DoctrineWriter will try to find an entity having it's primary key set to the value of
+the first column of the item. If it finds one, the entity will be updated, otherwise it's inserted.
+You can tell DoctrineWriter to lookup the entity using different columns of your item by passing a third parameter to
+it's constructor.
+
+```php
+$writer = new DoctrineWriter($entityManager, 'YourNamespace:Employee', 'columnName');
+```
+
+or
+
+```php
+$writer = new DoctrineWriter($entityManager, 'YourNamespace:Employee', array('column1', 'column2', 'column3'));
+```
+
 #### PdoWriter
 
 Use the PDO writer for importing data into a relational database (such as
