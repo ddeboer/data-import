@@ -17,10 +17,12 @@ class DoctrineWriterTest extends \PHPUnit_Framework_TestCase
         $writer = new DoctrineWriter($em, 'DdeboerDataImport:TestEntity');
 
         $association = new TestEntity();
+        $secondAssociation = array(new TestEntity());
         $item = array(
-            'firstProperty'   => 'some value',
-            'secondProperty'  => 'some other value',
-            'firstAssociation'=> $association
+            'firstProperty'     => 'some value',
+            'secondProperty'    => 'some other value',
+            'firstAssociation'  => $association,
+            'secondAssociation' => $secondAssociation
         );
         $writer->writeItem($item);
     }
@@ -41,10 +43,12 @@ class DoctrineWriterTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(3, $writer->getBatchSize());
 
         $association = new TestEntity();
+        $secondAssociation = array(new TestEntity());
         $item = array(
-            'firstProperty'   => 'some value',
-            'secondProperty'  => 'some other value',
-            'firstAssociation'=> $association
+            'firstProperty'     => 'some value',
+            'secondProperty'    => 'some other value',
+            'firstAssociation'  => $association,
+            'secondAssociation' => $secondAssociation
         );
 
         for ($i = 0; $i < 11; $i++) {
@@ -80,7 +84,7 @@ class DoctrineWriterTest extends \PHPUnit_Framework_TestCase
 
         $metadata->expects($this->any())
             ->method('getAssociationNames')
-            ->will($this->returnValue(array('firstAssociation')));
+            ->will($this->returnValue(array('firstAssociation', 'secondAssociation')));
 
         $configuration = $this->getMockBuilder('Doctrine\DBAL\Configuration')
             ->setMethods(array('getConnection'))
@@ -136,10 +140,12 @@ class DoctrineWriterTest extends \PHPUnit_Framework_TestCase
         $writer = new DoctrineWriter($this->getEntityManager(), 'DdeboerDataImport:TestEntity');
 
         $association = new TestEntity();
+        $secondAssociation = array(new TestEntity());
         $item = array(
-            'firstProperty'   => 'some value',
-            'secondProperty'  => 'some other value',
-            'firstAssociation'=> $association
+            'firstProperty'     => 'some value',
+            'secondProperty'    => 'some other value',
+            'firstAssociation'  => $association,
+            'secondAssociation' => $secondAssociation
         );
 
         $this->assertSame($writer, $writer->prepare());

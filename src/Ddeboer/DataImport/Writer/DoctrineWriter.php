@@ -162,10 +162,22 @@ class DoctrineWriter extends AbstractWriter
         return new $className;
     }
 
-    protected function setValue($entity, $value, $setter)
+    protected function setValue($entity, $value, $fieldName)
     {
+        $getter  = 'get' . ucfirst($fieldName);
+        $setter  = 'set' . ucfirst($fieldName);
+        $adder   = 'add' . ucfirst($fieldName);
+        $remover = 'remove' . ucfirst($fieldName);
         if (method_exists($entity, $setter)) {
             $entity->$setter($value);
+        } elseif (method_exists($entity, $adder)) {
+            $oldValue = $entity->$getter();
+            foreach ($oldValue as $oldItem) {
+                $entity->$remover($oldItem);
+            }
+            foreach ($value as $newItem) {
+                $entity->$adder($newItem);
+            }
         }
     }
 
@@ -228,8 +240,7 @@ class DoctrineWriter extends AbstractWriter
             if (!($value instanceof \DateTime)
                 || $value != $this->entityMetadata->getFieldValue($entity, $fieldName)
             ) {
-                $setter = 'set' . ucfirst($fieldName);
-                $this->setValue($entity, $value, $setter);
+                $this->setValue($entity, $value, $fieldName);
             }
         }
 
