@@ -27,7 +27,7 @@
         "ext-sqlite3": "*",
         "symfony/property-access": "*",
         "phpoffice/phpexcel": "*",
-        "doctrine/dbal": "*",
+        "doctrine/dbal": "~2.5@beta",
         "doctrine/orm": "*",
         "symfony/console": "~2.5.0",
         "symfony/validator": "~2.3.0"
