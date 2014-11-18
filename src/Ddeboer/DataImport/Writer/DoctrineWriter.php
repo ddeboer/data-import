@@ -78,11 +78,18 @@ class DoctrineWriter extends AbstractWriter
     protected $index;
 
     /**
+     * List of fields used to lookup an entity
+     *
+     * @var array
+     */
+    protected $lookupFields = array();
+
+    /**
      * Constructor
      *
      * @param ObjectManager $objectManager
      * @param string        $objectName
-     * @param string        $index         Index to find current entities by
+     * @param string|array        $index         Field or fields to find current entities by
      */
     public function __construct(ObjectManager $objectManager, $objectName, $index = null)
     {
@@ -90,7 +97,13 @@ class DoctrineWriter extends AbstractWriter
         $this->objectName = $objectName;
         $this->objectRepository = $objectManager->getRepository($objectName);
         $this->objectMetadata = $objectManager->getClassMetadata($objectName);
-        $this->index = $index;
+        if($index) {
+            if(is_array($index)) {
+                $this->lookupFields = $index;
+            } else {
+                $this->lookupFields = array($index);
+            }
+        }
     }
 
     public function getBatchSize()
@@ -186,12 +199,16 @@ class DoctrineWriter extends AbstractWriter
         $this->counter++;
         $object = null;
 
-        // If the table was not truncated to begin with, find current entities
+        // If the table was not truncated to begin with, find current entity
         // first
         if (false === $this->truncate) {
-            if ($this->index) {
+            if ($this->lookupFields) {
+                $lookupConditions = array();
+                foreach($this->lookupFields as $fieldName) {
+                    $lookupConditions[$fieldName] = $item[$fieldName];
+                }
                 $object = $this->objectRepository->findOneBy(
-                    array($this->index => $item[$this->index])
+                    $lookupConditions
                 );
             } else {
                 //TODO: it's better to set index field explicitly.
