@@ -10,6 +10,7 @@ services:
 
 before_script:
   - pecl -q install mongo && echo "extension=mongo.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
+  - phpenv config-add travis_php.ini
   - composer install --dev
 
 script: phpunit --coverage-text --coverage-clover=coverage.clover
