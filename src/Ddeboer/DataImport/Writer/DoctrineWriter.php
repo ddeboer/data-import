@@ -70,6 +70,7 @@ class DoctrineWriter extends AbstractWriter
     protected $truncate = true;
 
     /**
+
      * Whether to replace existing entities in the table
      *
      * @var boolean
@@ -77,18 +78,24 @@ class DoctrineWriter extends AbstractWriter
     protected $replace_existing = true;
 
     /**
-     * Whether to replace existing entities in the table
+     * Whether to camelize properties
      *
      * @var boolean
      */
     protected $camelize = false;
+
+    /** List of fields used to lookup an entity
+     *
+     * @var array
+     */
+    protected $lookupFields = array();
 
     /**
      * Constructor
      *
      * @param EntityManager $entityManager
      * @param string        $entityName
-     * @param string        $index         Index to find current entities by
+     * @param string|array        $index         Field or fields to find current entities by
      */
     public function __construct(EntityManager $entityManager, $entityName, $index = null)
     {
@@ -96,7 +103,13 @@ class DoctrineWriter extends AbstractWriter
         $this->entityName = $entityName;
         $this->entityRepository = $entityManager->getRepository($entityName);
         $this->entityMetadata = $entityManager->getClassMetadata($entityName);
-        $this->index = $index;
+        if($index) {
+            if(is_array($index)) {
+                $this->lookupFields = $index;
+            } else {
+                $this->lookupFields = array($index);
+            }
+        }
     }
 
     public function getBatchSize()
@@ -237,12 +250,16 @@ class DoctrineWriter extends AbstractWriter
         $this->counter++;
         $entity = null;
 
-        // If the table was not truncated to begin with, find current entities
+        // If the table was not truncated to begin with, find current entity
         // first
         if (false === $this->truncate && $this->replace_existing) {
-            if ($this->index) {
+            if ($this->lookupFields) {
+                $lookupConditions = array();
+                foreach($this->lookupFields as $fieldName) {
+                    $lookupConditions[$fieldName] = $item[$fieldName];
+                }
                 $entity = $this->entityRepository->findOneBy(
-                    array($this->index => $item[$this->index])
+                    $lookupConditions
                 );
             } else {
                 $entity = $this->entityRepository->find(current($item));
