@@ -36,6 +36,11 @@ class OffsetFilter implements FilterInterface
     protected $maxLimitHit = false;
 
     /**
+     * @var int
+     */
+    private $priority = 128;
+
+    /**
      * Constructor
      *
      * @param int      $offset 0-based index of the item to start read from
@@ -87,6 +92,14 @@ class OffsetFilter implements FilterInterface
      */
     public function getPriority()
     {
-        return 128;
+        return $this->priority;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setPriority($priority)
+    {
+        $this->priority = $priority;
     }
 }

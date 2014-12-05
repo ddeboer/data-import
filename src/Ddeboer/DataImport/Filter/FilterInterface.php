@@ -22,4 +22,11 @@ interface FilterInterface
      * @return int
      */
     public function getPriority();
+
+    /**
+     * Set filter priority (higher number means higher priority)
+     *
+     * @param in $priority Filter priority
+     */
+    public function setPriority($priority);
 }
