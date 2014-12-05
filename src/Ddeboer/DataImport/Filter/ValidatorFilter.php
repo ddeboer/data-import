@@ -19,6 +19,8 @@ class ValidatorFilter implements FilterInterface
 
     private $violations = array();
 
+    private $priority = 256;
+
     public function __construct(ValidatorInterface $validator)
     {
         $this->validator = $validator;
@@ -66,6 +68,14 @@ class ValidatorFilter implements FilterInterface
      */
     public function getPriority()
     {
-        return 256;
+        return $this->priority;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setPriority($priority)
+    {
+        $this->priority = $priority;
     }
 }

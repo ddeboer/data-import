@@ -15,6 +15,11 @@ class CallbackFilter implements FilterInterface
     private $callback;
 
     /**
+     * @var int
+     */
+    private $priority = 0;
+
+    /**
      * Constructor
      *
      * @param callable $callback
@@ -43,6 +48,14 @@ class CallbackFilter implements FilterInterface
      */
     public function getPriority()
     {
-        return 0;
+        return $this->priority;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setPriority($priority)
+    {
+        $this->priority = $priority;
     }
 }
