@@ -53,10 +53,10 @@ class PdoReader implements ReaderInterface
             // Grab the first row to find keys
             $row = $this->statement->fetch(\PDO::FETCH_ASSOC);
             // Return field keys, or empty array no rows remain
-            return array_keys($row ? $row : []);
+            return array_keys($row ? $row : array());
         } else {
             // If the statement errors return empty
-            return [];
+            return array();
         }
     }
 

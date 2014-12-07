@@ -73,14 +73,14 @@ class PdoReaderTest extends \PHPUnit_Framework_TestCase
 
 		$counter = 1;
 		for ($i = 1; $i <= 10; $i++) {
-			$group_insert->execute([':name' => "name {$i}"]);
+			$group_insert->execute(array(':name' => "name {$i}"));
 			$id = $connection->lastInsertId();
 
 			for ($j = 1; $j <= 10; $j++) {
-				$user_insert->execute([
+				$user_insert->execute(array(
 					':username'  => "user-{$counter}",
 					':group' => $id
-				]);
+				));
 
 				$counter++;
 			}
