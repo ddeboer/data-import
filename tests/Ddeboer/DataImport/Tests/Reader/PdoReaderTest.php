@@ -49,12 +49,12 @@ class PdoReaderTest extends \PHPUnit_Framework_TestCase
 
 		// Build schema
 		$connection->query('CREATE TABLE groups (
-			id INTEGER PRIMARY KEY,
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name VARCHAR(45)
 		)');
 
 		$connection->query('CREATE TABLE user (
-			id INTEGER PRIMARY KEY,
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			username VARCHAR(32),
 			group_id INTEGER,
 			FOREIGN KEY(group_id) REFERENCES groups(id)
