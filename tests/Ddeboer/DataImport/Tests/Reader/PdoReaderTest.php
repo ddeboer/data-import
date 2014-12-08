@@ -48,18 +48,18 @@ class PdoReaderTest extends \PHPUnit_Framework_TestCase
 		$connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
 		// Build schema
-		$connection->query('CREATE TABLE pdo_group (
+		$connection->query('CREATE TABLE groups (
 			id INTEGER PRIMARY KEY,
 			name VARCHAR(45)
 		)');
 
-		$connection->query('CREATE TABLE pdo_user (
+		$connection->query('CREATE TABLE user (
 			id INTEGER PRIMARY KEY,
 			username VARCHAR(32),
 			group_id INTEGER,
-			FOREIGN KEY(group_id) REFERENCES pdo_group(id)
+			FOREIGN KEY(group_id) REFERENCES groups(id)
 		)');
-		$connection->query('CREATE UNIQUE INDEX user_username ON pdo_user(username)');
+		$connection->query('CREATE UNIQUE INDEX user_username ON user(username)');
 
 		return $connection;
 	}
@@ -68,8 +68,8 @@ class PdoReaderTest extends \PHPUnit_Framework_TestCase
 	{
 		$connection = $this->getConnection();
 
-		$group_insert = $connection->prepare('INSERT INTO pdo_group (name) VALUES (:name)');
-		$user_insert  = $connection->prepare('INSERT INTO pdo_user (username, group_id) VALUES (:username, :group)');
+		$group_insert = $connection->prepare('INSERT INTO groups (name) VALUES (:name)');
+		$user_insert  = $connection->prepare('INSERT INTO user (username, group_id) VALUES (:username, :group)');
 
 		$counter = 1;
 		for ($i = 1; $i <= 10; $i++) {
@@ -86,6 +86,6 @@ class PdoReaderTest extends \PHPUnit_Framework_TestCase
 			}
 		}
 
-		return new PdoReader($connection, 'SELECT u.id, u.username, g.name FROM `pdo_user` u INNER JOIN `pdo_group` g ON u.group_id = g.id');
+		return new PdoReader($connection, 'SELECT u.id, u.username, g.name FROM `user` u INNER JOIN groups g ON u.group_id = g.id');
 	}
 }
