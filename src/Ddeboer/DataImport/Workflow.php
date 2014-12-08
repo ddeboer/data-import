@@ -338,7 +338,7 @@ class Workflow
                     try {
                         $item[$property] = $converter->convert($item[$property]);
                     } catch (ExceptionInterface $e) {
-                        throw new ValueConversionException("Unable to convert value for '$property'",null,$e);
+                        throw new ValueConversionException($property,$e);
                     }
                 }
             }
