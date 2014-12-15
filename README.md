@@ -99,7 +99,7 @@ Broadly speaking, you can use this library in two ways:
 Each data import revolves around the workflow and takes place along the following lines:
 
 1. Construct a [reader](#readers).
-2. Construct a workflow and pass the reader to it, optionaly pass a logger as second argument.
+2. Construct a workflow and pass the reader to it, optionally pass a logger as second argument.
    Add at least one [writer](#writers) to the workflow.
 3. Optionally, add [filters](#filters), item converters and
    [value converters](#value-converters) to the workflow.
@@ -313,7 +313,7 @@ $reader = new DoctrineReader($entityManager, 'Your\Namespace\Entity\User');
 #### ExcelReader
 
 Acts as an adapter for the [PHPExcel library](http://phpexcel.codeplex.com/). Make sure
-to incude that library in your project:
+to include that library in your project:
 
 ```bash
 $ composer require phpoffice/phpexcel
@@ -370,7 +370,7 @@ Take for example the CSV's given above, you would expect that Order "1" has the 
 being "1".
 
 Note: You can omit the last parameter, if both files have the same field. Eg if parameter 4 is 'OrderId' and you don't specify
-paramater 5, the reader will look for the foreign key using 'OrderId'
+parameter 5, the reader will look for the foreign key using 'OrderId'
 
 The resulting data will look like:
 
