@@ -19,7 +19,7 @@ class CsvReaderFactory
     public function __construct(
         $headerRowNumber = null,
         $strict = true,
-        $delimiter = ';',
+        $delimiter = ',',
         $enclosure = '"',
         $escape = '\\'
     ) {
