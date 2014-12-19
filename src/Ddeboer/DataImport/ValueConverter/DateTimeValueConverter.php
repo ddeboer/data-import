@@ -2,12 +2,14 @@
 
 namespace Ddeboer\DataImport\ValueConverter;
 
+use \Ddeboer\DataImport\Exception\UnexpectedValueException;
+
 /**
  * Convert an date string into another date string
  * Eg. You want to change the format of a string OR
  * If no output specified, return DateTime instance
  */
-class DateTimeValueConverter implements ValueConverterInterface
+class DateTimeValueConverter implements \Ddeboer\DataImport\ValueConverter\ValueConverterInterface
 {
     /**
      * Date time format
@@ -56,7 +58,7 @@ class DateTimeValueConverter implements ValueConverterInterface
         if ($this->inputFormat) {
             $date = \DateTime::createFromFormat($this->inputFormat, $input);
             if (false === $date) {
-                throw new \UnexpectedValueException(
+                throw new UnexpectedValueException(
                     $input . ' is not a valid date/time according to format ' . $this->inputFormat
                 );
             }

@@ -2,12 +2,14 @@
 
 namespace Ddeboer\DataImport\ValueConverter;
 
+use \Ddeboer\DataImport\Exception\InvalidArgumentException;
+
 /**
  * Converts a nested array using a converter-map
  *
  * @author Christoph Rosse <christoph@rosse.at>
  */
-class ArrayValueConverterMap implements ValueConverterInterface
+class ArrayValueConverterMap implements \Ddeboer\DataImport\ValueConverter\ValueConverterInterface
 {
     /**
      * @var array
@@ -30,7 +32,7 @@ class ArrayValueConverterMap implements ValueConverterInterface
     public function convert($input)
     {
         if (!is_array($input)) {
-            throw new \InvalidArgumentException('Input of a ArrayValueConverterMap must be an array');
+            throw new InvalidArgumentException('Input of a ArrayValueConverterMap must be an array');
         }
 
         foreach ($input as $key => $item) {
