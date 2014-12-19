@@ -258,7 +258,7 @@ class Workflow
                 }
 
                 foreach ($this->writers as $writer) {
-                    $writer->writeItem($convertedItem, $item);
+                    $writer->writeItem($convertedItem);
                 }
 
             } catch(ExceptionInterface $e) {
