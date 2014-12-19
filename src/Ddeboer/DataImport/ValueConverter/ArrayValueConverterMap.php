@@ -9,7 +9,7 @@ use \Ddeboer\DataImport\Exception\InvalidArgumentException;
  *
  * @author Christoph Rosse <christoph@rosse.at>
  */
-class ArrayValueConverterMap implements \Ddeboer\DataImport\ValueConverter\ValueConverterInterface
+class ArrayValueConverterMap implements ValueConverterInterface
 {
     /**
      * @var array
