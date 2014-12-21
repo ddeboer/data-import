@@ -3,6 +3,7 @@
 namespace Ddeboer\DataImport\Tests\Filter;
 
 use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Constraints as Assert;
 use Ddeboer\DataImport\Filter\ValidatorFilter;
 use Ddeboer\DataImport\Exception\ValidationException;
 
@@ -20,10 +21,6 @@ class ValidationFilterTest extends \PHPUnit_Framework_TestCase
 
         $list = new ConstraintViolationList();
 
-        $this->validator->expects($this->once())
-            ->method('validateValue')
-            ->will($this->returnValue($list));
-
         $this->assertTrue($this->filter->filter($item));
     }
 
@@ -38,6 +35,7 @@ class ValidationFilterTest extends \PHPUnit_Framework_TestCase
             ->method('validateValue')
             ->will($this->returnValue($list));
 
+        $this->filter->add('foo', new Assert\EqualTo('baz'));
         $this->assertFalse($this->filter->filter($item));
 
         $this->assertEquals(array(1 => $list), $this->filter->getViolations());
@@ -55,8 +53,9 @@ class ValidationFilterTest extends \PHPUnit_Framework_TestCase
         $this->validator->expects($this->once())
             ->method('validateValue')
             ->will($this->returnValue($list));
-        
+
         try {
+            $this->filter->add('foo', new Assert\EqualTo('baz'));
             $this->filter->filter($item);
             $this->fail('ValidationException should be thrown');
         } catch (ValidationException $e) {
