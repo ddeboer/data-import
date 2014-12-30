@@ -58,7 +58,7 @@ class DbalReaderTest extends \PHPUnit_Framework_TestCase
         $table->setPrimaryKey(array('id'));
 
         $myTable = $schema->createTable('user');
-        $myTable->addColumn('id', 'integer', array('unsigned' => true));
+        $myTable->addColumn('id', 'integer', array('unsigned' => true, 'autoincrement' => true));
         $myTable->addColumn('username', 'string', array('length' => 32));
         $myTable->addColumn('group_id', 'integer');
         $myTable->setPrimaryKey(array('id'));
