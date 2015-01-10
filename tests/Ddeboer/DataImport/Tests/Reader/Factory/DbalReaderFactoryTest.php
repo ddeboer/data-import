@@ -6,6 +6,13 @@ use Ddeboer\DataImport\Reader\Factory\ExcelReaderFactory;
 
 class DbalReaderFactoryTest extends \PHPUnit_Framework_TestCase
 {
+    public function setUp()
+    {
+        if (!extension_loaded('zip')) {
+            $this->markTestSkipped();
+        }
+    }
+
     public function testGetReader()
     {
         $factory = new ExcelReaderFactory();
