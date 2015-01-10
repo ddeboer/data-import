@@ -331,7 +331,7 @@ $reader = new ExcelReader($file);
 
 ###OneToManyReader
 
-Allows for merging of two data sources (using existing readers), for example you have one CSV with orders and another with order items. 
+Allows for merging of two data sources (using existing readers), for example you have one CSV with orders and another with order items.
 
 Imagine two CSV's like the following:
 
@@ -349,7 +349,7 @@ OrderId,Name
 ```
 
 You want to associate the items to the order. Using the OneToMany reader we can nest these rows in the order using a key
-which you specify in the OneToManyReader.  
+which you specify in the OneToManyReader.
 
 The code would look something like:
 
@@ -365,9 +365,9 @@ $orderItemReader->setHeaderRowNumber(0);
 $oneToManyReader = new OneToManyReader($orderReader, $orderItemReader, 'items', 'OrderId', 'OrderId');
 ```
 
-The third parameter is the key which the order item data will be nested under. This will be an array of order items. 
+The third parameter is the key which the order item data will be nested under. This will be an array of order items.
 The fourth and fifth parameters are "primary" and "foreign" keys of the data. The OneToMany reader will try to match the data using these keys.
-Take for example the CSV's given above, you would expect that Order "1" has the first 2 Order Items associated to it due to their Order Id's also 
+Take for example the CSV's given above, you would expect that Order "1" has the first 2 Order Items associated to it due to their Order Id's also
 being "1".
 
 Note: You can omit the last parameter, if both files have the same field. Eg if parameter 4 is 'OrderId' and you don't specify
@@ -378,30 +378,30 @@ The resulting data will look like:
 ```php
 //Row 1
 array(
-	'OrderId' => 1,
-	'Price' => 30,
-	'items' => array(
-		array(
-			'OrderId' => 1,
-			'Name' => 'Super Cool Item 1',
-		),
-		array(
-			'OrderId' => 1,
-			'Name' => 'Super Cool Item 2',
-		),
-	),
+    'OrderId' => 1,
+    'Price' => 30,
+    'items' => array(
+        array(
+            'OrderId' => 1,
+            'Name' => 'Super Cool Item 1',
+        ),
+        array(
+            'OrderId' => 1,
+            'Name' => 'Super Cool Item 2',
+        ),
+    ),
 );
 
 //Row2
 array(
-	'OrderId' => 2,
-	'Price' => 15,
-	'items' => array(
-		array(
-			'OrderId' => 2,
-			'Name' => 'Super Cool Item 1',
-		),
-	)
+    'OrderId' => 2,
+    'Price' => 15,
+    'items' => array(
+        array(
+            'OrderId' => 2,
+            'Name' => 'Super Cool Item 1',
+        ),
+    )
 );
 ```
 
