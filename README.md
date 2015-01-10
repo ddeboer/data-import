@@ -60,6 +60,7 @@ Documentation
       - [StringToObjectConverter](#stringtoobjectconverter)
       - [ArrayValueConverterMap](#arrayvalueconvertermap)
       - [CallbackValueConverter](#callbackvalueconverter)
+      - [MappingValueConverter](#mappingvalueconverter)
   * [Examples](#examples)
     - [Import CSV file and write to database](#import-csv-file-and-write-to-database)
     - [Export to CSV file](#export-to-csv-file)
@@ -970,6 +971,21 @@ $callable = function ($item) {
 
 $converter = new CallbackValueConverter($callable);
 $output = $converter->convert(array('foo', 'bar')); // $output will be "foo,bar"
+```
+
+#### MappingValueConverter
+
+Looks for a key in a hash you must provide in the constructor:
+
+```php
+use Ddeboer\DataImport\ValueConverter\MappingValueConverter;
+
+$converter = new MappingValueConverter(array(
+    'source' => 'destination'
+));
+
+$converter->convert('source'); // destination
+$converter->convert('unexpected value'); // throws an UnexpectedValueException
 ```
 
 ### Examples
