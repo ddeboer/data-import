@@ -3,6 +3,7 @@
 namespace Ddeboer\DataImport\Tests\Filter;
 
 use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Constraints;
 use Ddeboer\DataImport\Filter\ValidatorFilter;
 use Ddeboer\DataImport\Exception\ValidationException;
 
@@ -55,7 +56,7 @@ class ValidationFilterTest extends \PHPUnit_Framework_TestCase
         $this->validator->expects($this->once())
             ->method('validateValue')
             ->will($this->returnValue($list));
-        
+
         try {
             $this->filter->filter($item);
             $this->fail('ValidationException should be thrown');
@@ -63,6 +64,16 @@ class ValidationFilterTest extends \PHPUnit_Framework_TestCase
             $this->assertSame(1, $e->getLineNumber());
             $this->assertEquals($list, $e->getViolations());
         }
+    }
+
+    public function testFilterNonStrict()
+    {
+        $this->filter->setStrict(false);
+
+        $item = array('foo' => true, 'bar' => true);
+
+        $this->filter->add('foo', new Constraints\True());
+        $this->assertTrue($this->filter->filter($item));
     }
 
     public function testFilterLineNumbers()
