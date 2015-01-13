@@ -840,7 +840,7 @@ $converter = new CallbackItemConverter(function ($item) use ($translator) {
         $item[$key] = $translator->translate($value);
     }
 
-    return $row;
+    return $item;
 });
 ```
 
