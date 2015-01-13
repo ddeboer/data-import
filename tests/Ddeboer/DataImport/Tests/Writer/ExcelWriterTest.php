@@ -6,6 +6,13 @@ use Ddeboer\DataImport\Writer\ExcelWriter;
 
 class ExcelWriterTest extends \PHPUnit_Framework_TestCase
 {
+    public function setUp()
+    {
+        if (!extension_loaded('zip')) {
+            $this->markTestSkipped();
+        }
+    }
+
     public function testWriteItemAppendWithSheetTitle()
     {
         $file = tempnam(sys_get_temp_dir(), null);
