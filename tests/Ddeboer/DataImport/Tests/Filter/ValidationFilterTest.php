@@ -64,4 +64,34 @@ class ValidationFilterTest extends \PHPUnit_Framework_TestCase
             $this->assertEquals($list, $e->getViolations());
         }
     }
+
+    public function testFilterLineNumbers()
+    {
+        $this->filter->throwExceptions();
+
+        $item = array('foo' => 'bar');
+
+        $violation = $this->getMock('Symfony\\Component\\Validator\\ConstraintViolationInterface');
+        $list = new ConstraintViolationList(array($violation));
+
+        $this->validator->expects($this->exactly(2))
+            ->method('validateValue')
+            ->will($this->returnValue($list));
+
+        try {
+            $this->assertTrue($this->filter->filter($item));
+            $this->fail('ValidationException should be thrown (1)');
+        } catch (ValidationException $e) {
+            $this->assertSame(1, $e->getLineNumber());
+            $this->assertEquals($list, $e->getViolations());
+        }
+
+        try {
+            $this->assertTrue($this->filter->filter($item));
+            $this->fail('ValidationException should be thrown (2)');
+        } catch (ValidationException $e) {
+            $this->assertSame(2, $e->getLineNumber());
+            $this->assertEquals($list, $e->getViolations());
+        }
+    }
 }

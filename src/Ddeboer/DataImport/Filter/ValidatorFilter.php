@@ -47,16 +47,15 @@ class ValidatorFilter implements FilterInterface
     {
         $constraints = new Constraints\Collection($this->constraints);
         $list = $this->validator->validateValue($item, $constraints);
+        $currentLine = $this->line++;
 
         if (count($list) > 0) {
-            $this->violations[$this->line] = $list;
+            $this->violations[$currentLine] = $list;
 
             if ($this->throwExceptions) {
-                throw new ValidationException($list, $this->line);
+                throw new ValidationException($list, $currentLine);
             }
         }
-
-        $this->line++;
 
         return 0 === count($list);
     }
