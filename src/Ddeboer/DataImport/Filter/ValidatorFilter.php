@@ -15,6 +15,8 @@ class ValidatorFilter implements FilterInterface
 
     private $line = 1;
 
+    private $strict = true;
+
     private $constraints = array();
 
     private $violations = array();
@@ -38,6 +40,11 @@ class ValidatorFilter implements FilterInterface
         $this->throwExceptions = $flag;
     }
 
+    public function setStrict($strict)
+    {
+        $this->strict = $strict;
+    }
+
     public function getViolations()
     {
         return $this->violations;
@@ -45,18 +52,23 @@ class ValidatorFilter implements FilterInterface
 
     public function filter(array $item)
     {
-        $constraints = new Constraints\Collection($this->constraints);
-        $list = $this->validator->validateValue($item, $constraints);
-
-        if (count($list) > 0) {
-            $this->violations[$this->line] = $list;
-
-            if ($this->throwExceptions) {
-                throw new ValidationException($list, $this->line);
-            }
+        if (!$this->strict) {
+            // Only validate properties which have an constaint.
+            $temp = array_intersect(array_keys($item), array_keys($this->constraints));
+            $item = array_intersect_key($item, array_flip($temp));
         }
 
-        $this->line++;
+        $constraints = new Constraints\Collection($this->constraints);
+        $list = $this->validator->validateValue($item, $constraints);
+        $currentLine = $this->line++;
+
+        if (count($list) > 0) {
+            $this->violations[$currentLine] = $list;
+
+            if ($this->throwExceptions) {
+                throw new ValidationException($list, $currentLine);
+            }
+        }
 
         return 0 === count($list);
     }

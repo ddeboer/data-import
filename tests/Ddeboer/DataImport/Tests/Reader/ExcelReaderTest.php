@@ -6,6 +6,13 @@ use Ddeboer\DataImport\Reader\ExcelReader;
 
 class ExcelReaderTest extends \PHPUnit_Framework_TestCase
 {
+    public function setUp()
+    {
+        if (!extension_loaded('zip')) {
+            $this->markTestSkipped();
+        }
+    }
+
     public function testGetFields()
     {
         $file = new \SplFileObject(__DIR__.'/../Fixtures/data_column_headers.xlsx');
