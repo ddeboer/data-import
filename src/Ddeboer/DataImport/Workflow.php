@@ -13,6 +13,7 @@ use Ddeboer\DataImport\Writer\WriterInterface;
 use Ddeboer\DataImport\Filter\FilterInterface;
 use Ddeboer\DataImport\ValueConverter\ValueConverterInterface;
 use Ddeboer\DataImport\ItemConverter\ItemConverterInterface;
+use Ddeboer\DataImport\RejectCollector\RejectCollectorInterface;
 
 use DateTime;
 
@@ -80,6 +81,13 @@ class Workflow
     protected $afterConversionFilters = array();
 
     /**
+     * Array of reject collectors that will be used if an item is filtered out
+     *
+     * @var \SplPriorityQueue|RejectCollectorInterface[]
+     */
+    protected $rejectCollectors = array();
+
+    /**
      * Identifier for the Import/Export
      *
      * @var string|null
@@ -110,6 +118,7 @@ class Workflow
         $this->logger = $logger ? $logger : new NullLogger();
         $this->filters = new \SplPriorityQueue();
         $this->afterConversionFilters =  new \SplPriorityQueue();
+        $this->rejectCollectors = new \SplPriorityQueue();
     }
 
     /**
@@ -140,6 +149,26 @@ class Workflow
     public function addFilterAfterConversion(FilterInterface $filter, $priority = null)
     {
         $this->afterConversionFilters->insert($filter, $priority ?: $filter->getPriority());
+
+        return $this;
+    }
+
+    /**
+     * Add reject collector to an internal queue
+     *
+     * @param RejectCollectorInterface $rejectCollector Will be called when items are filtered
+     * @param int                      $priority        Priority in the queue (optional)
+     *
+     * @return Workflow
+     */
+    public function addRejectCollector(
+        RejectCollectorInterface $rejectCollector,
+        $priority = null
+    ) {
+        $this->rejectCollectors->insert(
+            $rejectCollector,
+            $priority ?: $rejectCollector->getPriority()
+        );
 
         return $this;
     }
@@ -222,7 +251,7 @@ class Workflow
      * 2. Ask the reader for one item at a time.
      * 3. Filter each item.
      * 4. If the filter succeeds, convert the item’s values using the added
-     *    converters.
+     *    converters. If it fails, call the reject handlers
      * 5. Write the item to each of the writers.
      *
      * @throws ExceptionInterface
@@ -295,12 +324,22 @@ class Workflow
         // elements each time it is iterated over.
         foreach (clone $filters as $filter) {
             if (false == $filter->filter($item)) {
+                $this->reject($item, $filter);
                 return false;
             }
         }
 
         // Return true if no filters failed
         return true;
+    }
+
+    protected function reject($item, $filter)
+    {
+        // SplPriorityQueue must be cloned because it is a stack and thus drops
+        // elements each time it is iterated over.
+        foreach (clone $this->rejectCollectors as $rejectCollector) {
+            $rejectCollector->collect($item, $filter);
+        }
     }
 
     /**

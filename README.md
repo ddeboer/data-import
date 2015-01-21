@@ -49,6 +49,7 @@ Documentation
     - [CallbackFilter](#callbackfilter)
     - [OffsetFilter](#offsetfilter)
     - [ValidatorFilter](#offsetfilter)
+  * [RejectCollectors](#rejectcollectors)
   * [Converters](#converters)
     - [Item converters](#item-converters)
       - [MappingItemConverter](#mappingitemconverter)
@@ -710,6 +711,34 @@ each invalid row. If you want to stop on the first failing row you can call
 `ValidatorFilter::throwExceptions()`, which throws a
 [ValidationException](/src/Ddeboer/DataImport/Exception/ValidationException.php)
 containing the line number and the violation list.
+
+### RejectCollector
+
+Reject collectors are responsible for dealing with rejected items. The most common
+use-case would probably be to write them in a file that could be corrected by
+the people in charge of the data, and then fed back to the import workflow.
+
+There are no implementations for the moments, feel free to contribute.
+
+#### Create a reject collector
+
+Implement `RejectCollectorInterface` to create your own reject collector:
+
+```php
+use Ddeboer\DataImport\RejectCollector\RejectCollectorInterface;
+use Ddeboer\DataImport\Filter\FilterInterface;
+
+class MyItemConverter implements RejectCollectorInterface
+{
+    public function collect($rejectedItem, FilterInterface $rejectingFilter)
+    {
+        // write the rejectedItem somewhere.
+        // you can test the rejecting filter to make sure you need to do something
+        // if it is an OffsetFilter, you probably do not want to do anything
+    }
+}
+```
+
 
 ### Item converters
 
