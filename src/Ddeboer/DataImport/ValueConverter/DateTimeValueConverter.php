@@ -3,13 +3,14 @@
 namespace Ddeboer\DataImport\ValueConverter;
 
 use \Ddeboer\DataImport\Exception\UnexpectedValueException;
+use \Ddeboer\DataImport\ValueConverter\ValueConverterInterface;
 
 /**
  * Convert an date string into another date string
  * Eg. You want to change the format of a string OR
  * If no output specified, return DateTime instance
  */
-class DateTimeValueConverter implements \Ddeboer\DataImport\ValueConverter\ValueConverterInterface
+class DateTimeValueConverter implements ValueConverterInterface
 {
     /**
      * Date time format
