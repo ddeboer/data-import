@@ -257,7 +257,7 @@ class DoctrineWriter extends AbstractWriter
         foreach ($this->entityMetadata->getAssociationMappings() as $associationMapping) {
 
             $value = null;
-            if (isset($item[$associationMapping['fieldName']])) {
+            if (isset($item[$associationMapping['fieldName']]) && !is_object($item[$associationMapping['fieldName']])) {
                 $value = $this->entityManager->getReference($associationMapping['targetEntity'], $item[$associationMapping['fieldName']]);
             }
 

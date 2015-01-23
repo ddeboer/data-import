@@ -151,7 +151,7 @@ class DoctrineWriterTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($writer, $writer->finish());
     }
 
-    public function testLoadAssociation()
+    public function testLoadAssociationWithoutObject()
     {
         $em = $this->getEntityManager();
 
@@ -163,11 +163,32 @@ class DoctrineWriterTest extends \PHPUnit_Framework_TestCase
 
         $writer = new DoctrineWriter($em, 'DdeboerDataImport:TestEntity');
 
+        $item   = array(
+            'firstProperty'    => 'some value',
+            'secondProperty'   => 'some other value',
+            'firstAssociation' => 'firstAssociationId'
+        );
+
+        $writer->writeItem($item);
+    }
+
+    public function testLoadAssociationWithPresetObject()
+    {
+        $em = $this->getEntityManager();
+
+        $em->expects($this->once())
+            ->method('persist');
+
+        $em->expects($this->never())
+            ->method('getReference');
+
+        $writer = new DoctrineWriter($em, 'DdeboerDataImport:TestEntity');
+
         $association = new TestEntity();
         $item        = array(
             'firstProperty'    => 'some value',
             'secondProperty'   => 'some other value',
-            'firstAssociation' => $association
+            'firstAssociation' => $association,
         );
 
         $writer->writeItem($item);
