@@ -258,7 +258,7 @@ class DoctrineWriter extends AbstractWriter
 
             $value = null;
             if (isset($item[$associationMapping['fieldName']])) {
-                $value = $this->entityManager->getRepository($associationMapping['targetEntity'])->find($item[$associationMapping['fieldName']]);
+                $value = $this->entityManager->getReference($associationMapping['targetEntity'], $item[$associationMapping['fieldName']]);
             }
 
             if (null === $value) {
