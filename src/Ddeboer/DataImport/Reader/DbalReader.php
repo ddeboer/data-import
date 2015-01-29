@@ -7,7 +7,7 @@ use Doctrine\DBAL\Statement;
 /**
  * Reads data through the Doctrine DBAL
  */
-class DbalReader implements ReaderInterface
+class DbalReader implements CountableReaderInterface
 {
     /** @var Connection */
     private $connection;
