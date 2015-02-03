@@ -10,7 +10,7 @@ use Ddeboer\DataImport\Exception\ReaderException;
  * @author Adam Paterson <hello@adampaterson.co.uk>
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class OneToManyReader implements ReaderInterface
+class OneToManyReader implements CountableReaderInterface
 {
     /**
      * @var ReaderInterface

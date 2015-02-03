@@ -11,7 +11,7 @@ namespace Ddeboer\DataImport\Reader;
  * @link   http://phpexcel.codeplex.com/
  * @link   https://github.com/logiQ/PHPExcel
  */
-class ExcelReader implements ReaderInterface
+class ExcelReader implements CountableReaderInterface
 {
     protected $worksheet;
     protected $headerRowNumber;

@@ -4,7 +4,7 @@ namespace Ddeboer\DataImport\Reader;
 /**
  * Reads data through PDO
  */
-class PdoReader implements ReaderInterface
+class PdoReader implements CountableReaderInterface
 {
     /**
      * @var \PDO

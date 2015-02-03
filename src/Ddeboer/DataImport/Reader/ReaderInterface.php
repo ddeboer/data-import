@@ -7,7 +7,7 @@ namespace Ddeboer\DataImport\Reader;
  *
  * @author David de Boer <david@ddeboer.nl>
  */
-interface ReaderInterface extends \Iterator, \Countable
+interface ReaderInterface extends \Iterator
 {
     /**
      * Get the field (column, property) names
@@ -15,6 +15,4 @@ interface ReaderInterface extends \Iterator, \Countable
      * @return array
      */
     public function getFields();
-
-    // Don't add count() to interface: see https://github.com/ddeboer/data-import/pull/5
 }

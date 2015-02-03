@@ -10,7 +10,7 @@ use Doctrine\ORM\Query;
  * Reads entities through the Doctrine ORM
  *
  */
-class DoctrineReader implements ReaderInterface
+class DoctrineReader implements CountableReaderInterface
 {
     protected $objectManager;
     protected $objectName;
