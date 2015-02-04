@@ -7,7 +7,7 @@ namespace Ddeboer\DataImport\ValueConverter;
  * Eg. You want to change the format of a string OR
  * If no output specified, return DateTime instance
  */
-class DateTimeValueConverter implements ValueConverterInterface
+class StringToDateTimeValueConverter implements ValueConverterInterface
 {
     /**
      * Date time format

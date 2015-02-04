@@ -2,14 +2,14 @@
 
 namespace Ddeboer\DataImport\Tests\ValueConverter;
 
-use Ddeboer\DataImport\ValueConverter\DateTimeValueConverter;
+use Ddeboer\DataImport\ValueConverter\StringToDateTimeValueConverter;
 
-class DateTimeValueConverterTest extends \PHPUnit_Framework_TestCase
+class StringToStringToDateTimeValueConverterTest extends \PHPUnit_Framework_TestCase
 {
     public function testConvertWithoutInputOrOutputFormatReturnsDateTimeInstance()
     {
         $value = '2011-10-20 13:05';
-        $converter = new DateTimeValueConverter;
+        $converter = new StringToDateTimeValueConverter;
         $output = $converter->convert($value);
         $this->assertInstanceOf('\DateTime', $output);
         $this->assertEquals('13', $output->format('H'));
@@ -18,7 +18,7 @@ class DateTimeValueConverterTest extends \PHPUnit_Framework_TestCase
     public function testConvertWithFormatReturnsDateTimeInstance()
     {
         $value = '14/10/2008 09:40:20';
-        $converter = new DateTimeValueConverter('d/m/Y H:i:s');
+        $converter = new StringToDateTimeValueConverter('d/m/Y H:i:s');
         $output = $converter->convert($value);
         $this->assertInstanceOf('\DateTime', $output);
         $this->assertEquals('20', $output->format('s'));
@@ -27,7 +27,7 @@ class DateTimeValueConverterTest extends \PHPUnit_Framework_TestCase
     public function testConvertWithInputAndOutputFormatReturnsString()
     {
         $value = '14/10/2008 09:40:20';
-        $converter = new DateTimeValueConverter('d/m/Y H:i:s', 'd-M-Y');
+        $converter = new StringToDateTimeValueConverter('d/m/Y H:i:s', 'd-M-Y');
         $output = $converter->convert($value);
         $this->assertEquals('14-Oct-2008', $output);
     }
@@ -35,7 +35,7 @@ class DateTimeValueConverterTest extends \PHPUnit_Framework_TestCase
     public function testConvertWithNoInputStringWithOutputFormatReturnsString()
     {
         $value = '2011-10-20 13:05';
-        $converter = new DateTimeValueConverter(null, 'd-M-Y');
+        $converter = new StringToDateTimeValueConverter(null, 'd-M-Y');
         $output = $converter->convert($value);
         $this->assertEquals('20-Oct-2011', $output);
 
@@ -44,14 +44,14 @@ class DateTimeValueConverterTest extends \PHPUnit_Framework_TestCase
     public function testInvalidInputFormatThrowsException()
     {
         $value = '14/10/2008 09:40:20';
-        $converter = new DateTimeValueConverter('d-m-y', 'd-M-Y');
+        $converter = new StringToDateTimeValueConverter('d-m-y', 'd-M-Y');
         $this->setExpectedException("UnexpectedValueException", "14/10/2008 09:40:20 is not a valid date/time according to format d-m-y");
         $converter->convert($value);
     }
 
     public function testNullIsReturnedIfNullPassed()
     {
-        $converter = new DateTimeValueConverter('d-m-y', 'd-M-Y');
+        $converter = new StringToDateTimeValueConverter('d-m-y', 'd-M-Y');
         $this->assertNull($converter->convert(null));
     }
 }
