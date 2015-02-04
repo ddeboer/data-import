@@ -56,6 +56,7 @@ Documentation
       - [CallbackItemConverter](#callbackitemconverter)
     - [Value converters](#value-converters)
       - [StringToDateTimeValueConverter](#stringtodatetimevalueconverter)
+      - [DateTimeToStringValueConverter](#datetimetostringvalueconverter)
       - [ObjectConverter](#objectconverter)
       - [StringToObjectConverter](#stringtoobjectconverter)
       - [ArrayValueConverterMap](#arrayvalueconvertermap)
@@ -906,7 +907,7 @@ $workflow->addValueConverter('my_date_field', $converter);
 
 #### DateTimeToStringValueConverter
 
-There main use of DateTimeToStringValueConverter is to convert DateTime object into it's string representation in proper format.
+The main use of DateTimeToStringValueConverter is to convert DateTime object into it's string representation in proper format.
 Default format is 'Y-m-d H:i:s';
 
 ```php
