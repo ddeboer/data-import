@@ -23,7 +23,7 @@ class PdoWriterTest extends \PHPUnit_Framework_TestCase
     {
         $writer = new PdoWriter($this->pdo, 'example');
         $writer->prepare();
-        $writer->writeItem(array('foo', 'bar'));
+        $writer->writeItem(array('a' => 'foo', 'b' => 'bar'));
         $writer->finish();
 
         $stmnt = $this->pdo->query('SELECT * FROM `example`');
@@ -38,9 +38,9 @@ class PdoWriterTest extends \PHPUnit_Framework_TestCase
     {
         $writer = new PdoWriter($this->pdo, 'example');
         $writer->prepare();
-        $writer->writeItem(array('foo', 'bar'));
-        $writer->writeItem(array('cat', 'dog'));
-        $writer->writeItem(array('ac', 'dc'));
+        $writer->writeItem(array('a' => 'foo', 'b' => 'bar'));
+        $writer->writeItem(array('a' => 'cat', 'b' => 'dog'));
+        $writer->writeItem(array('a' => 'ac', 'b' => 'dc'));
         $writer->finish();
 
         $stmnt = $this->pdo->query('SELECT * FROM `example`');
@@ -110,7 +110,7 @@ class PdoWriterTest extends \PHPUnit_Framework_TestCase
         $writer = new PdoWriter($this->pdo, 'example');
 
         $this->assertSame($writer, $writer->prepare());
-        $this->assertSame($writer, $writer->writeItem(array('foo', 'bar')));
+        $this->assertSame($writer, $writer->writeItem(array('a' => 'foo', 'b' => 'bar')));
         $this->assertSame($writer, $writer->finish());
     }
 }

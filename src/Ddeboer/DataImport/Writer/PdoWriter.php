@@ -63,7 +63,7 @@ class PdoWriter implements WriterInterface
             if (!$this->statement) {
 
                 $this->statement = $this->pdo->prepare(
-                    'INSERT INTO '.$this->tableName.' VALUES ('.substr(str_repeat('?,', count($item)), 0, -1).')'
+                    'INSERT INTO '.$this->tableName.'('.implode(',', array_keys($item)).') VALUES ('.substr(str_repeat('?,', count($item)), 0, -1).')'
                 );
 
                 //for PDO objects that do not have exceptions enabled
