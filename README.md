@@ -40,6 +40,7 @@ Documentation
     - [DoctrineWriter](#doctrinewriter)
     - [PdoWriter](#pdowriter)
     - [ExcelWriter](#excelwriter)
+    - [ConsoleTableWriter](#consoletablewriter)
     - [ConsoleProgressWriter](#consoleprogresswriter)
     - [CallbackWriter](#callbackwriter)
     - [AbstractStreamWriter](#abstractstreamwriter)
@@ -539,6 +540,34 @@ existing sheet:
 
 ```php
 $writer = new ExcelWriter($file, 'Old sheet');
+```
+#### ConsoleTableWriter
+
+This writer displays import progress when you start the workflow from the
+command-line. It requires Symfony’s Console component 2.5 or higher:
+
+```bash
+$ composer require symfony/console ~2.5
+```
+
+```php
+use Ddeboer\DataImport\Reader;
+use Ddeboer\DataImport\Writer\ConsoleTableWriter;
+use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Helper\Table;
+
+$reader = new Reader\...;
+$output = new ConsoleOutput(...);
+
+$table = new Table($output);
+$table->setHeaders($reader->getFields());
+
+// Make some manipulations, e.g. set table style
+$table->setStyle('compact');
+
+$workflow = new Workflow($reader);
+$workflow->addWriter(new ConsoleTableWriter($output, $table));
+
 ```
 
 #### ConsoleProgressWriter
