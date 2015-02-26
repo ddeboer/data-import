@@ -15,7 +15,7 @@ use \Ddeboer\DataImport\Exception\WriterException;
  *     $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
  *
  */
-class PdoWriter implements WriterInterface
+class PdoWriter extends AbstractWriter
 {
     /**
      * @var \PDO
@@ -48,14 +48,6 @@ class PdoWriter implements WriterInterface
     /**
      * {@inheritDoc}
      */
-    public function prepare()
-    {
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function writeItem(array $item)
     {
         try {
@@ -82,14 +74,6 @@ class PdoWriter implements WriterInterface
             throw new WriterException('Write failed ('.$e->getMessage().').', null, $e);
         }
 
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function finish()
-    {
         return $this;
     }
 }

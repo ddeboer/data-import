@@ -71,7 +71,7 @@ abstract class AbstractStreamWriter implements WriterInterface
     /**
      * @inheritdoc
      */
-    public function finish()
+    public function finish($errorCount = null)
     {
         if (is_resource($this->stream) && $this->getCloseStreamOnFinish()) {
             fclose($this->stream);

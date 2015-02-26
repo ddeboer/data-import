@@ -7,7 +7,7 @@ namespace Ddeboer\DataImport\Writer;
  *
  * Class ArrayWriter
  */
-class ArrayWriter implements WriterInterface
+class ArrayWriter extends AbstractWriter
 {
     /**
      * @var array
@@ -38,13 +38,5 @@ class ArrayWriter implements WriterInterface
     public function writeItem(array $item)
     {
         $this->data[] = $item;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function finish()
-    {
-
     }
 }

@@ -28,9 +28,11 @@ abstract class AbstractWriter implements WriterInterface
      * This template method can be overridden in concrete writer
      * implementations.
      *
+     * @param $errorCount
+     *
      * @return $this
      */
-    public function finish()
+    public function finish($errorCount = null)
     {
         return $this;
     }

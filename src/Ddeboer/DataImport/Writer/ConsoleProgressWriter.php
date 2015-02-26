@@ -80,9 +80,9 @@ class ConsoleProgressWriter extends AbstractWriter
     }
 
     /**
-     * @return $this
+     * {@inheritdoc}
      */
-    public function finish()
+    public function finish($errorCount = null)
     {
         $this->progress->finish();
 
