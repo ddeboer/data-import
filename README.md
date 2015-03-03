@@ -1126,7 +1126,7 @@ $workflow = new Workflow($reader);
 
 // Add the writer to the workflow
 $file = new \SplFileObject('output.csv', 'w');
-$writer = new Writer($file);
+$writer = new CsvWriter($file);
 $workflow->addWriter($writer);
 
 // As you can see, the first names are not capitalized correctly. Let's fix
