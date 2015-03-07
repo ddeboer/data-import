@@ -10,8 +10,8 @@ use Symfony\Component\Console\Helper\Table;
  */
 class ConsoleTableWriter implements WriterInterface
 {
-    protected $output = null;
-    protected $table = null;
+    private $output = null;
+    private $table = null;
 
     /**
      * @param OutputInterface $output
@@ -44,18 +44,10 @@ class ConsoleTableWriter implements WriterInterface
     }
 
     /**
-     * Yout can get Table object to apply extra
+     * You can get Table object to apply extra
      */
     public function getTable()
     {
         return $this->table;
-    }
-
-    /**
-     *
-     */
-    public function setTable(Table $table)
-    {
-        $this->table = $table;
     }
 }
