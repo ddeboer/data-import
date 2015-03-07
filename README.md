@@ -543,8 +543,9 @@ $writer = new ExcelWriter($file, 'Old sheet');
 ```
 #### ConsoleTableWriter
 
-This writer displays import progress when you start the workflow from the
-command-line. It requires Symfony’s Console component 2.5 or higher:
+This writer displays items as table on console output for debug purposes
+when you start the workflow from the command-line. 
+It requires Symfony’s Console component 2.5 or higher:
 
 ```bash
 $ composer require symfony/console ~2.5
