@@ -561,7 +561,6 @@ $reader = new Reader\...;
 $output = new ConsoleOutput(...);
 
 $table = new Table($output);
-$table->setHeaders($reader->getFields());
 
 // Make some manipulations, e.g. set table style
 $table->setStyle('compact');

@@ -12,6 +12,7 @@ class ConsoleTableWriter implements WriterInterface
 {
     private $output = null;
     private $table = null;
+    private $firstItem = null;
 
     /**
      * @param OutputInterface $output
@@ -33,6 +34,12 @@ class ConsoleTableWriter implements WriterInterface
      * {@inheritdoc}
      */
     public function writeItem(array $item) {
+        
+        // Save first item to get keys to display at header
+        if (is_null($this->firstItem)) {
+            $this->firstItem = $item;
+        }
+
         $this->table->addRow($item);
     }
 
@@ -40,11 +47,16 @@ class ConsoleTableWriter implements WriterInterface
      * {@inheritdoc}
      */
     public function finish() {
+        $this->table->setHeaders(array_keys($this->firstItem));
         $this->table->render();
+
+        $this->firstItem = null;
     }
 
     /**
      * You can get Table object to apply extra
+     * 
+     * @return Table
      */
     public function getTable()
     {
