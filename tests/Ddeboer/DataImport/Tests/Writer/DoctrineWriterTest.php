@@ -57,7 +57,7 @@ class DoctrineWriterTest extends \PHPUnit_Framework_TestCase
     protected function getEntityManager()
     {
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->setMethods(array('getRepository', 'getClassMetadata', 'persist', 'flush', 'clear', 'getConnection'))
+            ->setMethods(array('getRepository', 'getClassMetadata', 'persist', 'flush', 'clear', 'getConnection', 'getReference'))
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -66,7 +66,7 @@ class DoctrineWriterTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $metadata = $this->getMockBuilder('Doctrine\ORM\Mapping\ClassMetadata')
-            ->setMethods(array('getName', 'getFieldNames', 'getAssociationNames', 'setFieldValue'))
+            ->setMethods(array('getName', 'getFieldNames', 'getAssociationNames', 'setFieldValue', 'getAssociationMappings'))
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -81,6 +81,10 @@ class DoctrineWriterTest extends \PHPUnit_Framework_TestCase
         $metadata->expects($this->any())
             ->method('getAssociationNames')
             ->will($this->returnValue(array('firstAssociation')));
+
+        $metadata->expects($this->any())
+            ->method('getAssociationMappings')
+            ->will($this->returnValue(array(array('fieldName' => 'firstAssociation','targetEntity' => 'Ddeboer\DataImport\Tests\Fixtures\Entity\TestEntity'))));
 
         $configuration = $this->getMockBuilder('Doctrine\DBAL\Configuration')
             ->setMethods(array('getConnection'))
@@ -145,5 +149,48 @@ class DoctrineWriterTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($writer, $writer->prepare());
         $this->assertSame($writer, $writer->writeItem($item));
         $this->assertSame($writer, $writer->finish());
+    }
+
+    public function testLoadAssociationWithoutObject()
+    {
+        $em = $this->getEntityManager();
+
+        $em->expects($this->once())
+            ->method('persist');
+
+        $em->expects($this->once())
+            ->method('getReference');
+
+        $writer = new DoctrineWriter($em, 'DdeboerDataImport:TestEntity');
+
+        $item   = array(
+            'firstProperty'    => 'some value',
+            'secondProperty'   => 'some other value',
+            'firstAssociation' => 'firstAssociationId'
+        );
+
+        $writer->writeItem($item);
+    }
+
+    public function testLoadAssociationWithPresetObject()
+    {
+        $em = $this->getEntityManager();
+
+        $em->expects($this->once())
+            ->method('persist');
+
+        $em->expects($this->never())
+            ->method('getReference');
+
+        $writer = new DoctrineWriter($em, 'DdeboerDataImport:TestEntity');
+
+        $association = new TestEntity();
+        $item        = array(
+            'firstProperty'    => 'some value',
+            'secondProperty'   => 'some other value',
+            'firstAssociation' => $association,
+        );
+
+        $writer->writeItem($item);
     }
 }

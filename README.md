@@ -486,6 +486,12 @@ or
 $writer = new DoctrineWriter($entityManager, 'YourNamespace:Employee', array('column1', 'column2', 'column3'));
 ```
 
+The DoctrineWriter will also search out associations automatically and link them by an entity reference. For example
+suppose you have a Product entity that you are importing and must be associated to a Category. If there is a field in 
+the import file named 'Category' with an id, the writer will use metadata to get the association class and create a
+reference so that it can be associated properly. The DoctrineWriter will skip any association fields that are already
+objects in cases where a converter was used to retrieve the association.
+
 #### PdoWriter
 
 Use the PDO writer for importing data into a relational database (such as

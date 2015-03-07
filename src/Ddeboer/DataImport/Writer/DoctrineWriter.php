@@ -211,6 +211,8 @@ class DoctrineWriter extends AbstractWriter
             $entity = $this->getNewInstance();
         }
 
+        $this->loadAssociationObjectsToEntity($item, $entity);
+
         $fieldNames = array_merge($this->entityMetadata->getFieldNames(), $this->entityMetadata->getAssociationNames());
         foreach ($fieldNames as $fieldName) {
 
@@ -241,6 +243,31 @@ class DoctrineWriter extends AbstractWriter
         }
 
         return $this;
+    }
+
+    /**
+     * Add the associated objects in case the item have for persist its relation
+     *
+     * @param array $item
+     * @param $entity
+     * @return void
+     */
+    protected function loadAssociationObjectsToEntity(array $item, $entity)
+    {
+        foreach ($this->entityMetadata->getAssociationMappings() as $associationMapping) {
+
+            $value = null;
+            if (isset($item[$associationMapping['fieldName']]) && !is_object($item[$associationMapping['fieldName']])) {
+                $value = $this->entityManager->getReference($associationMapping['targetEntity'], $item[$associationMapping['fieldName']]);
+            }
+
+            if (null === $value) {
+                continue;
+            }
+
+            $setter = 'set' . ucfirst($associationMapping['fieldName']);
+            $this->setValue($entity, $value, $setter);
+        }
     }
 
     /**
