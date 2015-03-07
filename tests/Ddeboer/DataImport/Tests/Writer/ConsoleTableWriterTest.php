@@ -37,7 +37,6 @@ class ConsoleTableWriterTest extends \PHPUnit_Framework_TestCase
         $output = new BufferedOutput();
         $table = new Table($output);
         $table
-            ->setHeaders($reader->getFields())
             ->setStyle('compact')
         ;
 
