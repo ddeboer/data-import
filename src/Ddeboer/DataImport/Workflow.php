@@ -87,6 +87,11 @@ class Workflow
     protected $name = null;
 
     /**
+     *
+     */
+    protected $shouldStop = false;
+
+    /**
      * Construct a workflow
      *
      * @param ReaderInterface $reader
@@ -239,8 +244,16 @@ class Workflow
             $writer->prepare();
         }
 
+        $this->shouldStop = false;
+        pcntl_signal(SIGTERM, [$this, 'stop']);
+        pcntl_signal(SIGINT, [$this, 'stop']);
+
         // Read all items
         foreach ($this->reader as $rowIndex => $item) {
+
+            pcntl_signal_dispatch();
+            if ( $this->shouldStop ) break;
+
             try {
                 // Apply filters before conversion
                 if (!$this->filterItem($item, $this->filters)) {
@@ -278,6 +291,14 @@ class Workflow
         }
 
         return new Result($this->name, $startTime, new DateTime, $count, $exceptions);
+    }
+
+    /**
+     * Stops processing and force return Result from process() function
+     */
+    public function stop()
+    {
+        $this->shouldStop = true;
     }
 
     /**
