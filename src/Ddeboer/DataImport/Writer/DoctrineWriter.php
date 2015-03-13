@@ -70,7 +70,21 @@ class DoctrineWriter extends AbstractWriter
     protected $truncate = true;
 
     /**
-     * List of fields used to lookup an entity
+
+     * Whether to replace existing entities in the table
+     *
+     * @var boolean
+     */
+    protected $replace_existing = true;
+
+    /**
+     * Whether to camelize properties
+     *
+     * @var boolean
+     */
+    protected $camelize = false;
+
+    /** List of fields used to lookup an entity
      *
      * @var array
      */
@@ -134,6 +148,51 @@ class DoctrineWriter extends AbstractWriter
 
         return $this;
     }
+	
+	public function getReplaceExisting()
+    {
+        return $this->replace_existing;
+    }
+
+    public function setReplaceExisting($replace_existing)
+    {
+        $this->replace_existing = $replace_existing;
+
+        return $this;
+    }
+
+    public function disableReplaceExisting()
+    {
+        $this->replace_existing = false;
+
+        return $this;
+    }
+
+    public function getCamelize()
+    {
+        return $this->camelize;
+    }
+
+    public function setCamelize($camelize)
+    {
+        $this->camelize = $camelize;
+
+        return $this;
+    }
+
+    public function enableCamelize()
+    {
+        $this->camelize = true;
+
+        return $this;
+    }
+    
+    public function getFormattedFieldName($fieldName) {
+		if($this->camelize)
+			return strtr(ucwords(strtr($fieldName, array('_' => ' ', '.' => '_ ', '\\' => '_ '))), array(' ' => ''));
+		else 
+			return ucfirst($fieldName);
+    }
 
     /**
      * Disable Doctrine logging
@@ -165,7 +224,7 @@ class DoctrineWriter extends AbstractWriter
     protected function setValue($entity, $value, $setter)
     {
         if (method_exists($entity, $setter)) {
-            $entity->$setter($value);
+            $entity->{$setter}($value);
         }
     }
 
@@ -193,7 +252,7 @@ class DoctrineWriter extends AbstractWriter
 
         // If the table was not truncated to begin with, find current entity
         // first
-        if (false === $this->truncate) {
+        if (false === $this->truncate && $this->replace_existing) {
             if ($this->lookupFields) {
                 $lookupConditions = array();
                 foreach($this->lookupFields as $fieldName) {
@@ -217,10 +276,10 @@ class DoctrineWriter extends AbstractWriter
         foreach ($fieldNames as $fieldName) {
 
             $value = null;
-            if (isset($item[$fieldName])) {
+			if (isset($item[$fieldName])) {
                 $value = $item[$fieldName];
-            } elseif (method_exists($item, 'get' . ucfirst($fieldName))) {
-                $value = $item->{'get' . ucfirst($fieldName)};
+            } else if (method_exists($item, 'get' . $this->getFormattedFieldName($fieldName))) {
+                $value = $item->{'get' . $this->getFormattedFieldName($fieldName)};
             }
 
             if (null === $value) {
@@ -230,11 +289,19 @@ class DoctrineWriter extends AbstractWriter
             if (!($value instanceof \DateTime)
                 || $value != $this->entityMetadata->getFieldValue($entity, $fieldName)
             ) {
-                $setter = 'set' . ucfirst($fieldName);
-                $this->setValue($entity, $value, $setter);
+				$setter = 'set' . $this->getFormattedFieldName($fieldName);
+
+                //Treat simple property
+                if ($this->entityMetadata->hasField($fieldName)) {
+                    $this->setValue($entity, $value, $setter);
+                }
+                //treat manyToOne association
+				else if ($this->entityMetadata->hasAssociation($fieldName)) {
+                    $association = $this->entityMetadata->associationMappings[$fieldName];
+                    $entity->{$setter}($this->entityManager->getReference($association['targetEntity'], $value));
+                }
             }
         }
-
         $this->entityManager->persist($entity);
 
         if (($this->counter % $this->batchSize) == 0) {
@@ -244,6 +311,7 @@ class DoctrineWriter extends AbstractWriter
 
         return $this;
     }
+
 
     /**
      * Add the associated objects in case the item have for persist its relation
