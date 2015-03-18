@@ -278,7 +278,7 @@ class DoctrineWriter extends AbstractWriter
     {
         $tableName = $this->entityMetadata->table['name'];
         $connection = $this->entityManager->getConnection();
-        $query = $connection->getDatabasePlatform()->getTruncateTableSQL($tableName);
+        $query = $connection->getDatabasePlatform()->getTruncateTableSQL($tableName, true);
         $connection->executeQuery($query);
     }
 
