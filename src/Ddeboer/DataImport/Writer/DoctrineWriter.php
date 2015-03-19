@@ -189,27 +189,7 @@ class DoctrineWriter extends AbstractWriter
     public function writeItem(array $item)
     {
         $this->counter++;
-        $entity = null;
-
-        // If the table was not truncated to begin with, find current entity
-        // first
-        if (false === $this->truncate) {
-            if ($this->lookupFields) {
-                $lookupConditions = array();
-                foreach($this->lookupFields as $fieldName) {
-                    $lookupConditions[$fieldName] = $item[$fieldName];
-                }
-                $entity = $this->entityRepository->findOneBy(
-                    $lookupConditions
-                );
-            } else {
-                $entity = $this->entityRepository->find(current($item));
-            }
-        }
-
-        if (!$entity) {
-            $entity = $this->getNewInstance();
-        }
+        $entity = $this->findOrCreateItem($item);
 
         $this->loadAssociationObjectsToEntity($item, $entity);
 
@@ -299,5 +279,34 @@ class DoctrineWriter extends AbstractWriter
     {
         $config = $this->entityManager->getConnection()->getConfiguration();
         $config->setSQLLogger($this->originalLogger);
+    }
+
+    /**
+     * Finds existing entity or create a new instance
+     */
+    protected function findOrCreateItem(array $item)
+    {
+        $entity = null;
+        // If the table was not truncated to begin with, find current entity
+        // first
+        if (false === $this->truncate) {
+            if ($this->lookupFields) {
+                $lookupConditions = array();
+                foreach ($this->lookupFields as $fieldName) {
+                    $lookupConditions[$fieldName] = $item[$fieldName];
+                }
+                $entity = $this->entityRepository->findOneBy(
+                    $lookupConditions
+                );
+            } else {
+                $entity = $this->entityRepository->find(current($item));
+            }
+        }
+
+        if (!$entity) {
+            return $this->getNewInstance();
+        }
+
+        return $entity;
     }
 }
