@@ -49,6 +49,7 @@ Documentation
   * [Filters](#filters)
     - [CallbackFilter](#callbackfilter)
     - [OffsetFilter](#offsetfilter)
+    - [DateTimeThresholdFilter](#datetimethresholdfilter)
     - [ValidatorFilter](#offsetfilter)
   * [Converters](#converters)
     - [Item converters](#item-converters)
@@ -731,6 +732,23 @@ $filter = new OffsetFilter(0, 3);
 
 // Start from the third item, process max five items (items 3 - 7)
 $filter = new OffsetFilter(2, 5);
+```
+
+#### DateTimeThresholdFilter
+
+This filter is useful if you want to do incremental imports. Specify a threshold
+`DateTime` instance, a column name (defaults to `updated_at`), and a
+`DateTimeValueConverter` that will be used to convert values read from the
+filtered items. The item strictly older than the threshold will be discarded.
+
+```php
+use Ddeboer\DataImport\Filter\DateTimeThresholdFilter;
+use Ddeboer\DataImport\ValueConverter\DateTimeValueConverter;
+
+new DateTimeThresholdFilter(
+    new DateTimeValueConverter(),
+    new \DateTime('yesterday')
+);
 ```
 
 #### ValidatorFilter
