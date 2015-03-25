@@ -56,7 +56,7 @@ class Workflow implements WorkflowInterface
      * @var boolean For internal use
      */
     protected $shouldStop = false;
-    
+
     /**
      * Construct a workflow
      *
@@ -122,13 +122,17 @@ class Workflow implements WorkflowInterface
         }
 
         $this->shouldStop = false;
-        pcntl_signal(SIGTERM, array($this, 'stop'));
-        pcntl_signal(SIGINT, array($this, 'stop'));
+        if (is_callable('pcntl_signal')) {
+            pcntl_signal(SIGTERM, array($this, 'stop'));
+            pcntl_signal(SIGINT, array($this, 'stop'));
+        }
 
         // Read all items
         foreach ($this->reader as $index => $item) {
 
-            pcntl_signal_dispatch();
+            if (is_callable('pcntl_signal_dispatch')) {
+                pcntl_signal_dispatch();
+            }
             if ( $this->shouldStop ) break;
 
             try {
