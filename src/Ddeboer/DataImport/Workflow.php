@@ -87,6 +87,13 @@ class Workflow
     protected $name = null;
 
     /**
+     * If TRUE then writes will only happen if all read rows pass validation
+     * 
+     * @var bool
+     */
+    protected $atomicWrites = FALSE;
+    
+    /**
      * Construct a workflow
      *
      * @param ReaderInterface $reader
@@ -239,28 +246,34 @@ class Workflow
             $writer->prepare();
         }
 
+        $filterFail = FALSE;
+        
         // Read all items
         foreach ($this->reader as $rowIndex => $item) {
             try {
                 // Apply filters before conversion
                 if (!$this->filterItem($item, $this->filters)) {
+                    $filterFail = TRUE;
                     continue;
                 }
 
                 $convertedItem = $this->convertItem($item);
                 if (!$convertedItem) {
+                    $filterFail = TRUE;
                     continue;
                 }
 
                 // Apply filters after conversion
                 if (!$this->filterItem($convertedItem, $this->afterConversionFilters)) {
+                    $filterFail = TRUE;                   
                     continue;
                 }
 
-                foreach ($this->writers as $writer) {
-                    $writer->writeItem($convertedItem);
-                }
-
+                if ( !($this->atomicWrites AND $filterFail)) {
+                    foreach ($this->writers as $writer) {
+                        $writer->writeItem($convertedItem);
+                    }
+                } 
             } catch(ExceptionInterface $e) {
                 if ($this->skipItemOnFailure) {
                     $exceptions[$rowIndex] = $e;
@@ -383,4 +396,19 @@ class Workflow
 
         return $this;
     }
+
+    /**
+     * Set atomicWrites
+     *
+     * @param boolean $atomicWrites if true then writes will only happen if all read rows pass validation
+     *
+     * @return $this
+     */
+    public function setAtomicWrites($atomicWrites)
+    {
+        $this->atomicWrites = $atomicWrites;
+
+        return $this;
+    }
+    
 }
