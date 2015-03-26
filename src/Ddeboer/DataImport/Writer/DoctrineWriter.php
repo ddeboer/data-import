@@ -192,7 +192,25 @@ class DoctrineWriter extends AbstractWriter
         $entity = $this->findOrCreateItem($item);
 
         $this->loadAssociationObjectsToEntity($item, $entity);
+        $this->updateEntity($item, $entity);
 
+        $this->entityManager->persist($entity);
+
+        if (($this->counter % $this->batchSize) == 0) {
+            $this->entityManager->flush();
+            $this->entityManager->clear($this->entityName);
+        }
+
+        return $this;
+    }
+
+    /**
+     * 
+     * @param array $item
+     * @param object $entity
+     */
+    protected function updateEntity(array $item, $entity)
+    {
         $fieldNames = array_merge($this->entityMetadata->getFieldNames(), $this->entityMetadata->getAssociationNames());
         foreach ($fieldNames as $fieldName) {
 
@@ -213,16 +231,7 @@ class DoctrineWriter extends AbstractWriter
                 $setter = 'set' . ucfirst($fieldName);
                 $this->setValue($entity, $value, $setter);
             }
-        }
-
-        $this->entityManager->persist($entity);
-
-        if (($this->counter % $this->batchSize) == 0) {
-            $this->entityManager->flush();
-            $this->entityManager->clear($this->entityName);
-        }
-
-        return $this;
+        }        
     }
 
     /**
