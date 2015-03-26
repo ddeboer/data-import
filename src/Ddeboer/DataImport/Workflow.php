@@ -285,11 +285,13 @@ class Workflow
             $count++;
         }
 
-        // Finish writers
-        foreach ($this->writers as $writer) {
-            $writer->finish();
+        if ( !($this->atomicWrites AND $filterFail)) {
+	        // Finish writers
+	        foreach ($this->writers as $writer) {
+	            $writer->finish();
+	        }
         }
-
+        
         return new Result($this->name, $startTime, new DateTime, $count, $exceptions);
     }
 
