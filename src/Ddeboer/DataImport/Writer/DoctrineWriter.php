@@ -197,8 +197,7 @@ class DoctrineWriter extends AbstractWriter
         $this->entityManager->persist($entity);
 
         if (($this->counter % $this->batchSize) == 0) {
-            $this->entityManager->flush();
-            $this->entityManager->clear($this->entityName);
+            $this->flushAndClear();
         }
 
         return $this;
@@ -317,5 +316,11 @@ class DoctrineWriter extends AbstractWriter
         }
 
         return $entity;
+    }
+    
+    protected function flushAndClear()
+    {
+        $this->entityManager->flush();
+        $this->entityManager->clear($this->entityName);
     }
 }
