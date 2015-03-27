@@ -382,6 +382,34 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(null, $result->getName());
     }
 
+    public function testAtomicWrites()
+    {
+        $workflow   = $this->getWorkflow();
+        $workflow->setAtomicWrites(true);
+        $writer     = $this->getMock('Ddeboer\DataImport\Writer\WriterInterface');
+        
+        // So THIS HERE needs to only return false on the FIRST call
+        $validatorFilter = $this->getMockBuilder('\Ddeboer\DataImport\Filter\ValidatorFilter')
+            ->disableOriginalConstructor()
+            ->setMethods(array('filter'))
+            ->getMock();
+                
+        $validatorFilter->method('filter')
+            ->will($this->returnValue(false));
+        
+        $result = $workflow
+            ->addFilter($validatorFilter)
+            ->addWriter($writer)
+            ->process();
+        
+        $this->assertSame(0, $result->getTotalProcessedCount());
+        $this->assertSame(0, $result->getSuccessCount());
+        $this->assertSame(0, $result->getErrorCount());
+//        $this->assertTrue($result->hasErrors());
+        
+    }
+    
+    
     protected function getWorkflow()
     {
         $reader = new ArrayReader(array(
