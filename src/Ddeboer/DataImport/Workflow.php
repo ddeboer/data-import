@@ -95,6 +95,13 @@ class Workflow
     protected $atomicWrites = FALSE;
     
     /**
+     * Number of rows processed
+     * 
+     * @var int
+     */
+    protected $processedCount = 0;
+    
+    /**
      * Construct a workflow
      *
      * @param ReaderInterface $reader
@@ -222,6 +229,21 @@ class Workflow
 
         return $this;
     }
+    
+    /**
+     * Checks to see if we are using atomicWrites, and if so we need to increment the processedCount
+     * and return true
+     * 
+     * @return boolean
+     */
+    protected function incrementProcessedCountIfAtomic($filterFail)
+    {
+        if ($this->atomicWrites) {
+            $this->processedCount++;
+            return true;
+        }
+        return $filterFail;
+    }
 
     /**
      * Process the whole import workflow
@@ -238,7 +260,6 @@ class Workflow
      */
     public function process()
     {
-        $count      = 0;
         $exceptions = array();
         $startTime  = new DateTime;
 
@@ -254,28 +275,19 @@ class Workflow
             try {
                 // Apply filters before conversion
                 if (!$this->filterItem($item, $this->filters)) {
-                    if ($this->atomicWrites) {
-                        $filterFail = TRUE;
-                        $count++;
-                    }
+                    $filterFail = $this->incrementProcessedCountIfAtomic($filterFail);
                     continue;
                 }
 
                 $convertedItem = $this->convertItem($item);
                 if (!$convertedItem) {
-                    if ($this->atomicWrites) {
-                        $filterFail = TRUE;
-                        $count++;
-                    }
+                    $filterFail = $this->incrementProcessedCountIfAtomic($filterFail);
                     continue;
                 }
 
                 // Apply filters after conversion
                 if (!$this->filterItem($convertedItem, $this->afterConversionFilters)) { 
-                    if ($this->atomicWrites) {
-                        $filterFail = TRUE;
-                        $count++;
-                    }
+                    $filterFail = $this->incrementProcessedCountIfAtomic($filterFail);
                     continue;
                 }
 
@@ -292,10 +304,11 @@ class Workflow
                     throw $e;
                 }
             }
-            $count++;
+            $this->processedCount++;
         }
 
         if ($this->atomicWrites AND $filterFail) {
+            // Since one row failed, all rows must be taken as failures
             for($i = 0 ; $i < count($this->reader) ; $i++) {
                 if (!isset($exceptions[$i])) {
                     $exceptions[$i] = new ReaderException('Row skipped due to atomic writes');
@@ -308,7 +321,7 @@ class Workflow
 	        }
         }
         
-        return new Result($this->name, $startTime, new DateTime, $count, $exceptions);
+        return new Result($this->name, $startTime, new DateTime, $this->processedCount, $exceptions);
     }
 
     /**
