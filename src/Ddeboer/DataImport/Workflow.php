@@ -272,6 +272,21 @@ class Workflow
             $count++;
         }
 
+        // Collect reader errors
+        if ($this->reader instanceof Reader\ErrorProneReaderInterface && $this->reader->hasErrors()) {
+            foreach ($this->reader->getErrors() as $readerLine => $readerError) {
+                // Shift existing exceptions and increase their line numbers
+                foreach ($exceptions as $exceptionLine => $exception) {
+                    $shiftedExceptions[$exceptionLine+1] = $exception;
+                }
+                // Insert reader error and convert to ReaderException
+                $shiftedExceptions[$readerLine] = new Exception\ReaderException('Number of fields mismatches the number of headers: ' . implode(';', $readerError));
+                // Add malicious line to number of total lines processed
+                $count++;
+                $exceptions = $shiftedExceptions;
+            }
+        }
+        
         // Finish writers
         foreach ($this->writers as $writer) {
             $writer->finish();
