@@ -234,6 +234,7 @@ class Workflow
      * Checks to see if we are using atomicWrites, and if so we need to increment the processedCount
      * and return true
      * 
+     * @param  boolean the current value
      * @return boolean
      */
     protected function incrementProcessedCountIfAtomic($filterFail)
