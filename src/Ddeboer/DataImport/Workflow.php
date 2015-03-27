@@ -6,6 +6,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 use Ddeboer\DataImport\Exception\UnexpectedTypeException;
+use Ddeboer\DataImport\Exception\ReaderException;
 use Ddeboer\DataImport\Exception\ExceptionInterface;
 use Ddeboer\DataImport\ItemConverter\MappingItemConverter;
 use Ddeboer\DataImport\Reader\ReaderInterface;
@@ -253,19 +254,28 @@ class Workflow
             try {
                 // Apply filters before conversion
                 if (!$this->filterItem($item, $this->filters)) {
-                    $filterFail = TRUE;
+                    if ($this->atomicWrites) {
+                        $filterFail = TRUE;
+                        $count++;
+                    }
                     continue;
                 }
 
                 $convertedItem = $this->convertItem($item);
                 if (!$convertedItem) {
-                    $filterFail = TRUE;
+                    if ($this->atomicWrites) {
+                        $filterFail = TRUE;
+                        $count++;
+                    }
                     continue;
                 }
 
                 // Apply filters after conversion
-                if (!$this->filterItem($convertedItem, $this->afterConversionFilters)) {
-                    $filterFail = TRUE;                   
+                if (!$this->filterItem($convertedItem, $this->afterConversionFilters)) { 
+                    if ($this->atomicWrites) {
+                        $filterFail = TRUE;
+                        $count++;
+                    }
                     continue;
                 }
 
@@ -285,7 +295,13 @@ class Workflow
             $count++;
         }
 
-        if ( !($this->atomicWrites AND $filterFail)) {
+        if ($this->atomicWrites AND $filterFail) {
+            for($i = 0 ; $i < count($this->reader) ; $i++) {
+                if (!isset($exceptions[$i])) {
+                    $exceptions[$i] = new ReaderException('Row skipped due to atomic writes');
+                }
+            }
+        } else {
 	        // Finish writers
 	        foreach ($this->writers as $writer) {
 	            $writer->finish();

@@ -388,25 +388,31 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
         $workflow->setAtomicWrites(true);
         $writer     = $this->getMock('Ddeboer\DataImport\Writer\WriterInterface');
         
-        // So THIS HERE needs to only return false on the FIRST call
         $validatorFilter = $this->getMockBuilder('\Ddeboer\DataImport\Filter\ValidatorFilter')
             ->disableOriginalConstructor()
             ->setMethods(array('filter'))
             ->getMock();
                 
-        $validatorFilter->method('filter')
+        // Validate at least 1 false and 1 true
+        $validatorFilter
+            ->expects($this->at(0))
+            ->method('filter')
             ->will($this->returnValue(false));
+        
+        $validatorFilter
+            ->expects($this->at(1))
+            ->method('filter')
+            ->will($this->returnValue(true));
         
         $result = $workflow
             ->addFilter($validatorFilter)
             ->addWriter($writer)
             ->process();
         
-        $this->assertSame(0, $result->getTotalProcessedCount());
+        $this->assertSame(3, $result->getTotalProcessedCount());
         $this->assertSame(0, $result->getSuccessCount());
-        $this->assertSame(0, $result->getErrorCount());
-//        $this->assertTrue($result->hasErrors());
-        
+        $this->assertSame(3, $result->getErrorCount());
+        $this->assertTrue($result->hasErrors());
     }
     
     
