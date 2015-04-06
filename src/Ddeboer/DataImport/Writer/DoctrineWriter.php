@@ -210,7 +210,7 @@ class DoctrineWriter extends AbstractWriter
      */
     protected function updateEntity(array $item, $entity)
     {
-        foreach ($$this->entityMetadata->getFieldNames() as $fieldName) {
+        foreach ($this->entityMetadata->getFieldNames() as $fieldName) {
 
             $value = null;
             if (isset($item[$fieldName])) {
