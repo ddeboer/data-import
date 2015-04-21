@@ -6,6 +6,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 use Ddeboer\DataImport\Exception\UnexpectedTypeException;
+use Ddeboer\DataImport\Exception\ReaderException;
 use Ddeboer\DataImport\Exception\ExceptionInterface;
 use Ddeboer\DataImport\ItemConverter\MappingItemConverter;
 use Ddeboer\DataImport\Reader\ReaderInterface;
@@ -86,6 +87,20 @@ class Workflow
      */
     protected $name = null;
 
+    /**
+     * If TRUE then writes will only happen if all read rows pass validation
+     * 
+     * @var bool
+     */
+    protected $atomicWrites = FALSE;
+    
+    /**
+     * Number of rows processed
+     * 
+     * @var int
+     */
+    protected $processedCount = 0;
+    
     /**
      * Construct a workflow
      *
@@ -214,6 +229,22 @@ class Workflow
 
         return $this;
     }
+    
+    /**
+     * Checks to see if we are using atomicWrites, and if so we need to increment the processedCount
+     * and return true
+     * 
+     * @param  boolean the current value
+     * @return boolean
+     */
+    protected function incrementProcessedCountIfAtomic($filterFail)
+    {
+        if ($this->atomicWrites) {
+            $this->processedCount++;
+            return true;
+        }
+        return $filterFail;
+    }
 
     /**
      * Process the whole import workflow
@@ -230,7 +261,6 @@ class Workflow
      */
     public function process()
     {
-        $count      = 0;
         $exceptions = array();
         $startTime  = new DateTime;
 
@@ -239,28 +269,34 @@ class Workflow
             $writer->prepare();
         }
 
+        $filterFail = FALSE;
+        
         // Read all items
         foreach ($this->reader as $rowIndex => $item) {
             try {
                 // Apply filters before conversion
                 if (!$this->filterItem($item, $this->filters)) {
+                    $filterFail = $this->incrementProcessedCountIfAtomic($filterFail);
                     continue;
                 }
 
                 $convertedItem = $this->convertItem($item);
                 if (!$convertedItem) {
+                    $filterFail = $this->incrementProcessedCountIfAtomic($filterFail);
                     continue;
                 }
 
                 // Apply filters after conversion
-                if (!$this->filterItem($convertedItem, $this->afterConversionFilters)) {
+                if (!$this->filterItem($convertedItem, $this->afterConversionFilters)) { 
+                    $filterFail = $this->incrementProcessedCountIfAtomic($filterFail);
                     continue;
                 }
 
-                foreach ($this->writers as $writer) {
-                    $writer->writeItem($convertedItem);
-                }
-
+                if ( !($this->atomicWrites AND $filterFail)) {
+                    foreach ($this->writers as $writer) {
+                        $writer->writeItem($convertedItem);
+                    }
+                } 
             } catch(ExceptionInterface $e) {
                 if ($this->skipItemOnFailure) {
                     $exceptions[$rowIndex] = $e;
@@ -269,15 +305,24 @@ class Workflow
                     throw $e;
                 }
             }
-            $count++;
+            $this->processedCount++;
         }
 
-        // Finish writers
-        foreach ($this->writers as $writer) {
-            $writer->finish();
+        if ($this->atomicWrites AND $filterFail) {
+            // Since one row failed, all rows must be taken as failures
+            for($i = 0 ; $i < count($this->reader) ; $i++) {
+                if (!isset($exceptions[$i])) {
+                    $exceptions[$i] = new ReaderException('Row skipped due to atomic writes');
+                }
+            }
+        } else {
+	        // Finish writers
+	        foreach ($this->writers as $writer) {
+	            $writer->finish();
+	        }
         }
-
-        return new Result($this->name, $startTime, new DateTime, $count, $exceptions);
+        
+        return new Result($this->name, $startTime, new DateTime, $this->processedCount, $exceptions);
     }
 
     /**
@@ -383,4 +428,19 @@ class Workflow
 
         return $this;
     }
+
+    /**
+     * Set atomicWrites
+     *
+     * @param boolean $atomicWrites if true then writes will only happen if all read rows pass validation
+     *
+     * @return $this
+     */
+    public function setAtomicWrites($atomicWrites)
+    {
+        $this->atomicWrites = $atomicWrites;
+
+        return $this;
+    }
+    
 }
