@@ -274,7 +274,7 @@ class Workflow
 
         // Finish writers
         foreach ($this->writers as $writer) {
-            $writer->finish();
+            $writer->finish(count($exceptions));
         }
 
         return new Result($this->name, $startTime, new DateTime, $count, $exceptions);

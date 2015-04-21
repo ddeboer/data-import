@@ -28,7 +28,9 @@ interface WriterInterface
     /**
      * Wrap up the writer after all items have been written
      *
+     * @param int|null The number of errors occurred during import.
+     *
      * @return $this
      */
-    public function finish();
+    public function finish($errorCount = null);
 }

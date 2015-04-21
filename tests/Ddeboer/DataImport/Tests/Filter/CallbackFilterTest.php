@@ -21,7 +21,7 @@ class CallbackFilterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      */
     public function testFilterWithNotCallableArgument()
     {

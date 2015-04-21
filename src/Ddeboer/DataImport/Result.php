@@ -14,7 +14,6 @@ use Ddeboer\DataImport\Exception\ExceptionInterface;
  */
 class Result
 {
-
     /**
      * Identifier given to the import/export
      *

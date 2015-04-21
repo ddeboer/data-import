@@ -3,6 +3,7 @@
 namespace Ddeboer\DataImport\Writer;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadata;
 
 /**
@@ -172,9 +173,10 @@ class DoctrineWriter extends AbstractWriter
     /**
      * Re-enable Doctrine logging
      *
+     * @param $errorCount
      * @return DoctrineWriter
      */
-    public function finish()
+    public function finish($errorCount = null)
     {
         $this->entityManager->flush();
         $this->entityManager->clear($this->entityName);

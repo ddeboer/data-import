@@ -9,9 +9,14 @@ namespace Ddeboer\DataImport\Writer;
  */
 class StreamMergeWriter extends AbstractStreamWriter
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     private $discriminantField = 'discr';
-    /** @var AbstractStreamWriter[] */
+
+    /**
+     * @var AbstractStreamWriter[]
+     */
     private $writers = array();
 
     /**
@@ -23,6 +28,7 @@ class StreamMergeWriter extends AbstractStreamWriter
     public function setDiscriminantField($discriminantField)
     {
         $this->discriminantField = (string) $discriminantField;
+
         return $this;
     }
 
