@@ -382,6 +382,41 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(null, $result->getName());
     }
 
+    public function testRejectCollectorExecution()
+    {
+        $filter = new CallbackFilter(function ($item) {
+            return 'James' === $item['first'];
+        });
+        $rejectCollector = $this->getMock(
+            'Ddeboer\DataImport\RejectCollector\RejectCollectorInterface'
+        );
+
+        // check that only rejected elements are processed
+        $rejectCollector->expects($this->exactly(2))
+            ->method('collect')
+            ->withConsecutive(
+                array(
+                    array(
+                        'first' => 'Miss',
+                        'last'  => 'Moneypenny'
+                    ),
+                    $filter
+                ),
+                array(
+                    array(
+                        'first' => null,
+                        'last'  => 'Doe'
+                    ),
+                    $filter
+                )
+            );
+        $workflow = $this->getWorkflow();
+        $workflow
+            ->addFilter($filter)
+            ->addRejectCollector($rejectCollector, 1)
+            ->process();
+    }
+
     protected function getWorkflow()
     {
         $reader = new ArrayReader(array(
