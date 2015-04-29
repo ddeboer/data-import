@@ -2,7 +2,8 @@
 
 namespace Ddeboer\DataImport\Writer;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadata;
 
 /**
@@ -18,7 +19,7 @@ class DoctrineWriter extends AbstractWriter
     /**
      * Doctrine entity manager
      *
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
@@ -79,11 +80,11 @@ class DoctrineWriter extends AbstractWriter
     /**
      * Constructor
      *
-     * @param EntityManager $entityManager
-     * @param string        $entityName
-     * @param string|array        $index         Field or fields to find current entities by
+     * @param EntityManagerInterface $entityManager
+     * @param string $entityName
+     * @param string|array $index Field or fields to find current entities by
      */
-    public function __construct(EntityManager $entityManager, $entityName, $index = null)
+    public function __construct(EntityManagerInterface $entityManager, $entityName, $index = null)
     {
         $this->entityManager = $entityManager;
         $this->entityName = $entityName;
