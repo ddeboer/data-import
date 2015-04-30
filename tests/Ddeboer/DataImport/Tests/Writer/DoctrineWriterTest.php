@@ -193,4 +193,19 @@ class DoctrineWriterTest extends \PHPUnit_Framework_TestCase
 
         $writer->writeItem($item);
     }
+
+    /**
+     * Test to make sure that we are clearing the write entity
+     */
+    public function testFlushAndClear()
+    {
+        $em = $this->getEntityManager();
+
+        $em->expects($this->once())
+            ->method('clear')
+            ->with($this->equalTo('Ddeboer\DataImport\Tests\Fixtures\Entity\TestEntity'));
+
+        $writer = new DoctrineWriter($em, 'DdeboerDataImport:TestEntity');
+        $writer->finish();
+    }
 }
