@@ -211,8 +211,7 @@ class DoctrineWriter extends AbstractWriter
      */
     protected function updateEntity(array $item, $entity)
     {
-        $fieldNames = array_merge($this->entityMetadata->getFieldNames(), $this->entityMetadata->getAssociationNames());
-        foreach ($fieldNames as $fieldName) {
+        foreach ($this->entityMetadata->getFieldNames() as $fieldName) {
 
             $value = null;
             if (isset($item[$fieldName])) {
