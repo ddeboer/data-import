@@ -16,7 +16,7 @@ class ArrayReader extends \ArrayIterator implements CountableReaderInterface
     {
         // Examine first row
         if ($this->count() > 0) {
-            return \array_keys($this[0]);
+            return array_keys($this[0]);
         }
 
         return array();

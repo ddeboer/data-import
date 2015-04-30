@@ -8,11 +8,11 @@ use Ddeboer\DataImport\ValueConverter\DateTimeValueConverter;
  * This filter can be used to filter out some items from a specific date. Useful
  * to do incremental imports
  */
-class DateTimeThresholdFilter implements FilterInterface
+class DateTimeThresholdFilter
 {
     /**
-     * @var DateTime threshold dates strictly before this date will be filtered out.
-     *               defaults to null
+     * @var \DateTime threshold dates strictly before this date will be filtered out.
+     *                defaults to null
      */
     protected $threshold;
 
@@ -47,14 +47,14 @@ class DateTimeThresholdFilter implements FilterInterface
     /**
      * {@inheritDoc}
      */
-    public function filter(array $item)
+    public function __invoke(array $item)
     {
         if ($this->threshold == null) {
             throw new \LogicException('Make sure you set a threshold');
         }
 
         return
-            $this->valueConverter->convert($item[$this->timeColumnName])
+            call_user_func($this->valueConverter, $item[$this->timeColumnName])
             >=
             $this->threshold;
     }
@@ -68,13 +68,5 @@ class DateTimeThresholdFilter implements FilterInterface
         $this->threshold = $value;
 
         return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPriority()
-    {
-        return $this->priority;
     }
 }

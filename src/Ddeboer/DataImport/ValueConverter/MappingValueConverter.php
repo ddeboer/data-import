@@ -4,7 +4,7 @@ namespace Ddeboer\DataImport\ValueConverter;
 
 use Ddeboer\DataImport\Exception\UnexpectedValueException;
 
-class MappingValueConverter implements ValueConverterInterface
+class MappingValueConverter
 {
     private $mapping;
 
@@ -13,7 +13,7 @@ class MappingValueConverter implements ValueConverterInterface
         $this->mapping = $mapping;
     }
 
-    public function convert($input)
+    public function __invoke($input)
     {
         if (!isset($this->mapping[$input])) {
             throw new UnexpectedValueException(sprintf(

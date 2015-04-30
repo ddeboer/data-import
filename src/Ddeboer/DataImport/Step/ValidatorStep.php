@@ -1,27 +1,28 @@
 <?php
 
-namespace Ddeboer\DataImport\Filter;
+namespace Ddeboer\DataImport\Step;
 
-use Symfony\Component\Validator\ValidatorInterface;
-use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Validator;
 use Symfony\Component\Validator\Constraints;
+use Symfony\Component\Validator\Constraint;
 use Ddeboer\DataImport\Exception\ValidationException;
 
-class ValidatorFilter
+/**
+ * @author Markus Bachmann <markus.bachmann@bachi.biz>
+ */
+class ValidatorStep implements PriorityStepInterface
 {
-    private $validator;
+    private $constraints = [];
+
+    private $violations = [];
 
     private $throwExceptions = false;
 
     private $line = 1;
 
-    private $strict = true;
+    private $validator;
 
-    private $constraints = array();
-
-    private $violations = array();
-
-    public function __construct(ValidatorInterface $validator)
+    public function __construct(Validator $validator)
     {
         $this->validator = $validator;
     }
@@ -33,16 +34,15 @@ class ValidatorFilter
         }
 
         $this->constraints[$field][] = $constraint;
+
+        return $this;
     }
 
     public function throwExceptions($flag = true)
     {
         $this->throwExceptions = $flag;
-    }
 
-    public function setStrict($strict)
-    {
-        $this->strict = $strict;
+        return $this;
     }
 
     public function getViolations()
@@ -50,26 +50,26 @@ class ValidatorFilter
         return $this->violations;
     }
 
-    public function __invoke(array $item)
+    public function process(&$item)
     {
-        if (!$this->strict) {
-            // Only validate properties which have an constaint.
-            $temp = array_intersect(array_keys($item), array_keys($this->constraints));
-            $item = array_intersect_key($item, array_flip($temp));
-        }
-
         $constraints = new Constraints\Collection($this->constraints);
         $list = $this->validator->validateValue($item, $constraints);
-        $currentLine = $this->line++;
 
         if (count($list) > 0) {
-            $this->violations[$currentLine] = $list;
+            $this->violations[$this->line] = $list;
 
             if ($this->throwExceptions) {
-                throw new ValidationException($list, $currentLine);
+                throw new ValidationException($list, $this->line);
             }
         }
 
+        $this->line++;
+
         return 0 === count($list);
+    }
+
+    public function getPriority()
+    {
+        return 128;
     }
 }

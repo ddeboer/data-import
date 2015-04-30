@@ -144,7 +144,7 @@ class DbalReaderTest extends \PHPUnit_Framework_TestCase
         $schema = new Schema();
 
         $table = $schema->createTable('groups');
-        $table->addColumn('id', 'integer');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('name', 'string', array('length' => 45));
         $table->setPrimaryKey(array('id'));
 

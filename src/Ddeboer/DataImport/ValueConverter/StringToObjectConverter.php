@@ -9,7 +9,7 @@ use Doctrine\Common\Persistence\ObjectRepository;
  *
  * @author Markus Bachmann <markus.bachmann@bachi.biz>
  */
-class StringToObjectConverter implements ValueConverterInterface
+class StringToObjectConverter
 {
     /**
      * @var ObjectRepository
@@ -30,7 +30,7 @@ class StringToObjectConverter implements ValueConverterInterface
     /**
      * {@inheritDoc}
      */
-    public function convert($input)
+    public function __invoke($input)
     {
         $method = 'findOneBy'.ucfirst($this->property);
 

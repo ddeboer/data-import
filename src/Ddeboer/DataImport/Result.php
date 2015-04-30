@@ -64,7 +64,7 @@ class Result
      * @param $totalCount
      * @param ExceptionInterface[] $exceptions
      */
-    public function __construct($name, DateTime $startTime, DateTime $endTime, $totalCount, array $exceptions = array())
+    public function __construct($name, DateTime $startTime, DateTime $endTime, $totalCount, \SplObjectStorage $exceptions)
     {
         $this->name                = $name;
         $this->startTime           = $startTime;

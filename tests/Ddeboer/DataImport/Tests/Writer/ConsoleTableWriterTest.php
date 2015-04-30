@@ -19,34 +19,29 @@ class ConsoleTableWriterTest extends \PHPUnit_Framework_TestCase
     {
         $data = array(
             array(
-                'first'  => 'John',
+                'firstname'  => 'John',
                 'lastname' => 'Doe'
             ),
             array(
-                'first'  => 'Ivan',
+                'firstname'  => 'Ivan',
                 'lastname' => 'Sidorov'
             )
         );
         $reader = new ArrayReader($data);
 
-        $converter = new MappingItemConverter();
-        $converter
-            ->addMapping('first', 'firstname')
-        ;
-
         $output = new BufferedOutput();
-        $table = new Table($output);
-        $table
-            ->setStyle('compact')
-        ;
+
+        $table = $this->getMockBuilder('Symfony\Component\Console\Helper\Table')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $table->expects($this->at(2))
+            ->method('addRow');
 
         $workflow = new Workflow($reader);
         $workflow
-            ->addItemConverter($converter)
             ->addWriter(new ConsoleTableWriter($output, $table))
             ->process()
         ;
-
-        $this->assertRegExp('/\s+lastname\s+firstname\s+Doe\s+John\s+Sidorov\s+Ivan\s+/', $output->fetch());
     }
 }

@@ -23,7 +23,7 @@ class ObjectConverterTest extends \PHPUnit_Framework_TestCase
         $converter = new ObjectConverter();
         $object = new ToStringDummy();
 
-        $this->assertEquals('foo', $converter->convert($object));
+        $this->assertEquals('foo', call_user_func($converter, $object));
     }
 
     public function testConvertWithPropertyPath()
@@ -31,7 +31,7 @@ class ObjectConverterTest extends \PHPUnit_Framework_TestCase
         $converter = new ObjectConverter('foo');
         $object = new Dummy();
 
-        $this->assertEquals('bar', $converter->convert($object));
+        $this->assertEquals('bar', call_user_func($converter, $object));
     }
 
     /**
@@ -40,7 +40,7 @@ class ObjectConverterTest extends \PHPUnit_Framework_TestCase
     public function testConvertAObjectWithoutToString()
     {
         $converter = new ObjectConverter;
-        $converter->convert(new Dummy());
+        call_user_func($converter, new Dummy());
     }
 
     /**
@@ -49,7 +49,7 @@ class ObjectConverterTest extends \PHPUnit_Framework_TestCase
     public function testConvetANonObject()
     {
         $converter = new ObjectConverter();
-        $converter->convert('foo');
+        call_user_func($converter, 'foo');
     }
 }
 

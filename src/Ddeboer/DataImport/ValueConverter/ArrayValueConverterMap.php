@@ -7,7 +7,7 @@ namespace Ddeboer\DataImport\ValueConverter;
  *
  * @author Christoph Rosse <christoph@rosse.at>
  */
-class ArrayValueConverterMap implements ValueConverterInterface
+class ArrayValueConverterMap
 {
     /**
      * @var array
@@ -17,7 +17,7 @@ class ArrayValueConverterMap implements ValueConverterInterface
     /**
      * Constructor
      *
-     * @param array $converters
+     * @param callable[] $converters
      */
     public function __construct(array $converters)
     {
@@ -27,7 +27,7 @@ class ArrayValueConverterMap implements ValueConverterInterface
     /**
      * {@inheritDoc}
      */
-    public function convert($input)
+    public function __invoke($input)
     {
         if (!is_array($input)) {
             throw new \InvalidArgumentException('Input of a ArrayValueConverterMap must be an array');
@@ -55,7 +55,7 @@ class ArrayValueConverterMap implements ValueConverterInterface
             }
 
             foreach ($this->converters[$key] as $converter) {
-                $item[$key] = $converter->convert($item[$key]);
+                $item[$key] = call_user_func($converter, $item[$key]);
             }
         }
 

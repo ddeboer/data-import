@@ -15,7 +15,7 @@ class MappingValueConverterTest extends \PHPUnit_Framework_TestCase
             'source' => 'destination'
         ));
 
-        $this->assertSame('destination', $converter->convert('source'));
-        $converter->convert('unexpected value');
+        $this->assertSame('destination', call_user_func($converter, 'source'));
+        call_user_func($converter, 'unexpected value');
     }
 }

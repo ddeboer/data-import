@@ -9,7 +9,7 @@ use Ddeboer\DataImport\Exception\UnexpectedTypeException;
  *
  * @author Markus Bachmann <markus.bachmann@bachi.biz>
  */
-class CharsetValueConverter implements ValueConverterInterface
+class CharsetValueConverter
 {
     /**
      * @var string
@@ -36,12 +36,8 @@ class CharsetValueConverter implements ValueConverterInterface
     /**
      * {@inheritDoc}
      */
-    public function convert($input)
+    public function __invoke($input)
     {
-        if (!is_string($input)) {
-            throw new UnexpectedTypeException($input, 'string');
-        }
-
         if (function_exists('mb_convert_encoding')) {
             return mb_convert_encoding($input, $this->charset, $this->inCharset);
         }

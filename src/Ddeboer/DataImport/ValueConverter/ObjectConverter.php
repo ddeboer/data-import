@@ -5,11 +5,12 @@ namespace Ddeboer\DataImport\ValueConverter;
 use Ddeboer\DataImport\Exception\UnexpectedTypeException;
 use Symfony\Component\PropertyAccess\PropertyPath;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 /**
  * @author Markus Bachmann <markus.bachmann@bachi.biz
  */
-class ObjectConverter implements ValueConverterInterface
+class ObjectConverter
 {
     /**
      * @var string|null
@@ -55,7 +56,7 @@ class ObjectConverter implements ValueConverterInterface
     /**
      * {@inheritDoc}
      */
-    public function convert($input)
+    public function __invoke($input)
     {
         if (!is_object($input)) {
             throw new UnexpectedTypeException($input, 'object');

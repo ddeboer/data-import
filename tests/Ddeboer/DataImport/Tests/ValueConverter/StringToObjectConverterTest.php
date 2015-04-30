@@ -25,6 +25,6 @@ class StringToObjectConverterTest extends \PHPUnit_Framework_TestCase
             ->with('bar')
             ->will($this->returnValue($class));
 
-        $this->assertEquals($class, $converter->convert('bar'));
+        $this->assertEquals($class, call_user_func($converter, 'bar'));
     }
 }
