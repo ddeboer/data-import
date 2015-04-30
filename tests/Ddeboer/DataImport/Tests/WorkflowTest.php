@@ -11,6 +11,7 @@ use Ddeboer\DataImport\ValueConverter\CallbackValueConverter;
 use Ddeboer\DataImport\ItemConverter\CallbackItemConverter;
 use Ddeboer\DataImport\Writer\CallbackWriter;
 use Ddeboer\DataImport\Exception\SourceNotFoundException;
+use Ddeboer\DataImport\Exception\UnexpectedValueException;
 
 class WorkflowTest extends \PHPUnit_Framework_TestCase
 {
@@ -380,6 +381,54 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($result->hasErrors());
         $this->assertSame(array($e), $result->getExceptions());
         $this->assertSame(null, $result->getName());
+    }
+
+    public function testWorkflowConversionWithProperExceptionInterface()
+    {
+        $workflow   = $this->getWorkflow();
+        $workflow->setSkipItemOnFailure(true);
+        $workflow->addValueConverter('first', new CallbackValueConverter(function($input) {
+            if($input =='Miss')
+                throw new UnexpectedValueException('Miss is invalid');
+        }));
+        $results    = array();
+        $writer     = new ArrayWriter($results);
+        $workflow->addWriter($writer);
+        $result     = $workflow->process();
+        $exceptions = $result->getExceptions();
+
+        $this->assertInstanceOf('Ddeboer\DataImport\Result', $result);
+        $this->assertInstanceOf('DateTime', $result->getStartTime());
+        $this->assertInstanceOf('DateTime', $result->getEndTime());
+        $this->assertInstanceOf('DateInterval', $result->getElapsed());
+        $this->assertInstanceOf('Ddeboer\DataImport\Result', $result);
+        $this->assertSame(3, $result->getTotalProcessedCount());
+        $this->assertSame(2, $result->getSuccessCount());
+        $this->assertSame(1, $result->getErrorCount());
+        $this->assertTrue($result->hasErrors());
+        $this->assertCount(1, $exceptions);
+        $this->assertTrue(isset($exceptions[1])); // this tests that the exception array has keys that match the row that was failed conversion
+        $this->assertInstanceOf('\Ddeboer\DataImport\Exception\ValueConversionException',$exceptions[1]);
+        $this->assertInstanceOf('\Ddeboer\DataImport\Exception\UnexpectedValueException',$exceptions[1]->getPrevious());
+
+        $this->assertSame(null, $result->getName());
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     */
+    public function testWorkflowConversionWithoutProperExceptionInterface()
+    {
+        $workflow   = $this->getWorkflow();
+        $workflow->setSkipItemOnFailure(true);
+        $workflow->addValueConverter('first', new CallbackValueConverter(function($input) {
+            if($input =='Miss')
+                throw new \RuntimeException('Miss is invalid');
+        }));
+        $results    = array();
+        $writer     = new ArrayWriter($results);
+        $workflow->addWriter($writer);
+        $workflow->process();
     }
 
     protected function getWorkflow()
