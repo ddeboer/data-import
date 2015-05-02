@@ -42,6 +42,9 @@
         "symfony/property-access": "If you want to use the ObjectConverter"
     },
     "autoload": {
-        "psr-0": { "Ddeboer\\DataImport": "src" }
+        "psr-4": { 
+            "Ddeboer\\DataImport\\": "src/",
+            "Ddeboer\\DataImport\\Tests\\": "tests/"
+        }
     }
 }
