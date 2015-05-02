@@ -53,7 +53,7 @@ class OneToManyReader implements CountableReaderInterface
     ) {
         $this->leftJoinField = $leftJoinField;
 
-        if (!$rightJoinField) {
+        if (null === $rightJoinField) {
             $this->rightJoinField = $this->leftJoinField;
         } else {
             $this->rightJoinField = $rightJoinField;

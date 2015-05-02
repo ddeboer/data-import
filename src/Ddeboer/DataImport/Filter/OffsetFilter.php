@@ -8,7 +8,7 @@ namespace Ddeboer\DataImport\Filter;
  *
  * @author Ville Mattila <ville@eventio.fi>
  */
-class OffsetFilter implements FilterInterface
+class OffsetFilter
 {
     /**
      * @var int
@@ -50,7 +50,7 @@ class OffsetFilter implements FilterInterface
     /**
      * {@inheritDoc}
      */
-    public function filter(array $item)
+    public function __invoke(array $item)
     {
         // In case we've already filtered up to limited
         if ($this->maxLimitHit) {
@@ -80,13 +80,5 @@ class OffsetFilter implements FilterInterface
         }
 
         return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPriority()
-    {
-        return 128;
     }
 }

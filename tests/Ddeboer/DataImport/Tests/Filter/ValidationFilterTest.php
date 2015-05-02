@@ -25,7 +25,7 @@ class ValidationFilterTest extends \PHPUnit_Framework_TestCase
             ->method('validateValue')
             ->will($this->returnValue($list));
 
-        $this->assertTrue($this->filter->filter($item));
+        $this->assertTrue(call_user_func($this->filter, $item));
     }
 
     public function testFilterWithInvalidItem()
@@ -39,7 +39,7 @@ class ValidationFilterTest extends \PHPUnit_Framework_TestCase
             ->method('validateValue')
             ->will($this->returnValue($list));
 
-        $this->assertFalse($this->filter->filter($item));
+        $this->assertFalse(call_user_func($this->filter, $item));
 
         $this->assertEquals(array(1 => $list), $this->filter->getViolations());
     }
@@ -58,7 +58,7 @@ class ValidationFilterTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($list));
 
         try {
-            $this->filter->filter($item);
+            call_user_func($this->filter, $item);
             $this->fail('ValidationException should be thrown');
         } catch (ValidationException $e) {
             $this->assertSame(1, $e->getLineNumber());
@@ -73,7 +73,7 @@ class ValidationFilterTest extends \PHPUnit_Framework_TestCase
         $item = array('foo' => true, 'bar' => true);
 
         $this->filter->add('foo', new Constraints\True());
-        $this->assertTrue($this->filter->filter($item));
+        $this->assertTrue(call_user_func($this->filter, $item));
     }
 
     public function testFilterLineNumbers()
@@ -90,7 +90,7 @@ class ValidationFilterTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($list));
 
         try {
-            $this->assertTrue($this->filter->filter($item));
+            $this->assertTrue(call_user_func($this->filter, $item));
             $this->fail('ValidationException should be thrown (1)');
         } catch (ValidationException $e) {
             $this->assertSame(1, $e->getLineNumber());
@@ -98,7 +98,7 @@ class ValidationFilterTest extends \PHPUnit_Framework_TestCase
         }
 
         try {
-            $this->assertTrue($this->filter->filter($item));
+            $this->assertTrue(call_user_func($this->filter, $item));
             $this->fail('ValidationException should be thrown (2)');
         } catch (ValidationException $e) {
             $this->assertSame(2, $e->getLineNumber());

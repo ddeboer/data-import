@@ -21,7 +21,7 @@ class DateTimeFilterTest extends \PHPUnit_Framework_TestCase
 
     private function applyFilter(DateTimeThresholdFilter $filter, array $items)
     {
-        return array_filter($items, array($filter, 'filter'));
+        return array_filter($items, array($filter, '__invoke'));
     }
 
     /**
@@ -30,7 +30,7 @@ class DateTimeFilterTest extends \PHPUnit_Framework_TestCase
      */
     public function testDefaultFilter()
     {
-        $resultItems = $this->applyFilter(
+        $this->applyFilter(
             new DateTimeThresholdFilter(new DateTimeValueConverter()),
             $this->items
         );

@@ -286,8 +286,7 @@ class CsvReader implements CountableReaderInterface, \SeekableIterator
     {
         if (0 === $this->key()) {
             // Iterator has not yet been processed, so do that now
-            foreach ($this as $row) {
-            }
+            foreach ($this as $row) { /* noop */ }
         }
 
         return $this->errors;

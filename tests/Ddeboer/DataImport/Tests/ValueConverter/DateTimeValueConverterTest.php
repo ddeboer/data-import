@@ -10,7 +10,7 @@ class DateTimeValueConverterTest extends \PHPUnit_Framework_TestCase
     {
         $value = '2011-10-20 13:05';
         $converter = new DateTimeValueConverter;
-        $output = $converter->convert($value);
+        $output = call_user_func($converter, $value);
         $this->assertInstanceOf('\DateTime', $output);
         $this->assertEquals('13', $output->format('H'));
     }
@@ -19,7 +19,7 @@ class DateTimeValueConverterTest extends \PHPUnit_Framework_TestCase
     {
         $value = '14/10/2008 09:40:20';
         $converter = new DateTimeValueConverter('d/m/Y H:i:s');
-        $output = $converter->convert($value);
+        $output = call_user_func($converter, $value);
         $this->assertInstanceOf('\DateTime', $output);
         $this->assertEquals('20', $output->format('s'));
     }
@@ -28,7 +28,7 @@ class DateTimeValueConverterTest extends \PHPUnit_Framework_TestCase
     {
         $value = '14/10/2008 09:40:20';
         $converter = new DateTimeValueConverter('d/m/Y H:i:s', 'd-M-Y');
-        $output = $converter->convert($value);
+        $output = call_user_func($converter, $value);
         $this->assertEquals('14-Oct-2008', $output);
     }
 
@@ -36,7 +36,7 @@ class DateTimeValueConverterTest extends \PHPUnit_Framework_TestCase
     {
         $value = '2011-10-20 13:05';
         $converter = new DateTimeValueConverter(null, 'd-M-Y');
-        $output = $converter->convert($value);
+        $output = call_user_func($converter, $value);
         $this->assertEquals('20-Oct-2011', $output);
 
     }
@@ -46,12 +46,12 @@ class DateTimeValueConverterTest extends \PHPUnit_Framework_TestCase
         $value = '14/10/2008 09:40:20';
         $converter = new DateTimeValueConverter('d-m-y', 'd-M-Y');
         $this->setExpectedException("UnexpectedValueException", "14/10/2008 09:40:20 is not a valid date/time according to format d-m-y");
-        $converter->convert($value);
+        call_user_func($converter, $value);
     }
 
     public function testNullIsReturnedIfNullPassed()
     {
         $converter = new DateTimeValueConverter('d-m-y', 'd-M-Y');
-        $this->assertNull($converter->convert(null));
+        $this->assertNull(call_user_func($converter, null));
     }
 }

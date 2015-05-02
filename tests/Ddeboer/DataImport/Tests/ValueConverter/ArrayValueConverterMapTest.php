@@ -15,8 +15,8 @@ class ArrayValueConverterMapTest extends \PHPUnit_Framework_TestCase
      */
     public function testConvertWithNoArrayArgument()
     {
-        $converter = new ArrayValueConverterMap(array('foo' => new CallbackValueConverter(function($input) {return $input;})));
-        $converter->convert('foo');
+        $converter = new ArrayValueConverterMap(array('foo' => function($input) {return $input;}));
+        call_user_func($converter, 'foo');
     }
 
     public function testConvertWithMultipleFields()
@@ -32,8 +32,8 @@ class ArrayValueConverterMapTest extends \PHPUnit_Framework_TestCase
             ),
         );
 
-        $addBarConverter = new CallbackValueConverter(function($input) { return 'bar'.$input; });
-        $addBazConverter = new CallbackValueConverter(function($input) { return 'baz'.$input; });
+        $addBarConverter = function($input) { return 'bar'.$input; };
+        $addBazConverter = function($input) { return 'baz'.$input; };
 
         $converter = new ArrayValueConverterMap(
             array(
@@ -42,7 +42,7 @@ class ArrayValueConverterMapTest extends \PHPUnit_Framework_TestCase
             )
         );
 
-        $data = $converter->convert($data);
+        $data = call_user_func($converter, $data);
 
         $this->assertEquals('bartest', $data[0]['foo']);
         $this->assertEquals('barbaztest', $data[0]['bar']);

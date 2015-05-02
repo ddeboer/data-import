@@ -206,7 +206,7 @@ class DoctrineWriter extends AbstractWriter
     }
 
     /**
-     * 
+     *
      * @param array $item
      * @param object $entity
      */
@@ -232,7 +232,7 @@ class DoctrineWriter extends AbstractWriter
                 $setter = 'set' . ucfirst($fieldName);
                 $this->setValue($entity, $value, $setter);
             }
-        }        
+        }
     }
 
     /**
@@ -300,7 +300,7 @@ class DoctrineWriter extends AbstractWriter
         // If the table was not truncated to begin with, find current entity
         // first
         if (false === $this->truncate) {
-            if ($this->lookupFields) {
+            if (!empty($this->lookupFields)) {
                 $lookupConditions = array();
                 foreach ($this->lookupFields as $fieldName) {
                     $lookupConditions[$fieldName] = $item[$fieldName];
@@ -319,7 +319,7 @@ class DoctrineWriter extends AbstractWriter
 
         return $entity;
     }
-    
+
     protected function flushAndClear()
     {
         $this->entityManager->flush();

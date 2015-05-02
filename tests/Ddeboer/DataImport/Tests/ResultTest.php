@@ -13,17 +13,21 @@ class ResultTest extends \PHPUnit_Framework_TestCase
 {
     public function testResultName()
     {
-        $result = new Result('export', new \DateTime, new \DateTime, 10);
+        $result = new Result('export', new \DateTime, new \DateTime, 10, new \SplObjectStorage());
         $this->assertSame('export', $result->getName());
     }
 
     public function testResultCounts()
     {
-        $result = new Result('export', new \DateTime, new \DateTime, 10);
+        $result = new Result('export', new \DateTime, new \DateTime, 10, new \SplObjectStorage());
         $this->assertSame(10, $result->getTotalProcessedCount());
         $this->assertSame(10, $result->getSuccessCount());
         $this->assertSame(0, $result->getErrorCount());
-        $result = new Result('export', new \DateTime, new \DateTime, 10, array(new \Exception, new \Exception));
+
+        $exceptions = new \SplObjectStorage();
+        $exceptions->attach(new \Exception());
+        $exceptions->attach(new \Exception());
+        $result = new Result('export', new \DateTime, new \DateTime, 10, $exceptions);
         $this->assertSame(10, $result->getTotalProcessedCount());
         $this->assertSame(8, $result->getSuccessCount());
         $this->assertSame(2, $result->getErrorCount());
@@ -35,7 +39,7 @@ class ResultTest extends \PHPUnit_Framework_TestCase
         $startDate  = new \DateTime("22-07-2014 22:00");
         $endDate    = new \DateTime("22-07-2014 23:30");
 
-        $result     = new Result('export', $startDate, $endDate, 10);
+        $result     = new Result('export', $startDate, $endDate, 10, new \SplObjectStorage());
 
         $this->assertSame($startDate, $result->getStartTime());
         $this->assertSame($endDate, $result->getEndTime());
@@ -44,19 +48,26 @@ class ResultTest extends \PHPUnit_Framework_TestCase
 
     public function testHasErrorsReturnsTrueIfAnyExceptions()
     {
-        $result = new Result('export', new \DateTime, new \DateTime, 10, array(new \Exception, new \Exception));
+        $exceptions = new \SplObjectStorage();
+        $exceptions->attach(new \Exception());
+        $exceptions->attach(new \Exception());
+
+        $result = new Result('export', new \DateTime, new \DateTime, 10, $exceptions);
         $this->assertTrue($result->hasErrors());
     }
 
     public function testHasErrorsReturnsFalseIfNoExceptions()
     {
-        $result = new Result('export', new \DateTime, new \DateTime, 10);
+        $result = new Result('export', new \DateTime, new \DateTime, 10, new \SplObjectStorage());
         $this->assertFalse($result->hasErrors());
     }
 
     public function testGetExceptions()
     {
-        $exceptions = array(new \Exception, new \Exception);
+        $exceptions = new \SplObjectStorage();
+        $exceptions->attach(new \Exception());
+        $exceptions->attach(new \Exception());
+
         $result = new Result('export', new \DateTime, new \DateTime, 10, $exceptions);
         $this->assertSame($exceptions, $result->getExceptions());
     }
