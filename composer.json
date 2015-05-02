@@ -25,9 +25,9 @@
         "ext-iconv": "*",
         "ext-mbstring": "*",
         "ext-sqlite3": "*",
-        "symfony/property-access": "*",
+        "symfony/property-access": "~2.5",
         "phpoffice/phpexcel": "*",
-        "doctrine/dbal": "*",
+        "doctrine/dbal": "~2.4",
         "doctrine/orm": "~2.4",
         "symfony/console": "~2.5.0",
         "symfony/validator": "~2.3.0"
@@ -42,7 +42,7 @@
         "symfony/property-access": "If you want to use the ObjectConverter"
     },
     "autoload": {
-        "psr-4": { 
+        "psr-4": {
             "Ddeboer\\DataImport\\": "src/",
             "Ddeboer\\DataImport\\Tests\\": "tests/"
         }
