@@ -87,9 +87,10 @@ class DoctrineWriter extends AbstractWriter
     public function __construct(EntityManagerInterface $entityManager, $entityName, $index = null)
     {
         $this->entityManager = $entityManager;
-        $this->entityName = $entityName;
         $this->entityRepository = $entityManager->getRepository($entityName);
         $this->entityMetadata = $entityManager->getClassMetadata($entityName);
+        //translate entityName in case a namespace alias is used
+        $this->entityName = $this->entityMetadata->getName();
         if($index) {
             if(is_array($index)) {
                 $this->lookupFields = $index;
