@@ -29,6 +29,11 @@ class ExcelWriter implements Writer
     protected $type;
 
     /**
+     * @var boolean
+     */
+    protected $prependHeaderRow;
+
+    /**
      * @var PHPExcel
      */
     protected $excel;
@@ -42,12 +47,14 @@ class ExcelWriter implements Writer
      * @param \SplFileObject $file  File
      * @param string         $sheet Sheet title (optional)
      * @param string         $type  Excel file type (defaults to Excel2007)
+     * @param boolean        $prependHeaderRow
      */
-    public function __construct(\SplFileObject $file, $sheet = null, $type = 'Excel2007')
+    public function __construct(\SplFileObject $file, $sheet = null, $type = 'Excel2007', $prependHeaderRow = false)
     {
         $this->filename = $file->getPathname();
         $this->sheet = $sheet;
         $this->type = $type;
+        $this->prependHeaderRow = $prependHeaderRow;
     }
 
     /**
@@ -75,6 +82,17 @@ class ExcelWriter implements Writer
      */
     public function writeItem(array $item)
     {
+        if ($this->prependHeaderRow && 1 == $this->row) {
+            $headers = array_keys($item);
+            $count = count($headers);
+            $values = array_values($headers);
+
+            for ($i = 0; $i < $count; $i++) {
+                $this->excel->getActiveSheet()->setCellValueByColumnAndRow($i, $this->row, $values[$i]);
+            }
+            $this->row++;
+        }
+
         $count = count($item);
         $values = array_values($item);
 
