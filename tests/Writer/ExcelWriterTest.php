@@ -68,4 +68,63 @@ class ExcelWriterTest extends \PHPUnit_Framework_TestCase
 
         $writer->finish();
     }
+
+    /**
+     * Test that column names not prepended to first row 
+     * if ExcelWriter's 4-th parameter not given
+     * 
+     * @author  Igor Mukhin <igor.mukhin@gmail.com>
+     */
+    public function testHeaderNotPrependedByDefault()
+    {
+        $file = tempnam(sys_get_temp_dir(), null);
+
+        $writer = new ExcelWriter(new \SplFileObject($file, 'w'), null, 'Excel2007');
+        $writer
+            ->prepare()
+            ->writeItem(array(
+                'col 1 name'=>'col 1 value',
+                'col 2 name'=>'col 2 value',
+                'col 3 name'=>'col 3 value'
+            ))
+            ->finish();
+
+        $excel = \PHPExcel_IOFactory::load($file);
+        $sheet = $this->worksheet = $excel->getActiveSheet()->toArray();
+        
+        # Values should be at first line
+        $this->assertEquals(array('col 1 value', 'col 2 value', 'col 3 value'), $sheet[0]);
+    }
+
+
+    /**
+     * Test that column names prepended at first row
+     * and values have been written at second line
+     * if ExcelWriter's 4-th parameter set to true
+     * 
+     * @author  Igor Mukhin <igor.mukhin@gmail.com>
+     */
+    public function testHeaderPrependedWhenOptionSetToTrue()
+    {
+        $file = tempnam(sys_get_temp_dir(), null);
+
+        $writer = new ExcelWriter(new \SplFileObject($file, 'w'), null, 'Excel2007', true);
+        $writer
+            ->prepare()
+            ->writeItem(array(
+                'col 1 name'=>'col 1 value',
+                'col 2 name'=>'col 2 value',
+                'col 3 name'=>'col 3 value'
+            ))
+            ->finish();
+
+        $excel = \PHPExcel_IOFactory::load($file);
+        $sheet = $this->worksheet = $excel->getActiveSheet()->toArray();
+        
+        # Check column names at first line
+        $this->assertEquals(array('col 1 name', 'col 2 name', 'col 3 name'), $sheet[0]);
+
+        # Check values at second line
+        $this->assertEquals(array('col 1 value', 'col 2 value', 'col 3 value'), $sheet[1]);
+    }
 }
