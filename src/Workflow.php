@@ -53,6 +53,11 @@ class Workflow implements WorkflowInterface
     private $writers = [];
 
     /**
+     * @var boolean For internal use
+     */
+    protected $shouldStop = false;
+
+    /**
      * Construct a workflow
      *
      * @param ReaderInterface $reader
@@ -116,8 +121,20 @@ class Workflow implements WorkflowInterface
             $writer->prepare();
         }
 
+        $this->shouldStop = false;
+        if (is_callable('pcntl_signal')) {
+            pcntl_signal(SIGTERM, array($this, 'stop'));
+            pcntl_signal(SIGINT, array($this, 'stop'));
+        }
+
         // Read all items
         foreach ($this->reader as $index => $item) {
+
+            if (is_callable('pcntl_signal_dispatch')) {
+                pcntl_signal_dispatch();
+            }
+            if ( $this->shouldStop ) break;
+
             try {
                 foreach (clone $this->steps as $step) {
                     if (false === $step->process($item)) {
@@ -149,6 +166,14 @@ class Workflow implements WorkflowInterface
         }
 
         return new Result($this->name, $startTime, new \DateTime, $count, $exceptions);
+    }
+
+    /**
+     * Stops processing and force return Result from process() function
+     */
+    public function stop()
+    {
+        $this->shouldStop = true;
     }
 
     /**
