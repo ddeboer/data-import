@@ -82,18 +82,17 @@ class ExcelWriter implements Writer
      */
     public function writeItem(array $item)
     {
+        $count = count($item);
+
         if ($this->prependHeaderRow && 1 == $this->row) {
             $headers = array_keys($item);
-            $count = count($headers);
-            $values = array_values($headers);
 
             for ($i = 0; $i < $count; $i++) {
-                $this->excel->getActiveSheet()->setCellValueByColumnAndRow($i, $this->row, $values[$i]);
+                $this->excel->getActiveSheet()->setCellValueByColumnAndRow($i, $this->row, $headers[$i]);
             }
             $this->row++;
         }
 
-        $count = count($item);
         $values = array_values($item);
 
         for ($i = 0; $i < $count; $i++) {
