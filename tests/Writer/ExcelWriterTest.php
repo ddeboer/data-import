@@ -90,7 +90,7 @@ class ExcelWriterTest extends \PHPUnit_Framework_TestCase
             ->finish();
 
         $excel = \PHPExcel_IOFactory::load($file);
-        $sheet = $this->worksheet = $excel->getActiveSheet()->toArray();
+        $sheet = $excel->getActiveSheet()->toArray();
         
         # Values should be at first line
         $this->assertEquals(array('col 1 value', 'col 2 value', 'col 3 value'), $sheet[0]);
@@ -119,7 +119,7 @@ class ExcelWriterTest extends \PHPUnit_Framework_TestCase
             ->finish();
 
         $excel = \PHPExcel_IOFactory::load($file);
-        $sheet = $this->worksheet = $excel->getActiveSheet()->toArray();
+        $sheet = $excel->getActiveSheet()->toArray();
         
         # Check column names at first line
         $this->assertEquals(array('col 1 name', 'col 2 name', 'col 3 name'), $sheet[0]);
