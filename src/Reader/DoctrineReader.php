@@ -9,10 +9,18 @@ use Doctrine\ORM\Query;
 /**
  * Reads entities through the Doctrine ORM
  *
+ * @author David de Boer <david@ddeboer.nl>
  */
 class DoctrineReader implements CountableReaderInterface
 {
+    /**
+     * @var ObjectManager
+     */
     protected $objectManager;
+
+    /**
+     * @var string
+     */
     protected $objectName;
 
     /**
@@ -21,11 +29,8 @@ class DoctrineReader implements CountableReaderInterface
     protected $iterableResult;
 
     /**
-     * Constuctor
-     *
-     * @param ObjectManager $objectManager Doctrine object manager
-     * @param string        $objectName    Doctrine object name, e.g.
-     *                                     YourBundle:YourEntity
+     * @param ObjectManager $objectManager
+     * @param string        $objectName    e.g. YourBundle:YourEntity
      */
     public function __construct(ObjectManager $objectManager, $objectName)
     {

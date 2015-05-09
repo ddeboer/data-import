@@ -10,8 +10,15 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
  */
 class ValueConverterStep implements StepInterface
 {
+    /**
+     * @var array
+     */
     private $converters = [];
 
+    /**
+     * @param string   $property
+     * @param callable $converter
+     */
     public function add($property, callable $converter)
     {
         if (!isset($this->converters[$property])) {
@@ -23,6 +30,9 @@ class ValueConverterStep implements StepInterface
         return $this;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function process(&$item)
     {
         $accessor = new PropertyAccessor();

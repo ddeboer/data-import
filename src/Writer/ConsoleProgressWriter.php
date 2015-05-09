@@ -9,6 +9,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 /**
  * Writes output to the Symfony2 console
  *
+ * @author David de Boer <david@ddeboer.nl>
  */
 class ConsoleProgressWriter extends AbstractWriter
 {
@@ -38,10 +39,10 @@ class ConsoleProgressWriter extends AbstractWriter
     protected $redrawFrequency;
 
     /**
-     * @param OutputInterface $output
+     * @param OutputInterface          $output
      * @param CountableReaderInterface $reader
-     * @param string $verbosity
-     * @param int $redrawFrequency
+     * @param string                   $verbosity
+     * @param int                      $redrawFrequency
      */
     public function __construct(
         OutputInterface $output,
@@ -56,7 +57,7 @@ class ConsoleProgressWriter extends AbstractWriter
     }
 
     /**
-     * @return $this
+     * {@inheritdoc}
      */
     public function prepare()
     {
@@ -69,8 +70,7 @@ class ConsoleProgressWriter extends AbstractWriter
     }
 
     /**
-     * @param array $item
-     * @return $this
+     * {@inheritdoc}
      */
     public function writeItem(array $item)
     {
@@ -80,7 +80,7 @@ class ConsoleProgressWriter extends AbstractWriter
     }
 
     /**
-     * @return $this
+     * {@inheritdoc}
      */
     public function finish()
     {

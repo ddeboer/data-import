@@ -2,11 +2,9 @@
 
 namespace Ddeboer\DataImport\Writer;
 
-use \Ddeboer\DataImport\Exception\WriterException;
+use Ddeboer\DataImport\Exception\WriterException;
 
 /**
- * Class PdoWriter
- *
  * Write data into a specific database table using a PDO instance.
  *
  * IMPORTANT: If your PDO instance does not have ERRMODE_EXCEPTION any write failure will be silent or logged to
@@ -14,6 +12,7 @@ use \Ddeboer\DataImport\Exception\WriterException;
  *
  *     $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
  *
+ * @author Stefan Warman
  */
 class PdoWriter implements WriterInterface
 {
@@ -36,7 +35,7 @@ class PdoWriter implements WriterInterface
      * Note if your table name is a reserved word for your target DB you should quote it in the appropriate way e.g.
      * for MySQL enclose the name in `backticks`.
      *
-     * @param \PDO $pdo
+     * @param \PDO   $pdo
      * @param string $tableName
      */
     public function __construct(\PDO $pdo, $tableName)
@@ -46,7 +45,7 @@ class PdoWriter implements WriterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function prepare()
     {
@@ -54,7 +53,7 @@ class PdoWriter implements WriterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function writeItem(array $item)
     {
@@ -86,7 +85,7 @@ class PdoWriter implements WriterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function finish()
     {

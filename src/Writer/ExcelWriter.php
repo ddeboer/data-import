@@ -2,12 +2,13 @@
 
 namespace Ddeboer\DataImport\Writer;
 
-use \PHPExcel;
-use \PHPExcel_IOFactory;
+use PHPExcel;
+use PHPExcel_IOFactory;
 
 /**
  * Writes to an Excel file
  *
+ * @author David de Boer <david@ddeboer.nl>
  */
 class ExcelWriter extends AbstractWriter
 {
@@ -37,12 +38,9 @@ class ExcelWriter extends AbstractWriter
     protected $row = 1;
 
     /**
-     * Constructor
-     *
      * @param \SplFileObject $file  File
      * @param string         $sheet Sheet title (optional)
-     * @param string         $type  Excel file type (optional, defaults to
-     *                              Excel2007)
+     * @param string         $type  Excel file type (defaults to Excel2007)
      */
     public function __construct(\SplFileObject $file, $sheet = null, $type = 'Excel2007')
     {

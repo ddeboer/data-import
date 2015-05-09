@@ -7,5 +7,8 @@ namespace Ddeboer\DataImport\Step;
  */
 interface PriorityStepInterface extends StepInterface
 {
+    /**
+     * @return int
+     */
     function getPriority();
-} 
+}

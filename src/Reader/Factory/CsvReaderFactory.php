@@ -7,15 +7,42 @@ use Ddeboer\DataImport\Reader\CsvReader;
 /**
  * Factory that creates CsvReaders
  *
+ * @author David de Boer <david@ddeboer.nl>
  */
 class CsvReaderFactory
 {
-    protected $delimiter;
-    protected $enclosure;
-    protected $escape;
+    /**
+     * @var int
+     */
     protected $headerRowNumber;
+
+    /**
+     * @var boolean
+     */
     protected $strict;
 
+    /**
+     * @var string
+     */
+    protected $delimiter;
+
+    /**
+     * @var string
+     */
+    protected $enclosure;
+
+    /**
+     * @var string
+     */
+    protected $escape;
+
+    /**
+     * @param int     $headerRowNumber
+     * @param boolean $strict
+     * @param string  $delimiter
+     * @param string  $enclosure
+     * @param string  $escape
+     */
     public function __construct(
         $headerRowNumber = null,
         $strict = true,
@@ -30,6 +57,11 @@ class CsvReaderFactory
         $this->escape = $escape;
     }
 
+    /**
+     * @param \SplFileObject $file
+     *
+     * @return CsvReader
+     */
     public function getReader(\SplFileObject $file)
     {
         $reader = new CsvReader($file, $this->delimiter, $this->enclosure, $this->escape);

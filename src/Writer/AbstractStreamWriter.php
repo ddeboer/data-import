@@ -9,12 +9,17 @@ namespace Ddeboer\DataImport\Writer;
  */
 abstract class AbstractStreamWriter implements WriterInterface
 {
+    /**
+     * @var resource
+     */
     private $stream;
+
+    /**
+     * @var boolean
+     */
     private $closeStreamOnFinish = true;
 
     /**
-     * Constructor
-     *
      * @param resource $stream
      */
     public function __construct($stream = null)
@@ -25,10 +30,12 @@ abstract class AbstractStreamWriter implements WriterInterface
     }
 
     /**
-     * Set Stream Resource
+     * Set the stream resource
      *
-     * @param $stream
+     * @param resource $stream
+     *
      * @throws \InvalidArgumentException
+     *
      * @return $this
      */
     public function setStream($stream)
@@ -46,8 +53,6 @@ abstract class AbstractStreamWriter implements WriterInterface
     }
 
     /**
-     * Get underlying stream resource
-     *
      * @return resource
      */
     public function getStream()
@@ -61,7 +66,7 @@ abstract class AbstractStreamWriter implements WriterInterface
     }
 
     /**
-     * @inheritdoc
+     * @{inheritdoc}
      */
     public function prepare()
     {
@@ -69,7 +74,7 @@ abstract class AbstractStreamWriter implements WriterInterface
     }
 
     /**
-     * @inheritdoc
+     * @{inheritdoc}
      */
     public function finish()
     {
@@ -83,9 +88,9 @@ abstract class AbstractStreamWriter implements WriterInterface
     /**
      * Should underlying stream be closed on finish?
      *
-     * @param bool $closeStreamOnFinish
+     * @param boolean $closeStreamOnFinish
      *
-     * @return bool
+     * @return boolean
      */
     public function setCloseStreamOnFinish($closeStreamOnFinish = true)
     {
@@ -97,7 +102,7 @@ abstract class AbstractStreamWriter implements WriterInterface
     /**
      * Is Stream closed on finish?
      *
-     * @return bool
+     * @return boolean
      */
     public function getCloseStreamOnFinish()
     {

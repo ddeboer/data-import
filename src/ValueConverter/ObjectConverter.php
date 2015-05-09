@@ -23,8 +23,6 @@ class ObjectConverter
     protected $propertyAccessor;
 
     /**
-     * Constructor
-     *
      * @param string|null $propertyPath
      */
     public function __construct($propertyPath = null)
@@ -54,7 +52,7 @@ class ObjectConverter
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function __invoke($input)
     {

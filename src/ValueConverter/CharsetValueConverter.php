@@ -22,8 +22,6 @@ class CharsetValueConverter
     private $inCharset;
 
     /**
-     * Constructor
-     *
      * @param string $charset   Charset to convert values to
      * @param string $inCharset Charset of input values
      */
@@ -34,7 +32,7 @@ class CharsetValueConverter
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function __invoke($input)
     {

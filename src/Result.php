@@ -38,17 +38,17 @@ class Result
     protected $elapsed;
 
     /**
-     * @var int Number Of Errors
+     * @var int
      */
     protected $errorCount = 0;
 
     /**
-     * @var int Number of Successes
+     * @var int
      */
     protected $successCount = 0;
 
     /**
-     * @var int Total Rows Processed
+     * @var int
      */
     protected $totalProcessedCount = 0;
 
@@ -58,10 +58,10 @@ class Result
     protected $exceptions;
 
     /**
-     * @param $name
-     * @param DateTime $startTime
-     * @param DateTime $endTime
-     * @param $totalCount
+     * @param string               $name
+     * @param DateTime             $startTime
+     * @param DateTime             $endTime
+     * @param integer              $totalCount
      * @param ExceptionInterface[] $exceptions
      */
     public function __construct($name, DateTime $startTime, DateTime $endTime, $totalCount, \SplObjectStorage $exceptions)

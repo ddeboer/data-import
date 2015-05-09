@@ -9,32 +9,50 @@ use Doctrine\DBAL\Statement;
  */
 class DbalReader implements CountableReaderInterface
 {
-    /** @var Connection */
+    /**
+     * @var Connection
+     */
     private $connection;
 
+    /**
+     * @var array
+     */
     private $data;
 
-    /** @var Statement */
+    /**
+     * @var Statement
+     */
     private $stmt;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $sql;
-    /** @var array */
+
+    /**
+     * @var array
+     */
     private $params;
 
-    /** @var integer */
+    /**
+     * @var int
+     */
     private $rowCount;
-    /** @var bool */
+
+    /**
+     * @var boolean
+     */
     private $rowCountCalculated = true;
 
+    /**
+     * @var string
+     */
     private $key;
 
     /**
-     * Constructor
-     *
-     * @param Connection $connection Database connection
-     * @param string     $sql        SQL statement
-     * @param array      $params     SQL statement parameters
+     * @param Connection $connection
+     * @param string     $sql
+     * @param array      $params
      */
     public function __construct(Connection $connection, $sql, array $params = array())
     {
@@ -60,7 +78,7 @@ class DbalReader implements CountableReaderInterface
     /**
      * Is row count calculated?
      *
-     * @return bool
+     * @return boolean
      */
     public function isRowCountCalculated()
     {
@@ -102,7 +120,7 @@ class DbalReader implements CountableReaderInterface
     /**
      * Set SQL parameters
      *
-     * @param array  $params
+     * @param array $params
      *
      * @return $this
      */

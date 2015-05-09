@@ -5,7 +5,7 @@ namespace Ddeboer\DataImport\Writer;
 /**
  * This class writes an item into an array that was passed by reference
  *
- * Class ArrayWriter
+ * @author David de Boer <david@ddeboer.nl>
  */
 class ArrayWriter implements WriterInterface
 {
@@ -25,7 +25,7 @@ class ArrayWriter implements WriterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function prepare()
     {
@@ -33,7 +33,7 @@ class ArrayWriter implements WriterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function writeItem(array $item)
     {
@@ -41,7 +41,7 @@ class ArrayWriter implements WriterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function finish()
     {

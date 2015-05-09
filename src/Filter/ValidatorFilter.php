@@ -7,25 +7,53 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints;
 use Ddeboer\DataImport\Exception\ValidationException;
 
+/**
+ * @author Markus Bachmann <markus.bachmann@bachi.biz>
+ */
 class ValidatorFilter
 {
+    /**
+     * @var ValidatorInterface
+     */
     private $validator;
 
+    /**
+     * @var boolean
+     */
     private $throwExceptions = false;
 
+    /**
+     * @var int
+     */
     private $line = 1;
 
+    /**
+     * @var boolean
+     */
     private $strict = true;
 
+    /**
+     * @var array
+     */
     private $constraints = array();
 
+    /**
+     * @var array
+     */
     private $violations = array();
 
+    /**
+     * @param ValidatorInterface $validator
+     */
     public function __construct(ValidatorInterface $validator)
     {
         $this->validator = $validator;
     }
 
+    /**
+     * @param string     $field
+     * @param Constraint $constraint
+     */
     public function add($field, Constraint $constraint)
     {
         if (!isset($this->constraints[$field])) {
@@ -35,21 +63,35 @@ class ValidatorFilter
         $this->constraints[$field][] = $constraint;
     }
 
+    /**
+     * @param boolean $flag
+     */
     public function throwExceptions($flag = true)
     {
         $this->throwExceptions = $flag;
     }
 
+    /**
+     * @param boolean $strict
+     */
     public function setStrict($strict)
     {
         $this->strict = $strict;
     }
 
+    /**
+     * @return array
+     */
     public function getViolations()
     {
         return $this->violations;
     }
 
+    /**
+     * @param array $item
+     *
+     * @return boolean
+     */
     public function __invoke(array $item)
     {
         if (!$this->strict) {

@@ -7,6 +7,8 @@ use Ddeboer\DataImport\ValueConverter\DateTimeValueConverter;
 /**
  * This filter can be used to filter out some items from a specific date. Useful
  * to do incremental imports
+ *
+ * @author Grégoire Paris
  */
 class DateTimeThresholdFilter
 {
@@ -32,6 +34,12 @@ class DateTimeThresholdFilter
      */
     protected $priority;
 
+    /**
+     * @param DateTimeValueConverter $valueConverter
+     * @param \DateTime|null         $threshold
+     * @param string                 $timeColumnName
+     * @param int                    $priority
+     */
     public function __construct(
         DateTimeValueConverter $valueConverter,
         \DateTime $threshold = null,
@@ -45,7 +53,7 @@ class DateTimeThresholdFilter
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function __invoke(array $item)
     {
@@ -62,6 +70,8 @@ class DateTimeThresholdFilter
     /**
      * Useful if you build a filter service, and want to set the threshold
      * dynamically afterwards.
+     *
+     * @return $this
      */
     public function setThreshold(\DateTime $value)
     {

@@ -2,24 +2,42 @@
 
 namespace Ddeboer\DataImport\Step;
 
-use \Ddeboer\DataImport\Exception\MappingException;
-use \Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
-use \Symfony\Component\PropertyAccess\Exception\UnexpectedTypeException;
-use \Symfony\Component\PropertyAccess\PropertyAccessor;
+use Ddeboer\DataImport\Exception\MappingException;
+use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
+use Symfony\Component\PropertyAccess\Exception\UnexpectedTypeException;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 /**
  * @author Markus Bachmann <markus.bachmann@bachi.biz>
  */
 class MappingStep implements StepInterface
 {
+    /**
+     * @var array
+     */
     private $mappings;
 
+    /**
+     * @var PropertyAccessor
+     */
+    private $accessor;
+
+    /**
+     * @param array            $mappings
+     * @param PropertyAccessor $accessor
+     */
     public function __construct(array $mappings = [], PropertyAccessor $accessor = null)
     {
         $this->mappings = $mappings;
         $this->accessor = $accessor ?: new PropertyAccessor();
     }
 
+    /**
+     * @param string $from
+     * @param string $to
+     *
+     * @return $this
+     */
     public function map($from, $to)
     {
         $this->mappings[$from] = $to;
@@ -27,6 +45,11 @@ class MappingStep implements StepInterface
         return $this;
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @throws MappingException
+     */
     public function process(&$item)
     {
         try {

@@ -15,8 +15,6 @@ class CallbackWriter implements WriterInterface
     private $callback;
 
     /**
-     * Constructor
-     *
      * @param callable $callback
      */
     public function __construct(callable $callback)
@@ -25,7 +23,7 @@ class CallbackWriter implements WriterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function prepare()
     {
@@ -33,7 +31,7 @@ class CallbackWriter implements WriterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function writeItem(array $item)
     {
@@ -43,7 +41,7 @@ class CallbackWriter implements WriterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function finish()
     {

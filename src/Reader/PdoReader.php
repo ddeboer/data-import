@@ -1,8 +1,11 @@
 <?php
+
 namespace Ddeboer\DataImport\Reader;
 
 /**
  * Reads data through PDO
+ *
+ * @author Robbie Mackay
  */
 class PdoReader implements CountableReaderInterface
 {
@@ -27,13 +30,11 @@ class PdoReader implements CountableReaderInterface
     private $data;
 
     /**
-     * Constructor
-     *
-     * @param PDO        $pdo Database connection
-     * @param string     $sql        SQL statement
-     * @param array      $params     SQL statement parameters
+     * @param PDO        $pdo
+     * @param string     $sql
+     * @param array      $params
      */
-    public function __construct(\PDO  $pdo, $sql, array $params = array())
+    public function __construct(\PDO $pdo, $sql, array $params = array())
     {
         $this->pdo = $pdo;
         $this->statement = $this->pdo->prepare($sql);

@@ -10,13 +10,24 @@ use Symfony\Component\Console\Helper\Table;
  */
 class ConsoleTableWriter implements WriterInterface
 {
-    private $output = null;
-    private $table = null;
-    private $firstItem = null;
+    /**
+     * @var OutputInterface
+     */
+    private $output;
+
+    /**
+     * @var Table
+     */
+    private $table;
+
+    /**
+     * @var array
+     */
+    private $firstItem;
 
     /**
      * @param OutputInterface $output
-     * @param Table $table
+     * @param Table           $table
      */
     public function __construct(OutputInterface $output, Table $table) {
         $this->output = $output;
@@ -34,7 +45,7 @@ class ConsoleTableWriter implements WriterInterface
      * {@inheritdoc}
      */
     public function writeItem(array $item) {
-        
+
         // Save first item to get keys to display at header
         if (is_null($this->firstItem)) {
             $this->firstItem = $item;
@@ -54,8 +65,6 @@ class ConsoleTableWriter implements WriterInterface
     }
 
     /**
-     * You can get Table object to apply extra
-     * 
      * @return Table
      */
     public function getTable()

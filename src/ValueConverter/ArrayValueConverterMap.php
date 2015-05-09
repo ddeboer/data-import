@@ -15,8 +15,6 @@ class ArrayValueConverterMap
     private $converters;
 
     /**
-     * Constructor
-     *
      * @param callable[] $converters
      */
     public function __construct(array $converters)
@@ -25,7 +23,7 @@ class ArrayValueConverterMap
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function __invoke($input)
     {

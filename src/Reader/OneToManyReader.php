@@ -40,9 +40,9 @@ class OneToManyReader implements CountableReaderInterface
     /**
      * @param ReaderInterface $leftReader
      * @param ReaderInterface $rightReader
-     * @param string $nestKey
-     * @param string $leftJoinField
-     * @param string $rightJoinField
+     * @param string          $nestKey
+     * @param string          $leftJoinField
+     * @param string          $rightJoinField
      */
     public function __construct(
         ReaderInterface $leftReader,
@@ -70,6 +70,7 @@ class OneToManyReader implements CountableReaderInterface
      * Where the ID fields Match
      *
      * @return array
+     *
      * @throws ReaderException
      */
     public function current()
@@ -107,9 +108,11 @@ class OneToManyReader implements CountableReaderInterface
     }
 
     /**
-     * @param array $row
+     * @param array  $row
      * @param string $idField
+     *
      * @return mixed
+     *
      * @throws ReaderException
      */
     protected function getRowId(array $row, $idField)
@@ -155,6 +158,7 @@ class OneToManyReader implements CountableReaderInterface
 
     /**
      * Rewind the Iterator to the first element
+     *
      * @return void Any returned value is ignored.
      */
     public function rewind()
