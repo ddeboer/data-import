@@ -86,7 +86,7 @@ class DoctrineWriter extends AbstractWriter
             if(is_array($index)) {
                 $this->lookupFields = $index;
             } else {
-                $this->lookupFields = array($index);
+                $this->lookupFields = [$index];
             }
         }
     }

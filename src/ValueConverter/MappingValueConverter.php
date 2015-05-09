@@ -12,7 +12,7 @@ class MappingValueConverter
     /**
      * @var array
      */
-    private $mapping;
+    private $mapping = [];
 
     /**
      * @param array $mapping

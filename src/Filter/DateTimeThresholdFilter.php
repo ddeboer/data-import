@@ -61,10 +61,9 @@ class DateTimeThresholdFilter
             throw new \LogicException('Make sure you set a threshold');
         }
 
-        return
-            call_user_func($this->valueConverter, $item[$this->timeColumnName])
-            >=
-            $this->threshold;
+        $threshold = call_user_func($this->valueConverter, $item[$this->timeColumnName]);
+
+        return $threshold >= $this->threshold;
     }
 
     /**

@@ -54,7 +54,7 @@ class DbalReader implements CountableReaderInterface
      * @param string     $sql
      * @param array      $params
      */
-    public function __construct(Connection $connection, $sql, array $params = array())
+    public function __construct(Connection $connection, $sql, array $params = [])
     {
         $this->connection = $connection;
 
@@ -94,7 +94,7 @@ class DbalReader implements CountableReaderInterface
             $this->rewind();
         }
         if (false === $this->data) {
-            return array();
+            return [];
         }
 
         return array_keys((array) $this->data);
@@ -108,7 +108,7 @@ class DbalReader implements CountableReaderInterface
      *
      * @return $this
      */
-    public function setSql($sql, array $params = array())
+    public function setSql($sql, array $params = [])
     {
         $this->sql = (string) $sql;
 
@@ -211,7 +211,7 @@ class DbalReader implements CountableReaderInterface
 
     private function doCalcRowCount()
     {
-        $statement = $this->prepare('SELECT COUNT(*) FROM ('.$this->sql.')', $this->params);
+        $statement = $this->prepare(sprintf('SELECT COUNT(*) FROM (%s)', $this->sql), $this->params);
         $statement->execute();
 
         $this->rowCount = (int) $statement->fetchColumn(0);

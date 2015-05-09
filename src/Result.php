@@ -2,19 +2,15 @@
 
 namespace Ddeboer\DataImport;
 
-use DateTime;
-use DateInterval;
 use Ddeboer\DataImport\Exception\ExceptionInterface;
 
 /**
- * Simple Container for Workflow
- * Results
+ * Simple Container for Workflow Results
  *
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class Result
 {
-
     /**
      * Identifier given to the import/export
      *
@@ -23,17 +19,17 @@ class Result
     protected $name;
 
     /**
-     * @var DateTime
+     * @var \DateTime
      */
     protected $startTime;
 
     /**
-     * @var DateTime
+     * @var \DateTime
      */
     protected $endTime;
 
     /**
-     * @var DateInterval
+     * @var \DateInterval
      */
     protected $elapsed;
 
@@ -53,18 +49,18 @@ class Result
     protected $totalProcessedCount = 0;
 
     /**
-     * @var ExceptionInterface[]
+     * @var \SplObjectStorage
      */
     protected $exceptions;
 
     /**
-     * @param string               $name
-     * @param DateTime             $startTime
-     * @param DateTime             $endTime
-     * @param integer              $totalCount
-     * @param ExceptionInterface[] $exceptions
+     * @param string            $name
+     * @param \DateTime         $startTime
+     * @param \DateTime         $endTime
+     * @param integer           $totalCount
+     * @param \SplObjectStorage $exceptions
      */
-    public function __construct($name, DateTime $startTime, DateTime $endTime, $totalCount, \SplObjectStorage $exceptions)
+    public function __construct($name, \DateTime $startTime, \DateTime $endTime, $totalCount, \SplObjectStorage $exceptions)
     {
         $this->name                = $name;
         $this->startTime           = $startTime;
@@ -85,7 +81,7 @@ class Result
     }
 
     /**
-     * @return DateTime
+     * @return \DateTime
      */
     public function getStartTime()
     {
@@ -93,7 +89,7 @@ class Result
     }
 
     /**
-     * @return DateTime
+     * @return \DateTime
      */
     public function getEndTime()
     {
@@ -101,7 +97,7 @@ class Result
     }
 
     /**
-     * @return DateInterval
+     * @return \DateInterval
      */
     public function getElapsed()
     {

@@ -35,12 +35,12 @@ class ValidatorFilter
     /**
      * @var array
      */
-    private $constraints = array();
+    private $constraints = [];
 
     /**
      * @var array
      */
-    private $violations = array();
+    private $violations = [];
 
     /**
      * @param ValidatorInterface $validator
@@ -57,7 +57,7 @@ class ValidatorFilter
     public function add($field, Constraint $constraint)
     {
         if (!isset($this->constraints[$field])) {
-            $this->constraints[$field] = array();
+            $this->constraints[$field] = [];
         }
 
         $this->constraints[$field][] = $constraint;

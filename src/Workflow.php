@@ -51,7 +51,7 @@ class Workflow implements WorkflowInterface
     private $writers = [];
 
     /**
-     * @var boolean For internal use
+     * @var boolean
      */
     protected $shouldStop = false;
 
@@ -113,7 +113,6 @@ class Workflow implements WorkflowInterface
             $writer->prepare();
         }
 
-        $this->shouldStop = false;
         if (is_callable('pcntl_signal')) {
             pcntl_signal(SIGTERM, array($this, 'stop'));
             pcntl_signal(SIGINT, array($this, 'stop'));

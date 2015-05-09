@@ -86,9 +86,9 @@ class DoctrineReader implements CountableReaderInterface
     {
         if (!$this->iterableResult) {
             $query = $this->objectManager->createQuery(
-                sprintf('select o from %s o', $this->objectName)
+                sprintf('SELECT o FROM %s o', $this->objectName)
             );
-            $this->iterableResult = $query->iterate(array(), Query::HYDRATE_ARRAY);
+            $this->iterableResult = $query->iterate([], Query::HYDRATE_ARRAY);
         }
 
         $this->iterableResult->rewind();
@@ -100,7 +100,7 @@ class DoctrineReader implements CountableReaderInterface
     public function count()
     {
         $query = $this->objectManager->createQuery(
-            sprintf('select count(o) from %s o', $this->objectName)
+            sprintf('SELECT COUNT(o) FROM %s o', $this->objectName)
         );
 
         return $query->getSingleScalarResult();

@@ -61,9 +61,12 @@ class PdoWriter implements WriterInterface
             //prepare the statment as soon as we know how many values there are
             if (!$this->statement) {
 
-                $this->statement = $this->pdo->prepare(
-                    'INSERT INTO '.$this->tableName.'('.implode(',', array_keys($item)).') VALUES ('.substr(str_repeat('?,', count($item)), 0, -1).')'
-                );
+                $this->statement = $this->pdo->prepare(sprintf(
+                    'INSERT INTO %s(%s) VALUES (%s)',
+                    $this->tableName,
+                    implode(',', array_keys($item)),
+                    substr(str_repeat('?,', count($item)), 0, -1)
+                ));
 
                 //for PDO objects that do not have exceptions enabled
                 if (!$this->statement) {
@@ -78,7 +81,7 @@ class PdoWriter implements WriterInterface
 
         } catch (\Exception $e) {
             //convert exception so the abstracton doesn't leak
-            throw new WriterException('Write failed ('.$e->getMessage().').', null, $e);
+            throw new WriterException(sprintf('Write failed (%s)', $e->getMessage()), null, $e);
         }
 
         return $this;

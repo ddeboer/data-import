@@ -15,8 +15,6 @@ class ArrayWriter implements WriterInterface
     protected $data;
 
     /**
-     * Constructor
-     *
      * @param array $data
      */
     public function __construct(array &$data)
@@ -29,7 +27,7 @@ class ArrayWriter implements WriterInterface
      */
     public function prepare()
     {
-        $this->data = array();
+        $this->data = [];
     }
 
     /**

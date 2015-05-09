@@ -31,7 +31,7 @@ class DbalReaderFactory
      *
      * @return DbalReader
      */
-    public function getReader($sql, array $params = array())
+    public function getReader($sql, array $params = [])
     {
         return new DbalReader($this->connection, $sql, $params);
     }

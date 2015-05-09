@@ -17,7 +17,7 @@ class StreamMergeWriter extends AbstractStreamWriter
     /**
      * @var AbstractStreamWriter[]
      */
-    private $writers = array();
+    private $writers = [];
 
     /**
      * Set discriminant field

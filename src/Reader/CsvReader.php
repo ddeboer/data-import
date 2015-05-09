@@ -33,7 +33,7 @@ class CsvReader implements CountableReaderInterface, \SeekableIterator
      *
      * @var array
      */
-    protected $columnHeaders = array();
+    protected $columnHeaders = [];
 
     /**
      * Number of column headers, stored and re-used for performance
@@ -56,7 +56,7 @@ class CsvReader implements CountableReaderInterface, \SeekableIterator
      *
      * @var array
      */
-    protected $errors = array();
+    protected $errors = [];
 
     /**
      * Strict parsing - skip any lines mismatching header length
@@ -374,7 +374,7 @@ class CsvReader implements CountableReaderInterface, \SeekableIterator
      */
     protected function incrementHeaders(array $headers)
     {
-        $incrementedHeaders = array();
+        $incrementedHeaders = [];
         foreach (array_count_values($headers) as $header => $count) {
             if ($count > 1) {
                 $incrementedHeaders[] = $header;
@@ -405,7 +405,7 @@ class CsvReader implements CountableReaderInterface, \SeekableIterator
      */
     protected function mergeDuplicates(array $line)
     {
-        $values = array();
+        $values = [];
 
         $i = 0;
         foreach ($this->columnHeaders as $count) {

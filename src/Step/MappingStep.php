@@ -15,7 +15,7 @@ class MappingStep implements StepInterface
     /**
      * @var array
      */
-    private $mappings;
+    private $mappings = [];
 
     /**
      * @var PropertyAccessor
@@ -57,7 +57,7 @@ class MappingStep implements StepInterface
                 $value = $this->accessor->getValue($item, $from);
                 $this->accessor->setValue($item, $to, $value);
 
-                $from = str_replace(array('[',']'), '', $from);
+                $from = str_replace(['[',']'], '', $from);
 
                 // Check if $item is an array, because properties can't be unset.
                 // So we don't call unset for objects to prevent side affects.
@@ -66,9 +66,9 @@ class MappingStep implements StepInterface
                 }
             }
         } catch (NoSuchPropertyException $exception) {
-            throw new MappingException('Unable to map item',null,$exception);
+            throw new MappingException('Unable to map item', null, $exception);
         } catch (UnexpectedTypeException $exception) {
-            throw new MappingException('Unable to map item',null,$exception);
+            throw new MappingException('Unable to map item', null, $exception);
         }
     }
 }
