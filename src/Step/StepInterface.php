@@ -14,5 +14,5 @@ interface StepInterface
      *
      * @return boolean False return value means the item should be skipped
      */
-    function process(&$item);
+    public function process(&$item);
 }

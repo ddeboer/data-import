@@ -10,5 +10,5 @@ interface PriorityStepInterface extends StepInterface
     /**
      * @return int
      */
-    function getPriority();
+    public function getPriority();
 }
