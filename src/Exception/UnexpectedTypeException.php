@@ -8,7 +8,7 @@ namespace Ddeboer\DataImport\Exception;
 class UnexpectedTypeException extends \UnexpectedValueException implements ExceptionInterface
 {
     /**
-     * @param mixed $value
+     * @param mixed  $value
      * @param string $expectedType
      */
     public function __construct($value, $expectedType)

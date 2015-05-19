@@ -43,8 +43,8 @@ class ExcelReader implements CountableReaderInterface, \SeekableIterator
 
     /**
      * @param \SplFileObject $file            Excel file
-     * @param integer            $headerRowNumber Optional number of header row
-     * @param integer            $activeSheet     Index of active sheet to read from
+     * @param integer        $headerRowNumber Optional number of header row
+     * @param integer        $activeSheet     Index of active sheet to read from
      * @param boolean        $readOnly        If set to false, the reader take care of the excel formatting (slow)
      */
     public function __construct(\SplFileObject $file, $headerRowNumber = null, $activeSheet = null, $readOnly = true)

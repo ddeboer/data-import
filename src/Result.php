@@ -105,7 +105,7 @@ class Result
     }
 
     /**
-     * @return int
+     * @return integer
      */
     public function getErrorCount()
     {
@@ -113,7 +113,7 @@ class Result
     }
 
     /**
-     * @return int
+     * @return integer
      */
     public function getSuccessCount()
     {
@@ -121,7 +121,7 @@ class Result
     }
 
     /**
-     * @return int
+     * @return integer
      */
     public function getTotalProcessedCount()
     {
@@ -129,7 +129,7 @@ class Result
     }
 
     /**
-     * @return bool
+     * @return boolean
      */
     public function hasErrors()
     {

@@ -20,7 +20,7 @@ class FilterStep implements StepInterface
 
     /**
      * @param callable $filter
-     * @param integer      $priority
+     * @param integer  $priority
      */
     public function add(callable $filter, $priority = null)
     {
