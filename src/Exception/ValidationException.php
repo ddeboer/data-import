@@ -15,7 +15,7 @@ class ValidationException extends \Exception implements ExceptionInterface
     private $violations;
 
     /**
-     * @var int
+     * @var integer
      */
     private $lineNumber;
 

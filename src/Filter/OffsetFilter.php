@@ -11,22 +11,22 @@ namespace Ddeboer\DataImport\Filter;
 class OffsetFilter
 {
     /**
-     * @var int
+     * @var integer
      */
     protected $offset = 0;
 
     /**
-     * @var int|null
+     * @var integer|null
      */
     protected $limit = null;
 
     /**
-     * @var int
+     * @var integer
      */
     protected $offsetCount = 0;
 
     /**
-     * @var int
+     * @var integer
      */
     protected $sliceCount = 0;
 

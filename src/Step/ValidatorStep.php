@@ -28,7 +28,7 @@ class ValidatorStep implements PriorityStepInterface
     private $throwExceptions = false;
 
     /**
-     * @var integer
+     * @var integereger
      */
     private $line = 1;
 

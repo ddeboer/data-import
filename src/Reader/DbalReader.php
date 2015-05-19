@@ -35,7 +35,7 @@ class DbalReader implements CountableReaderInterface
     private $params;
 
     /**
-     * @var int
+     * @var integer
      */
     private $rowCount;
 
