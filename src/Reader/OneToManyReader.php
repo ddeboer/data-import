@@ -33,7 +33,9 @@ class OneToManyReader implements CountableReaderInterface
     protected $rightJoinField;
 
     /**
-     * @var string Key to nest the rightRows under
+     * Key to nest the rightRows under
+     *
+     * @var string
      */
     protected $nestKey;
 
@@ -131,7 +133,7 @@ class OneToManyReader implements CountableReaderInterface
     }
 
     /**
-     * @return void Any returned value is ignored.
+     * {@inheritdoc}
      */
     public function next()
     {
@@ -140,7 +142,7 @@ class OneToManyReader implements CountableReaderInterface
     }
 
     /**
-     * @return mixed scalar on success, or null on failure.
+     * {@inheritdoc}
      */
     public function key()
     {
@@ -148,8 +150,7 @@ class OneToManyReader implements CountableReaderInterface
     }
 
     /**
-     * Checks if current position is valid
-     * Returns true on success or false on failure.
+     * {@inheritdoc}
      */
     public function valid()
     {
@@ -157,9 +158,7 @@ class OneToManyReader implements CountableReaderInterface
     }
 
     /**
-     * Rewind the Iterator to the first element
-     *
-     * @return void Any returned value is ignored.
+     * {@inheritdoc}
      */
     public function rewind()
     {
@@ -168,7 +167,7 @@ class OneToManyReader implements CountableReaderInterface
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getFields()
     {
@@ -176,8 +175,7 @@ class OneToManyReader implements CountableReaderInterface
     }
 
     /**
-     * Count elements of an object
-     * The return value is cast to an integer.
+     * {@inheritdoc}
      */
     public function count()
     {

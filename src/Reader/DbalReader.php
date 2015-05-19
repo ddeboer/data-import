@@ -64,7 +64,7 @@ class DbalReader implements CountableReaderInterface
     /**
      * Do calculate row count?
      *
-     * @param bool $calculate
+     * @param boolean $calculate
      *
      * @return $this
      */

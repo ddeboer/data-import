@@ -37,7 +37,7 @@ class CsvReaderFactory
     protected $escape;
 
     /**
-     * @param integer     $headerRowNumber
+     * @param integer $headerRowNumber
      * @param boolean $strict
      * @param string  $delimiter
      * @param string  $enclosure

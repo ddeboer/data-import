@@ -92,7 +92,7 @@ class DoctrineWriter extends AbstractWriter
     }
 
     /**
-     * @return int
+     * @return integer
      */
     public function getBatchSize()
     {
