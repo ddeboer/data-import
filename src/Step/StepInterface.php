@@ -7,12 +7,12 @@ namespace Ddeboer\DataImport\Step;
  */
 interface StepInterface
 {
-	/**
-	 * Any processing done on each item in the data stack
-	 *
-	 * @param mixed &$item
-	 *
-	 * @return boolean False return value means the item should be skipped
-	 */
+    /**
+     * Any processing done on each item in the data stack
+     *
+     * @param mixed &$item
+     *
+     * @return boolean False return value means the item should be skipped
+     */
     function process(&$item);
 }

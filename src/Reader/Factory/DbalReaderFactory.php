@@ -12,9 +12,9 @@ use Doctrine\DBAL\Connection;
  */
 class DbalReaderFactory
 {
-	/**
-	 * @var Connection
-	 */
+    /**
+     * @var Connection
+     */
     protected $connection;
 
     /**

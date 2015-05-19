@@ -12,9 +12,9 @@ use Doctrine\Common\Persistence\ObjectManager;
  */
 class DoctrineReaderFactory
 {
-	/**
-	 * @var ObjectManager
-	 */
+    /**
+     * @var ObjectManager
+     */
     protected $objectManager;
 
     /**
