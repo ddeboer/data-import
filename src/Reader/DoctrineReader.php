@@ -9,10 +9,18 @@ use Doctrine\ORM\Query;
 /**
  * Reads entities through the Doctrine ORM
  *
+ * @author David de Boer <david@ddeboer.nl>
  */
 class DoctrineReader implements CountableReaderInterface
 {
+    /**
+     * @var ObjectManager
+     */
     protected $objectManager;
+
+    /**
+     * @var string
+     */
     protected $objectName;
 
     /**
@@ -21,11 +29,8 @@ class DoctrineReader implements CountableReaderInterface
     protected $iterableResult;
 
     /**
-     * Constuctor
-     *
-     * @param ObjectManager $objectManager Doctrine object manager
-     * @param string        $objectName    Doctrine object name, e.g.
-     *                                     YourBundle:YourEntity
+     * @param ObjectManager $objectManager
+     * @param string        $objectName    e.g. YourBundle:YourEntity
      */
     public function __construct(ObjectManager $objectManager, $objectName)
     {
@@ -81,9 +86,9 @@ class DoctrineReader implements CountableReaderInterface
     {
         if (!$this->iterableResult) {
             $query = $this->objectManager->createQuery(
-                sprintf('select o from %s o', $this->objectName)
+                sprintf('SELECT o FROM %s o', $this->objectName)
             );
-            $this->iterableResult = $query->iterate(array(), Query::HYDRATE_ARRAY);
+            $this->iterableResult = $query->iterate([], Query::HYDRATE_ARRAY);
         }
 
         $this->iterableResult->rewind();
@@ -95,7 +100,7 @@ class DoctrineReader implements CountableReaderInterface
     public function count()
     {
         $query = $this->objectManager->createQuery(
-            sprintf('select count(o) from %s o', $this->objectName)
+            sprintf('SELECT COUNT(o) FROM %s o', $this->objectName)
         );
 
         return $query->getSingleScalarResult();

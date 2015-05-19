@@ -8,6 +8,8 @@ use \Ddeboer\DataImport\Exception\UnexpectedValueException;
  * Convert an date string into another date string
  * Eg. You want to change the format of a string OR
  * If no output specified, return DateTime instance
+ *
+ * @author David de Boer <david@ddeboer.nl>
  */
 class DateTimeValueConverter
 {
@@ -15,6 +17,7 @@ class DateTimeValueConverter
      * Date time format
      *
      * @var string
+     *
      * @see http://php.net/manual/en/datetime.createfromformat.php
      */
     protected $inputFormat;
@@ -23,6 +26,7 @@ class DateTimeValueConverter
      * Date time format
      *
      * @var string
+     *
      * @see http://php.net/manual/en/datetime.createfromformat.php
      */
     protected $outputFormat;
@@ -38,8 +42,7 @@ class DateTimeValueConverter
     }
 
     /**
-     * Convert string to date time object
-     * + then convert back to a string
+     * Convert string to date time object then convert back to a string
      * using specified format
      *
      * If no output format specified then return

@@ -1,6 +1,7 @@
 <?php
 
 namespace Ddeboer\DataImport\Step;
+
 use Ddeboer\DataImport\Exception\UnexpectedTypeException;
 use Ddeboer\DataImport\ItemConverter\ItemConverterInterface;
 
@@ -9,8 +10,14 @@ use Ddeboer\DataImport\ItemConverter\ItemConverterInterface;
  */
 class ConverterStep implements StepInterface
 {
+    /**
+     * @var \SplObjectStorage
+     */
     private $converters;
 
+    /**
+     * @param array $converters
+     */
     public function __construct(array $converters = [])
     {
         $this->converters = new \SplObjectStorage();
@@ -20,6 +27,9 @@ class ConverterStep implements StepInterface
         }
     }
 
+    /**
+     * @param callable $converter
+     */
     public function add(callable $converter)
     {
         $this->converters->attach($converter);
@@ -27,6 +37,9 @@ class ConverterStep implements StepInterface
         return $this;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function process(&$item)
     {
         foreach ($this->converters as $converter) {

@@ -2,6 +2,7 @@
 
 namespace Ddeboer\DataImport\Writer;
 
+use Doctrine\DBAL\Logging\SQLLogger;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadata;
@@ -17,22 +18,16 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 class DoctrineWriter extends AbstractWriter
 {
     /**
-     * Doctrine entity manager
-     *
      * @var EntityManagerInterface
      */
     protected $entityManager;
 
     /**
-     * Fully qualified entity name
-     *
      * @var string
      */
     protected $entityName;
 
     /**
-     * Doctrine entity repository
-     *
      * @var EntityRepository
      */
     protected $entityRepository;
@@ -50,8 +45,6 @@ class DoctrineWriter extends AbstractWriter
     protected $batchSize = 20;
 
     /**
-     * Counter for internal use
-     *
      * @var int
      */
     protected $counter = 0;
@@ -59,7 +52,7 @@ class DoctrineWriter extends AbstractWriter
     /**
      * Original Doctrine logger
      *
-     * @var \Doctrine\DBAL\Logging\SQLLogger
+     * @var SQLLogger
      */
     protected $originalLogger;
 
@@ -78,11 +71,9 @@ class DoctrineWriter extends AbstractWriter
     protected $lookupFields = array();
 
     /**
-     * Constructor
-     *
      * @param EntityManagerInterface $entityManager
-     * @param string $entityName
-     * @param string|array $index Field or fields to find current entities by
+     * @param string                 $entityName
+     * @param string|array           $index Field or fields to find current entities by
      */
     public function __construct(EntityManagerInterface $entityManager, $entityName, $index = null)
     {
@@ -95,11 +86,14 @@ class DoctrineWriter extends AbstractWriter
             if(is_array($index)) {
                 $this->lookupFields = $index;
             } else {
-                $this->lookupFields = array($index);
+                $this->lookupFields = [$index];
             }
         }
     }
 
+    /**
+     * @return int
+     */
     public function getBatchSize()
     {
         return $this->batchSize;
@@ -108,8 +102,9 @@ class DoctrineWriter extends AbstractWriter
     /**
      * Set number of entities that may be persisted before a new flush
      *
-     * @param  int            $batchSize
-     * @return DoctrineWriter
+     * @param int $batchSize
+     *
+     * @return $this
      */
     public function setBatchSize($batchSize)
     {
@@ -118,11 +113,21 @@ class DoctrineWriter extends AbstractWriter
         return $this;
     }
 
+    /**
+     * @return boolean
+     */
     public function getTruncate()
     {
         return $this->truncate;
     }
 
+    /**
+     * Set whether to truncate the table first
+     *
+     * @param boolean $truncate
+     *
+     * @return $this
+     */
     public function setTruncate($truncate)
     {
         $this->truncate = $truncate;
@@ -130,6 +135,11 @@ class DoctrineWriter extends AbstractWriter
         return $this;
     }
 
+    /**
+     * Disable truncation
+     *
+     * @return $this
+     */
     public function disableTruncate()
     {
         $this->truncate = false;
@@ -140,7 +150,7 @@ class DoctrineWriter extends AbstractWriter
     /**
      * Disable Doctrine logging
      *
-     * @return DoctrineWriter
+     * @return $this
      */
     public function prepare()
     {
@@ -153,6 +163,11 @@ class DoctrineWriter extends AbstractWriter
         return $this;
     }
 
+    /**
+     * Return a new instance of the entity
+     *
+     * @return object
+     */
     protected function getNewInstance()
     {
         $className = $this->entityMetadata->getName();
@@ -164,6 +179,13 @@ class DoctrineWriter extends AbstractWriter
         return new $className;
     }
 
+    /**
+     * Call a setter of the entity
+     *
+     * @param object $entity
+     * @param mixed  $value
+     * @param string $setter
+     */
     protected function setValue($entity, $value, $setter)
     {
         if (method_exists($entity, $setter)) {
@@ -174,7 +196,7 @@ class DoctrineWriter extends AbstractWriter
     /**
      * Re-enable Doctrine logging
      *
-     * @return DoctrineWriter
+     * @return $this
      */
     public function finish()
     {
@@ -206,8 +228,7 @@ class DoctrineWriter extends AbstractWriter
     }
 
     /**
-     *
-     * @param array $item
+     * @param array  $item
      * @param object $entity
      */
     protected function updateEntity(array $item, $entity)
@@ -238,9 +259,8 @@ class DoctrineWriter extends AbstractWriter
     /**
      * Add the associated objects in case the item have for persist its relation
      *
-     * @param array $item
-     * @param $entity
-     * @return void
+     * @param array  $item
+     * @param object $entity
      */
     protected function loadAssociationObjectsToEntity(array $item, $entity)
     {
@@ -262,7 +282,6 @@ class DoctrineWriter extends AbstractWriter
 
     /**
      * Truncate the database table for this writer
-     *
      */
     protected function truncateTable()
     {
@@ -293,6 +312,8 @@ class DoctrineWriter extends AbstractWriter
 
     /**
      * Finds existing entity or create a new instance
+     *
+     * @param array $item
      */
     protected function findOrCreateItem(array $item)
     {
@@ -320,6 +341,9 @@ class DoctrineWriter extends AbstractWriter
         return $entity;
     }
 
+    /**
+     * Flush and clear the entity manager
+     */
     protected function flushAndClear()
     {
         $this->entityManager->flush();

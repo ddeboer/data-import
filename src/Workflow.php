@@ -19,8 +19,6 @@ use Psr\Log\NullLogger;
 class Workflow implements WorkflowInterface
 {
     /**
-     * Reader
-     *
      * @var ReaderInterface
      */
     private $reader;
@@ -53,13 +51,11 @@ class Workflow implements WorkflowInterface
     private $writers = [];
 
     /**
-     * @var boolean For internal use
+     * @var boolean
      */
     protected $shouldStop = false;
 
     /**
-     * Construct a workflow
-     *
      * @param ReaderInterface $reader
      * @param LoggerInterface $logger
      * @param string          $name
@@ -73,7 +69,7 @@ class Workflow implements WorkflowInterface
     }
 
     /**
-     * Add a step to the current workflow.
+     * Add a step to the current workflow
      *
      * @param StepInterface $step
      * @param integer|null  $priority
@@ -91,7 +87,7 @@ class Workflow implements WorkflowInterface
     }
 
     /**
-     * Add a new writer to the current workflow.
+     * Add a new writer to the current workflow
      *
      * @param WriterInterface $writer
      *
@@ -105,11 +101,7 @@ class Workflow implements WorkflowInterface
     }
 
     /**
-     * Process the whole import workflow
-     *
-     * @throws ExceptionInterface
-     *
-     * @return Result Object Containing Workflow Results
+     * {@inheritdoc}
      */
     public function process()
     {
@@ -121,7 +113,6 @@ class Workflow implements WorkflowInterface
             $writer->prepare();
         }
 
-        $this->shouldStop = false;
         if (is_callable('pcntl_signal')) {
             pcntl_signal(SIGTERM, array($this, 'stop'));
             pcntl_signal(SIGINT, array($this, 'stop'));
@@ -133,7 +124,10 @@ class Workflow implements WorkflowInterface
             if (is_callable('pcntl_signal_dispatch')) {
                 pcntl_signal_dispatch();
             }
-            if ( $this->shouldStop ) break;
+
+            if ($this->shouldStop) {
+                break;
+            }
 
             try {
                 foreach (clone $this->steps as $step) {
@@ -177,9 +171,9 @@ class Workflow implements WorkflowInterface
     }
 
     /**
-     * Set skipItemOnFailure.
+     * Sets the value which determines whether the item should be skipped when error occures
      *
-     * @param boolean $skipItemOnFailure then true skip current item on process exception and log the error
+     * @param boolean $skipItemOnFailure When true skip current item on process exception and log the error
      *
      * @return $this
      */
@@ -190,6 +184,9 @@ class Workflow implements WorkflowInterface
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getName()
     {
         return $this->name;

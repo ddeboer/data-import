@@ -36,8 +36,6 @@ class OffsetFilter
     protected $maxLimitHit = false;
 
     /**
-     * Constructor
-     *
      * @param int      $offset 0-based index of the item to start read from
      * @param int|null $limit  Maximum count of items to read. null = no limit
      */
@@ -48,7 +46,7 @@ class OffsetFilter
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function __invoke(array $item)
     {

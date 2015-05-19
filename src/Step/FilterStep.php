@@ -18,6 +18,10 @@ class FilterStep implements StepInterface
         $this->filters = new \SplPriorityQueue();
     }
 
+    /**
+     * @param callable $filter
+     * @param int      $priority
+     */
     public function add(callable $filter, $priority = null)
     {
         $this->filters->insert($filter, $priority);
@@ -25,6 +29,9 @@ class FilterStep implements StepInterface
         return $this;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function process(&$item)
     {
         foreach (clone $this->filters as $filter) {

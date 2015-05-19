@@ -9,34 +9,52 @@ use Doctrine\DBAL\Statement;
  */
 class DbalReader implements CountableReaderInterface
 {
-    /** @var Connection */
+    /**
+     * @var Connection
+     */
     private $connection;
 
+    /**
+     * @var array
+     */
     private $data;
 
-    /** @var Statement */
+    /**
+     * @var Statement
+     */
     private $stmt;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $sql;
-    /** @var array */
+
+    /**
+     * @var array
+     */
     private $params;
 
-    /** @var integer */
+    /**
+     * @var int
+     */
     private $rowCount;
-    /** @var bool */
+
+    /**
+     * @var boolean
+     */
     private $rowCountCalculated = true;
 
+    /**
+     * @var string
+     */
     private $key;
 
     /**
-     * Constructor
-     *
-     * @param Connection $connection Database connection
-     * @param string     $sql        SQL statement
-     * @param array      $params     SQL statement parameters
+     * @param Connection $connection
+     * @param string     $sql
+     * @param array      $params
      */
-    public function __construct(Connection $connection, $sql, array $params = array())
+    public function __construct(Connection $connection, $sql, array $params = [])
     {
         $this->connection = $connection;
 
@@ -60,7 +78,7 @@ class DbalReader implements CountableReaderInterface
     /**
      * Is row count calculated?
      *
-     * @return bool
+     * @return boolean
      */
     public function isRowCountCalculated()
     {
@@ -76,7 +94,7 @@ class DbalReader implements CountableReaderInterface
             $this->rewind();
         }
         if (false === $this->data) {
-            return array();
+            return [];
         }
 
         return array_keys((array) $this->data);
@@ -90,7 +108,7 @@ class DbalReader implements CountableReaderInterface
      *
      * @return $this
      */
-    public function setSql($sql, array $params = array())
+    public function setSql($sql, array $params = [])
     {
         $this->sql = (string) $sql;
 
@@ -102,7 +120,7 @@ class DbalReader implements CountableReaderInterface
     /**
      * Set SQL parameters
      *
-     * @param array  $params
+     * @param array $params
      *
      * @return $this
      */
@@ -193,7 +211,7 @@ class DbalReader implements CountableReaderInterface
 
     private function doCalcRowCount()
     {
-        $statement = $this->prepare('SELECT COUNT(*) FROM ('.$this->sql.')', $this->params);
+        $statement = $this->prepare(sprintf('SELECT COUNT(*) FROM (%s)', $this->sql), $this->params);
         $statement->execute();
 
         $this->rowCount = (int) $statement->fetchColumn(0);

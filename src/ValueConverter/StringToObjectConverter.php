@@ -21,6 +21,10 @@ class StringToObjectConverter
      */
     private $property;
 
+    /**
+     * @param ObjectRepository $repository
+     * @param string           $property
+     */
     public function __construct(ObjectRepository $repository, $property)
     {
         $this->repository = $repository;
@@ -28,7 +32,7 @@ class StringToObjectConverter
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function __invoke($input)
     {

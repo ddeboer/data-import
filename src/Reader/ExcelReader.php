@@ -8,14 +8,30 @@ namespace Ddeboer\DataImport\Reader;
  * PHPExcel must be installed.
  *
  * @author David de Boer <david@ddeboer.nl>
- * @link   http://phpexcel.codeplex.com/
- * @link   https://github.com/logiQ/PHPExcel
+ *
+ * @link http://phpexcel.codeplex.com/
+ * @link https://github.com/logiQ/PHPExcel
  */
 class ExcelReader implements CountableReaderInterface, \SeekableIterator
 {
+    /**
+     * @var array
+     */
     protected $worksheet;
+
+    /**
+     * @var int
+     */
     protected $headerRowNumber;
+
+    /**
+     * @var int
+     */
     protected $pointer = 0;
+
+    /**
+     * @var array
+     */
     protected $columnHeaders;
 
     /**
@@ -26,8 +42,6 @@ class ExcelReader implements CountableReaderInterface, \SeekableIterator
     protected $count;
 
     /**
-     * Construct CSV reader
-     *
      * @param \SplFileObject $file            Excel file
      * @param int            $headerRowNumber Optional number of header row
      * @param int            $activeSheet     Index of active sheet to read from
@@ -106,7 +120,6 @@ class ExcelReader implements CountableReaderInterface, \SeekableIterator
      * If a header row has been set, the pointer is set just below the header
      * row. That way, when you iterate over the rows, that header row is
      * skipped.
-     *
      */
     public function rewind()
     {
@@ -188,7 +201,7 @@ class ExcelReader implements CountableReaderInterface, \SeekableIterator
     /**
      * Get a row
      *
-     * @param int $number Row number
+     * @param int $number
      *
      * @return array
      */

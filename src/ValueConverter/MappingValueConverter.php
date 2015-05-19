@@ -4,10 +4,19 @@ namespace Ddeboer\DataImport\ValueConverter;
 
 use Ddeboer\DataImport\Exception\UnexpectedValueException;
 
+/**
+ * @author Grégoire Paris
+ */
 class MappingValueConverter
 {
-    private $mapping;
+    /**
+     * @var array
+     */
+    private $mapping = [];
 
+    /**
+     * @param array $mapping
+     */
     public function __construct(array $mapping)
     {
         $this->mapping = $mapping;

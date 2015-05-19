@@ -12,25 +12,49 @@ use Ddeboer\DataImport\Exception\ValidationException;
  */
 class ValidatorStep implements PriorityStepInterface
 {
+    /**
+     * @var array
+     */
     private $constraints = [];
 
+    /**
+     * @var array
+     */
     private $violations = [];
 
+    /**
+     * @var boolean
+     */
     private $throwExceptions = false;
 
+    /**
+     * @var integer
+     */
     private $line = 1;
 
+    /**
+     * @var Validator
+     */
     private $validator;
 
+    /**
+     * @param Validator $validator
+     */
     public function __construct(Validator $validator)
     {
         $this->validator = $validator;
     }
 
+    /**
+     * @param string     $field
+     * @param Constraint $constraint
+     *
+     * @return $this
+     */
     public function add($field, Constraint $constraint)
     {
         if (!isset($this->constraints[$field])) {
-            $this->constraints[$field] = array();
+            $this->constraints[$field] = [];
         }
 
         $this->constraints[$field][] = $constraint;
@@ -38,6 +62,11 @@ class ValidatorStep implements PriorityStepInterface
         return $this;
     }
 
+    /**
+     * @param boolean $flag
+     *
+     * @return $this
+     */
     public function throwExceptions($flag = true)
     {
         $this->throwExceptions = $flag;
@@ -45,11 +74,17 @@ class ValidatorStep implements PriorityStepInterface
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getViolations()
     {
         return $this->violations;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function process(&$item)
     {
         $constraints = new Constraints\Collection($this->constraints);
@@ -68,6 +103,9 @@ class ValidatorStep implements PriorityStepInterface
         return 0 === count($list);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPriority()
     {
         return 128;

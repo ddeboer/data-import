@@ -7,4 +7,5 @@ namespace Ddeboer\DataImport\Exception;
  */
 class SourceNotFoundException extends \Exception implements ExceptionInterface
 {
+
 }

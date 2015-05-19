@@ -19,6 +19,6 @@ class ArrayReader extends \ArrayIterator implements CountableReaderInterface
             return array_keys($this[0]);
         }
 
-        return array();
+        return [];
     }
 }

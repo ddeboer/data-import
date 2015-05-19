@@ -9,25 +9,32 @@ namespace Ddeboer\DataImport\Writer;
  */
 class StreamMergeWriter extends AbstractStreamWriter
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     private $discriminantField = 'discr';
-    /** @var AbstractStreamWriter[] */
-    private $writers = array();
 
     /**
-     * Set Discriminant field
+     * @var AbstractStreamWriter[]
+     */
+    private $writers = [];
+
+    /**
+     * Set discriminant field
      *
      * @param string $discriminantField
+     *
      * @return $this
      */
     public function setDiscriminantField($discriminantField)
     {
         $this->discriminantField = (string) $discriminantField;
+
         return $this;
     }
 
     /**
-     * Get Discriminant Field
+     * Get discriminant Field
      *
      * @return string
      */
@@ -37,7 +44,7 @@ class StreamMergeWriter extends AbstractStreamWriter
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function writeItem(array $item)
     {
@@ -54,7 +61,8 @@ class StreamMergeWriter extends AbstractStreamWriter
     }
 
     /**
-     * Set Stream writers
+     * Set stream writers
+     *
      * @param AbstractStreamWriter[] $writers
      *
      * @return $this
@@ -69,8 +77,9 @@ class StreamMergeWriter extends AbstractStreamWriter
     }
 
     /**
-     * @param string $key
+     * @param string               $key
      * @param AbstractStreamWriter $writer
+     *
      * @return $this
      */
     public function setStreamWriter($key, AbstractStreamWriter $writer)
@@ -86,6 +95,7 @@ class StreamMergeWriter extends AbstractStreamWriter
      * Get a previously registered Writer
      *
      * @param string $key
+     *
      * @return AbstractStreamWriter
      */
     public function getStreamWriter($key)
@@ -107,13 +117,19 @@ class StreamMergeWriter extends AbstractStreamWriter
      * Is a writer registered for key?
      *
      * @param string $key
-     * @return bool
+     *
+     * @return boolean
      */
     public function hasStreamWriter($key)
     {
         return isset($this->writers[$key]);
     }
 
+    /**
+     * Set a stream
+     *
+     * @param resource $stream
+     */
     public function setStream($stream)
     {
         parent::setStream($stream);

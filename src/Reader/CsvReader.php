@@ -33,7 +33,7 @@ class CsvReader implements CountableReaderInterface, \SeekableIterator
      *
      * @var array
      */
-    protected $columnHeaders = array();
+    protected $columnHeaders = [];
 
     /**
      * Number of column headers, stored and re-used for performance
@@ -56,7 +56,7 @@ class CsvReader implements CountableReaderInterface, \SeekableIterator
      *
      * @var array
      */
-    protected $errors = array();
+    protected $errors = [];
 
     /**
      * Strict parsing - skip any lines mismatching header length
@@ -73,12 +73,10 @@ class CsvReader implements CountableReaderInterface, \SeekableIterator
     protected $duplicateHeadersFlag;
 
     /**
-     * Construct CSV reader
-     *
-     * @param \SplFileObject $file      CSV file
-     * @param string         $delimiter Delimiter
-     * @param string         $enclosure Enclosure
-     * @param string         $escape    Escape characters
+     * @param \SplFileObject $file
+     * @param string         $delimiter
+     * @param string         $enclosure
+     * @param string         $escape
      */
     public function __construct(\SplFileObject $file, $delimiter = ',', $enclosure = '"', $escape = '\\')
     {
@@ -250,6 +248,9 @@ class CsvReader implements CountableReaderInterface, \SeekableIterator
         return $this->file->key();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function seek($pointer)
     {
         $this->file->seek($pointer);
@@ -295,7 +296,7 @@ class CsvReader implements CountableReaderInterface, \SeekableIterator
     /**
      * Does the reader contain any invalid rows?
      *
-     * @return bool
+     * @return boolean
      */
     public function hasErrors()
     {
@@ -305,7 +306,7 @@ class CsvReader implements CountableReaderInterface, \SeekableIterator
     /**
      * Should the reader use strict parsing?
      *
-     * @return bool
+     * @return boolean
      */
     public function isStrict()
     {
@@ -315,7 +316,7 @@ class CsvReader implements CountableReaderInterface, \SeekableIterator
     /**
      * Set strict parsing
      *
-     * @param bool $strict
+     * @param boolean $strict
      *
      * @return CsvReader
      */
@@ -331,7 +332,8 @@ class CsvReader implements CountableReaderInterface, \SeekableIterator
      *
      * @param int $rowNumber Row number
      *
-     * @return array                     Column headers
+     * @return array
+     *
      * @throws DuplicateHeadersException
      */
     protected function readHeaderRow($rowNumber)
@@ -372,7 +374,7 @@ class CsvReader implements CountableReaderInterface, \SeekableIterator
      */
     protected function incrementHeaders(array $headers)
     {
-        $incrementedHeaders = array();
+        $incrementedHeaders = [];
         foreach (array_count_values($headers) as $header => $count) {
             if ($count > 1) {
                 $incrementedHeaders[] = $header;
@@ -403,7 +405,7 @@ class CsvReader implements CountableReaderInterface, \SeekableIterator
      */
     protected function mergeDuplicates(array $line)
     {
-        $values = array();
+        $values = [];
 
         $i = 0;
         foreach ($this->columnHeaders as $count) {

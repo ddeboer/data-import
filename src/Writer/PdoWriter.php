@@ -2,11 +2,9 @@
 
 namespace Ddeboer\DataImport\Writer;
 
-use \Ddeboer\DataImport\Exception\WriterException;
+use Ddeboer\DataImport\Exception\WriterException;
 
 /**
- * Class PdoWriter
- *
  * Write data into a specific database table using a PDO instance.
  *
  * IMPORTANT: If your PDO instance does not have ERRMODE_EXCEPTION any write failure will be silent or logged to
@@ -14,6 +12,7 @@ use \Ddeboer\DataImport\Exception\WriterException;
  *
  *     $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
  *
+ * @author Stefan Warman
  */
 class PdoWriter implements WriterInterface
 {
@@ -36,7 +35,7 @@ class PdoWriter implements WriterInterface
      * Note if your table name is a reserved word for your target DB you should quote it in the appropriate way e.g.
      * for MySQL enclose the name in `backticks`.
      *
-     * @param \PDO $pdo
+     * @param \PDO   $pdo
      * @param string $tableName
      */
     public function __construct(\PDO $pdo, $tableName)
@@ -46,7 +45,7 @@ class PdoWriter implements WriterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function prepare()
     {
@@ -54,7 +53,7 @@ class PdoWriter implements WriterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function writeItem(array $item)
     {
@@ -62,9 +61,12 @@ class PdoWriter implements WriterInterface
             //prepare the statment as soon as we know how many values there are
             if (!$this->statement) {
 
-                $this->statement = $this->pdo->prepare(
-                    'INSERT INTO '.$this->tableName.'('.implode(',', array_keys($item)).') VALUES ('.substr(str_repeat('?,', count($item)), 0, -1).')'
-                );
+                $this->statement = $this->pdo->prepare(sprintf(
+                    'INSERT INTO %s(%s) VALUES (%s)',
+                    $this->tableName,
+                    implode(',', array_keys($item)),
+                    substr(str_repeat('?,', count($item)), 0, -1)
+                ));
 
                 //for PDO objects that do not have exceptions enabled
                 if (!$this->statement) {
@@ -79,14 +81,14 @@ class PdoWriter implements WriterInterface
 
         } catch (\Exception $e) {
             //convert exception so the abstracton doesn't leak
-            throw new WriterException('Write failed ('.$e->getMessage().').', null, $e);
+            throw new WriterException(sprintf('Write failed (%s)', $e->getMessage()), null, $e);
         }
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function finish()
     {

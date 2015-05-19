@@ -23,12 +23,12 @@ class OneToManyReader implements CountableReaderInterface
     protected $rightReader;
 
     /**
-     * @var string Left Join Field
+     * @var string
      */
     protected $leftJoinField;
 
     /**
-     * @var string Right Join Field
+     * @var string
      */
     protected $rightJoinField;
 
@@ -40,9 +40,9 @@ class OneToManyReader implements CountableReaderInterface
     /**
      * @param ReaderInterface $leftReader
      * @param ReaderInterface $rightReader
-     * @param string $nestKey
-     * @param string $leftJoinField
-     * @param string $rightJoinField
+     * @param string          $nestKey
+     * @param string          $leftJoinField
+     * @param string          $rightJoinField
      */
     public function __construct(
         ReaderInterface $leftReader,
@@ -70,6 +70,7 @@ class OneToManyReader implements CountableReaderInterface
      * Where the ID fields Match
      *
      * @return array
+     *
      * @throws ReaderException
      */
     public function current()
@@ -85,7 +86,7 @@ class OneToManyReader implements CountableReaderInterface
                 )
             );
         }
-        $leftRow[$this->nestKey] = array();
+        $leftRow[$this->nestKey] = [];
 
         $leftId     = $this->getRowId($leftRow, $this->leftJoinField);
         $rightRow   = $this->rightReader->current();
@@ -107,9 +108,11 @@ class OneToManyReader implements CountableReaderInterface
     }
 
     /**
-     * @param array $row
+     * @param array  $row
      * @param string $idField
+     *
      * @return mixed
+     *
      * @throws ReaderException
      */
     protected function getRowId(array $row, $idField)
@@ -155,6 +158,7 @@ class OneToManyReader implements CountableReaderInterface
 
     /**
      * Rewind the Iterator to the first element
+     *
      * @return void Any returned value is ignored.
      */
     public function rewind()
@@ -168,7 +172,7 @@ class OneToManyReader implements CountableReaderInterface
      */
     public function getFields()
     {
-        return array_merge($this->leftReader->getFields(), array($this->nestKey));
+        return array_merge($this->leftReader->getFields(), [$this->nestKey]);
     }
 
     /**
