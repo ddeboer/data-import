@@ -42,7 +42,7 @@ class ConsoleProgressWriter extends AbstractWriter
      * @param OutputInterface          $output
      * @param CountableReaderInterface $reader
      * @param string                   $verbosity
-     * @param int                      $redrawFrequency
+     * @param integer                  $redrawFrequency
      */
     public function __construct(
         OutputInterface $output,
@@ -98,7 +98,7 @@ class ConsoleProgressWriter extends AbstractWriter
     }
 
     /**
-     * @return int
+     * @return integer
      */
     public function getRedrawFrequency()
     {

@@ -21,7 +21,7 @@ class ValidationException extends \Exception implements ExceptionInterface
 
     /**
      * @param ConstraintViolationListInterface $list
-     * @param int                              $line
+     * @param integer                          $line
      */
     public function __construct(ConstraintViolationListInterface $list, $line)
     {
@@ -38,7 +38,7 @@ class ValidationException extends \Exception implements ExceptionInterface
     }
 
     /**
-     * @return int
+     * @return integer
      */
     public function getLineNumber()
     {

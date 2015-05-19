@@ -171,8 +171,8 @@ class CsvReader implements CountableReaderInterface, \SeekableIterator
     /**
      * Set header row number
      *
-     * @param int $rowNumber  Number of the row that contains column header names
-     * @param int $duplicates How to handle duplicates (optional). One of:
+     * @param integer $rowNumber  Number of the row that contains column header names
+     * @param integer $duplicates How to handle duplicates (optional). One of:
      *                        - CsvReader::DUPLICATE_HEADERS_INCREMENT;
      *                        increments duplicates (dup, dup1, dup2 etc.)
      *                        - CsvReader::DUPLICATE_HEADERS_MERGE; merges
@@ -267,7 +267,7 @@ class CsvReader implements CountableReaderInterface, \SeekableIterator
     /**
      * Get a row
      *
-     * @param int $number Row number
+     * @param integer $number Row number
      *
      * @return array
      */
@@ -330,7 +330,7 @@ class CsvReader implements CountableReaderInterface, \SeekableIterator
     /**
      * Read header row from CSV file
      *
-     * @param int $rowNumber Row number
+     * @param integer $rowNumber Row number
      *
      * @return array
      *

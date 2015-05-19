@@ -30,9 +30,9 @@ class PdoReader implements CountableReaderInterface
     private $data;
 
     /**
-     * @param PDO        $pdo
-     * @param string     $sql
-     * @param array      $params
+     * @param \PDO   $pdo
+     * @param string $sql
+     * @param array  $params
      */
     public function __construct(\PDO $pdo, $sql, array $params = [])
     {

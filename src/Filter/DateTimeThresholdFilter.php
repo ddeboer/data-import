@@ -38,7 +38,7 @@ class DateTimeThresholdFilter
      * @param DateTimeValueConverter $valueConverter
      * @param \DateTime|null         $threshold
      * @param string                 $timeColumnName
-     * @param int                    $priority
+     * @param integer                $priority
      */
     public function __construct(
         DateTimeValueConverter $valueConverter,
