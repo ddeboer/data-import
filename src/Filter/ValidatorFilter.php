@@ -23,7 +23,7 @@ class ValidatorFilter
     private $throwExceptions = false;
 
     /**
-     * @var int
+     * @var integer
      */
     private $line = 1;
 

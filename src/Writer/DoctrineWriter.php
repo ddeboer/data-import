@@ -40,12 +40,12 @@ class DoctrineWriter extends AbstractWriter
     /**
      * Number of entities to be persisted per flush
      *
-     * @var int
+     * @var integer
      */
     protected $batchSize = 20;
 
     /**
-     * @var int
+     * @var integer
      */
     protected $counter = 0;
 

@@ -17,7 +17,7 @@ class CsvReader implements CountableReaderInterface, \SeekableIterator
     /**
      * Number of the row that contains the column names
      *
-     * @var int
+     * @var integer
      */
     protected $headerRowNumber;
 
@@ -40,14 +40,14 @@ class CsvReader implements CountableReaderInterface, \SeekableIterator
      *
      * In case of duplicate headers, this is always the number of unmerged headers.
      *
-     * @var int
+     * @var integer
      */
     protected $headersCount;
 
     /**
      * Total number of rows in the CSV file
      *
-     * @var int
+     * @var integer
      */
     protected $count;
 
@@ -68,7 +68,7 @@ class CsvReader implements CountableReaderInterface, \SeekableIterator
     /**
      * How to handle duplicate headers
      *
-     * @var int
+     * @var integer
      */
     protected $duplicateHeadersFlag;
 

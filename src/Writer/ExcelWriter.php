@@ -33,7 +33,7 @@ class ExcelWriter extends AbstractWriter
     protected $excel;
 
     /**
-     * @var int
+     * @var integer
      */
     protected $row = 1;
 

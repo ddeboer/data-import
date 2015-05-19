@@ -11,12 +11,12 @@ use Ddeboer\DataImport\Reader\ExcelReader;
 class ExcelReaderFactory
 {
     /**
-     * @var int
+     * @var integer
      */
     protected $headerRowNumber;
 
     /**
-     * @var int
+     * @var integer
      */
     protected $activeSheet;
 

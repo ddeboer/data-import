@@ -12,7 +12,7 @@ use Ddeboer\DataImport\Reader\CsvReader;
 class CsvReaderFactory
 {
     /**
-     * @var int
+     * @var integer
      */
     protected $headerRowNumber;
 

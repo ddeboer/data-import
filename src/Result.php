@@ -34,17 +34,17 @@ class Result
     protected $elapsed;
 
     /**
-     * @var int
+     * @var integer
      */
     protected $errorCount = 0;
 
     /**
-     * @var int
+     * @var integer
      */
     protected $successCount = 0;
 
     /**
-     * @var int
+     * @var integer
      */
     protected $totalProcessedCount = 0;
 

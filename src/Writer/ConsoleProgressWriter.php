@@ -34,7 +34,7 @@ class ConsoleProgressWriter extends AbstractWriter
     protected $reader;
 
     /**
-     * @var int
+     * @var integer
      */
     protected $redrawFrequency;
 

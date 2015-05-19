@@ -30,7 +30,7 @@ class DateTimeThresholdFilter
     protected $timeColumnName;
 
     /**
-     * @var int priority the filter priority. Defaults to 512.
+     * @var integer priority the filter priority. Defaults to 512.
      */
     protected $priority;
 

@@ -20,12 +20,12 @@ class ExcelReader implements CountableReaderInterface, \SeekableIterator
     protected $worksheet;
 
     /**
-     * @var int
+     * @var integer
      */
     protected $headerRowNumber;
 
     /**
-     * @var int
+     * @var integer
      */
     protected $pointer = 0;
 
@@ -37,7 +37,7 @@ class ExcelReader implements CountableReaderInterface, \SeekableIterator
     /**
      * Total number of rows
      *
-     * @var int
+     * @var integer
      */
     protected $count;
 
