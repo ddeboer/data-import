@@ -40,7 +40,7 @@ class CsvWriter extends AbstractStreamWriter
     }
 
     /**
-     * @{inheritdoc}
+     * {@inheritdoc}
      */
     public function prepare()
     {

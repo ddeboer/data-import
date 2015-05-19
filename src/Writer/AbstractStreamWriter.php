@@ -66,7 +66,7 @@ abstract class AbstractStreamWriter implements WriterInterface
     }
 
     /**
-     * @{inheritdoc}
+     * {@inheritdoc}
      */
     public function prepare()
     {
@@ -74,7 +74,7 @@ abstract class AbstractStreamWriter implements WriterInterface
     }
 
     /**
-     * @{inheritdoc}
+     * {@inheritdoc}
      */
     public function finish()
     {

@@ -44,7 +44,7 @@ class StreamMergeWriter extends AbstractStreamWriter
     }
 
     /**
-     * @{inheritdoc}
+     * {@inheritdoc}
      */
     public function writeItem(array $item)
     {
