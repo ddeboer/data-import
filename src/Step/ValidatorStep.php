@@ -2,7 +2,7 @@
 
 namespace Ddeboer\DataImport\Step;
 
-use Symfony\Component\Validator\Validator;
+use Symfony\Component\Validator\ValidatorInterface;
 use Symfony\Component\Validator\Constraints;
 use Symfony\Component\Validator\Constraint;
 use Ddeboer\DataImport\Exception\ValidationException;
@@ -33,14 +33,14 @@ class ValidatorStep implements PriorityStepInterface
     private $line = 1;
 
     /**
-     * @var Validator
+     * @var ValidatorInterface
      */
     private $validator;
 
     /**
-     * @param Validator $validator
+     * @param ValidatorInterface $validator
      */
-    public function __construct(Validator $validator)
+    public function __construct(ValidatorInterface $validator)
     {
         $this->validator = $validator;
     }
