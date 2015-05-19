@@ -102,7 +102,7 @@ class DoctrineWriter extends AbstractWriter
     /**
      * Set number of entities that may be persisted before a new flush
      *
-     * @param int $batchSize
+     * @param integer $batchSize
      *
      * @return $this
      */

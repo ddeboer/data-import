@@ -36,8 +36,8 @@ class OffsetFilter
     protected $maxLimitHit = false;
 
     /**
-     * @param int      $offset 0-based index of the item to start read from
-     * @param int|null $limit  Maximum count of items to read. null = no limit
+     * @param integer      $offset 0-based index of the item to start read from
+     * @param integer|null $limit  Maximum count of items to read. null = no limit
      */
     public function __construct($offset = 0, $limit = null)
     {

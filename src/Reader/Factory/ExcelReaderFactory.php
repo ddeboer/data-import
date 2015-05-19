@@ -21,8 +21,8 @@ class ExcelReaderFactory
     protected $activeSheet;
 
     /**
-     * @param int $headerRowNumber
-     * @param int $activeSheet
+     * @param integer $headerRowNumber
+     * @param integer $activeSheet
      */
     public function __construct($headerRowNumber = null, $activeSheet = null)
     {
