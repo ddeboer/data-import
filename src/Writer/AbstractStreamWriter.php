@@ -9,6 +9,8 @@ namespace Ddeboer\DataImport\Writer;
  */
 abstract class AbstractStreamWriter implements WriterInterface
 {
+    use WriterTemplate;
+
     /**
      * @var resource
      */
@@ -63,14 +65,6 @@ abstract class AbstractStreamWriter implements WriterInterface
         }
 
         return $this->stream;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function prepare()
-    {
-        return $this;
     }
 
     /**

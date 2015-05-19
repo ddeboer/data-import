@@ -10,6 +10,8 @@ use Symfony\Component\Console\Helper\Table;
  */
 class ConsoleTableWriter implements WriterInterface
 {
+    use WriterTemplate;
+
     /**
      * @var OutputInterface
      */
@@ -32,13 +34,6 @@ class ConsoleTableWriter implements WriterInterface
     public function __construct(OutputInterface $output, Table $table) {
         $this->output = $output;
         $this->table = $table;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function prepare() {
-
     }
 
     /**

@@ -15,7 +15,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
  *
  * @author David de Boer <david@ddeboer.nl>
  */
-class DoctrineWriter extends AbstractWriter
+class DoctrineWriter implements WriterInterface
 {
     /**
      * @var EntityManagerInterface

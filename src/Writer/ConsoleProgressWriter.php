@@ -11,7 +11,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
  *
  * @author David de Boer <david@ddeboer.nl>
  */
-class ConsoleProgressWriter extends AbstractWriter
+class ConsoleProgressWriter implements WriterInterface
 {
     /**
      * @var OutputInterface

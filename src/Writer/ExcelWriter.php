@@ -10,7 +10,7 @@ use PHPExcel_IOFactory;
  *
  * @author David de Boer <david@ddeboer.nl>
  */
-class ExcelWriter extends AbstractWriter
+class ExcelWriter implements WriterInterface
 {
     /**
      * @var string
