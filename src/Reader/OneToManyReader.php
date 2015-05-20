@@ -2,6 +2,7 @@
 
 namespace Ddeboer\DataImport\Reader;
 
+use Ddeboer\DataImport\Reader;
 use Ddeboer\DataImport\Exception\ReaderException;
 
 /**
@@ -10,15 +11,15 @@ use Ddeboer\DataImport\Exception\ReaderException;
  * @author Adam Paterson <hello@adampaterson.co.uk>
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class OneToManyReader implements CountableReaderInterface
+class OneToManyReader implements CountableReader
 {
     /**
-     * @var ReaderInterface
+     * @var Reader
      */
     protected $leftReader;
 
     /**
-     * @var ReaderInterface
+     * @var Reader
      */
     protected $rightReader;
 
@@ -40,15 +41,15 @@ class OneToManyReader implements CountableReaderInterface
     protected $nestKey;
 
     /**
-     * @param ReaderInterface $leftReader
-     * @param ReaderInterface $rightReader
-     * @param string          $nestKey
-     * @param string          $leftJoinField
-     * @param string          $rightJoinField
+     * @param Reader $leftReader
+     * @param Reader $rightReader
+     * @param string $nestKey
+     * @param string $leftJoinField
+     * @param string $rightJoinField
      */
     public function __construct(
-        ReaderInterface $leftReader,
-        ReaderInterface $rightReader,
+        Reader $leftReader,
+        Reader $rightReader,
         $nestKey,
         $leftJoinField,
         $rightJoinField = null

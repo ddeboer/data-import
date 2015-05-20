@@ -9,7 +9,7 @@ use Ddeboer\DataImport\Exception\DuplicateHeadersException;
  *
  * @author David de Boer <david@ddeboer.nl>
  */
-class CsvReader implements CountableReaderInterface, \SeekableIterator
+class CsvReader implements CountableReader, \SeekableIterator
 {
     const DUPLICATE_HEADERS_INCREMENT = 1;
     const DUPLICATE_HEADERS_MERGE     = 2;

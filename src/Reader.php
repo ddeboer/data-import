@@ -1,13 +1,13 @@
 <?php
 
-namespace Ddeboer\DataImport\Reader;
+namespace Ddeboer\DataImport;
 
 /**
  * Iterator that reads data to be imported
  *
  * @author David de Boer <david@ddeboer.nl>
  */
-interface ReaderInterface extends \Iterator
+interface Reader extends \Iterator
 {
     /**
      * Get the field (column, property) names

@@ -11,7 +11,7 @@ use Doctrine\ORM\Query;
  *
  * @author David de Boer <david@ddeboer.nl>
  */
-class DoctrineReader implements CountableReaderInterface
+class DoctrineReader implements CountableReader
 {
     /**
      * @var ObjectManager

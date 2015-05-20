@@ -3,7 +3,6 @@
 namespace Ddeboer\DataImport;
 
 use Ddeboer\DataImport\Exception\UnexpectedTypeException;
-use Ddeboer\DataImport\Reader\ReaderInterface;
 use Ddeboer\DataImport\Step\PriorityStepInterface;
 use Ddeboer\DataImport\Step\StepInterface;
 use Ddeboer\DataImport\Writer\WriterInterface;
@@ -18,7 +17,7 @@ use Psr\Log\NullLogger;
 class Workflow implements WorkflowInterface
 {
     /**
-     * @var ReaderInterface
+     * @var Reader
      */
     private $reader;
 
@@ -55,11 +54,11 @@ class Workflow implements WorkflowInterface
     protected $shouldStop = false;
 
     /**
-     * @param ReaderInterface $reader
+     * @param Reader          $reader
      * @param LoggerInterface $logger
      * @param string          $name
      */
-    public function __construct(ReaderInterface $reader, LoggerInterface $logger = null, $name = null)
+    public function __construct(Reader $reader, LoggerInterface $logger = null, $name = null)
     {
         $this->name = $name;
         $this->logger = $logger ?: new NullLogger();
