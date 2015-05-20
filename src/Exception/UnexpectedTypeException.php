@@ -5,7 +5,7 @@ namespace Ddeboer\DataImport\Exception;
 /**
  * @author David de Boer <david@ddeboer.nl>
  */
-class UnexpectedTypeException extends \UnexpectedValueException implements ExceptionInterface
+class UnexpectedTypeException extends UnexpectedValueException
 {
     /**
      * @param mixed  $value

@@ -2,12 +2,13 @@
 
 namespace Ddeboer\DataImport\Exception;
 
+use Ddeboer\DataImport\Exception;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 /**
  * @author Markus Bachmann <markus.bachmann@bachi.biz>
  */
-class ValidationException extends \Exception implements ExceptionInterface
+class ValidationException extends \Exception implements Exception
 {
     /**
      * @var ConstraintViolationListInterface

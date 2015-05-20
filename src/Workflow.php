@@ -2,7 +2,6 @@
 
 namespace Ddeboer\DataImport;
 
-use Ddeboer\DataImport\Exception\ExceptionInterface;
 use Ddeboer\DataImport\Exception\UnexpectedTypeException;
 use Ddeboer\DataImport\Reader\ReaderInterface;
 use Ddeboer\DataImport\Step\PriorityStepInterface;
@@ -143,7 +142,7 @@ class Workflow implements WorkflowInterface
                 foreach ($this->writers as $writer) {
                     $writer->writeItem($item);
                 }
-            } catch(ExceptionInterface $e) {
+            } catch(Exception $e) {
                 if (!$this->skipItemOnFailure) {
                     throw $e;
                 }
