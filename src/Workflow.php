@@ -4,7 +4,6 @@ namespace Ddeboer\DataImport;
 
 use Ddeboer\DataImport\Exception\UnexpectedTypeException;
 use Ddeboer\DataImport\Step\PriorityStep;
-use Ddeboer\DataImport\Writer\WriterInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -43,7 +42,7 @@ class Workflow implements WorkflowInterface
     private $steps;
 
     /**
-     * @var WriterInterface[]
+     * @var Writer[]
      */
     private $writers = [];
 
@@ -86,11 +85,11 @@ class Workflow implements WorkflowInterface
     /**
      * Add a new writer to the current workflow
      *
-     * @param WriterInterface $writer
+     * @param Writer $writer
      *
      * @return Workflow
      */
-    public function addWriter(WriterInterface $writer)
+    public function addWriter(Writer $writer)
     {
         array_push($this->writers, $writer);
 

@@ -2,6 +2,7 @@
 
 namespace Ddeboer\DataImport\Writer;
 
+use Ddeboer\DataImport\Writer;
 use Doctrine\DBAL\Logging\SQLLogger;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -15,7 +16,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
  *
  * @author David de Boer <david@ddeboer.nl>
  */
-class DoctrineWriter implements WriterInterface
+class DoctrineWriter implements Writer
 {
     /**
      * @var EntityManagerInterface

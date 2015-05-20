@@ -3,6 +3,7 @@
 namespace Ddeboer\DataImport\Writer;
 
 use Ddeboer\DataImport\Reader\CountableReader;
+use Ddeboer\DataImport\Writer;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 
@@ -11,7 +12,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
  *
  * @author David de Boer <david@ddeboer.nl>
  */
-class ConsoleProgressWriter implements WriterInterface
+class ConsoleProgressWriter implements Writer
 {
     /**
      * @var OutputInterface

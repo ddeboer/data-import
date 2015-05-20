@@ -1,13 +1,13 @@
 <?php
 
-namespace Ddeboer\DataImport\Writer;
+namespace Ddeboer\DataImport;
 
 /**
  * Persists data in a storage medium, such as a database, CSV or XML file, etc.
  *
  * @author David de Boer <david@ddeboer.nl>
  */
-interface WriterInterface
+interface Writer
 {
     /**
      * Prepare the writer before writing the items

@@ -2,12 +2,14 @@
 
 namespace Ddeboer\DataImport\Writer;
 
+use Ddeboer\DataImport\Writer;
+
 /**
  * Writes using a callback or closure
  *
  * @author Markus Bachmann <markus.bachmann@bachi.biz>
  */
-class CallbackWriter implements WriterInterface
+class CallbackWriter implements Writer
 {
     use WriterTemplate;
 

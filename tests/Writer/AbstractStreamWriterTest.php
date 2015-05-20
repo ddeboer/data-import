@@ -11,7 +11,7 @@ class AbstractStreamWriterTest extends StreamWriterTest
 
     public function testItImplementsWriterInterface()
     {
-        $this->assertInstanceOf('Ddeboer\\DataImport\\Writer\\WriterInterface', $this->writer);
+        $this->assertInstanceOf('Ddeboer\\DataImport\\Writer', $this->writer);
     }
 
     public function testItThrowsInvalidArgumentExceptionOnInvalidStream()

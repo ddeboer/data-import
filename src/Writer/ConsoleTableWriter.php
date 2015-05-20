@@ -2,13 +2,14 @@
 
 namespace Ddeboer\DataImport\Writer;
 
+use Ddeboer\DataImport\Writer;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\Table;
 
 /**
  * @author Igor Mukhin <igor.mukhin@gmail.com>
  */
-class ConsoleTableWriter implements WriterInterface
+class ConsoleTableWriter implements Writer
 {
     use WriterTemplate;
 
