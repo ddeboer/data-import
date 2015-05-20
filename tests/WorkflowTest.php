@@ -9,7 +9,7 @@ use Ddeboer\DataImport\Step\FilterStep;
 use Ddeboer\DataImport\Step\MappingStep;
 use Ddeboer\DataImport\Step\ValueConverterStep;
 use Ddeboer\DataImport\Writer\ArrayWriter;
-use Ddeboer\DataImport\Workflow;
+use Ddeboer\DataImport\Workflow\StepAggregator;
 use Ddeboer\DataImport\Filter\CallbackFilter;
 use Ddeboer\DataImport\ValueConverter\CallbackValueConverter;
 use Ddeboer\DataImport\ItemConverter\CallbackItemConverter;
@@ -59,7 +59,7 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
         $data = array();
         $writer = new ArrayWriter($data);
 
-        $workflow = new Workflow($reader);
+        $workflow = new StepAggregator($reader);
         $workflow->addWriter($writer);
 
         $converterStep = new ConverterStep([
@@ -93,7 +93,7 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
         $data = array();
         $writer = new ArrayWriter($data);
 
-        $workflow = new Workflow($reader);
+        $workflow = new StepAggregator($reader);
         $workflow->addWriter($writer);
 
         $converterStep = new ConverterStep();
@@ -116,7 +116,7 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
         $data = array();
         $writer = new ArrayWriter($data);
 
-        $workflow = new Workflow($reader);
+        $workflow = new StepAggregator($reader);
         $workflow->addWriter($writer);
 
         $workflow->process();
@@ -193,7 +193,7 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
             ->with($exception->getMessage());
 
 
-        $workflow = new Workflow($reader, $logger);
+        $workflow = new StepAggregator($reader, $logger);
         $workflow->setSkipItemOnFailure(true);
         $workflow->addWriter($writer);
         $workflow->process();
@@ -226,7 +226,7 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
         $writer = new ArrayWriter($outputTestData);
         $reader = new ArrayReader($originalData);
 
-        $workflow = new Workflow($reader);
+        $workflow = new StepAggregator($reader);
 
         $converterStep = new ConverterStep();
 
@@ -296,7 +296,7 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
             )
         ));
 
-        return new Workflow($reader);
+        return new StepAggregator($reader);
     }
 }
 
