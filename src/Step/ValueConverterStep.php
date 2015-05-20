@@ -2,13 +2,13 @@
 
 namespace Ddeboer\DataImport\Step;
 
-use Ddeboer\DataImport\ValueConverter\ValueConverterInterface;
+use Ddeboer\DataImport\Step;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 /**
  * @author Markus Bachmann <markus.bachmann@bachi.biz>
  */
-class ValueConverterStep implements StepInterface
+class ValueConverterStep implements Step
 {
     /**
      * @var array

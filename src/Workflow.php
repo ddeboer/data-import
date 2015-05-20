@@ -3,8 +3,7 @@
 namespace Ddeboer\DataImport;
 
 use Ddeboer\DataImport\Exception\UnexpectedTypeException;
-use Ddeboer\DataImport\Step\PriorityStepInterface;
-use Ddeboer\DataImport\Step\StepInterface;
+use Ddeboer\DataImport\Step\PriorityStep;
 use Ddeboer\DataImport\Writer\WriterInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -69,14 +68,14 @@ class Workflow implements WorkflowInterface
     /**
      * Add a step to the current workflow
      *
-     * @param StepInterface $step
-     * @param integer|null  $priority
+     * @param Step         $step
+     * @param integer|null $priority
      *
      * @return Workflow
      */
-    public function addStep(StepInterface $step, $priority = null)
+    public function addStep(Step $step, $priority = null)
     {
-        $priority = null === $priority && $step instanceof PriorityStepInterface ? $step->getPriority() : null;
+        $priority = null === $priority && $step instanceof PriorityStep ? $step->getPriority() : null;
         $priority = null === $priority ? 0 : $priority;
 
         $this->steps->insert($step, $priority);

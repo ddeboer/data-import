@@ -3,6 +3,7 @@
 namespace Ddeboer\DataImport\Step;
 
 use Ddeboer\DataImport\Exception\MappingException;
+use Ddeboer\DataImport\Step;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\Exception\UnexpectedTypeException;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -10,7 +11,7 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 /**
  * @author Markus Bachmann <markus.bachmann@bachi.biz>
  */
-class MappingStep implements StepInterface
+class MappingStep implements Step
 {
     /**
      * @var array

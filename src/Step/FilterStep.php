@@ -1,12 +1,13 @@
 <?php
 
 namespace Ddeboer\DataImport\Step;
-use Ddeboer\DataImport\Filter\FilterInterface;
+
+use Ddeboer\DataImport\Step;
 
 /**
  * @author Markus Bachmann <markus.bachmann@bachi.biz>
  */
-class FilterStep implements StepInterface
+class FilterStep implements Step
 {
     /**
      * @var \SplPriorityQueue

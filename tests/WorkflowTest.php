@@ -20,7 +20,7 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
 {
     public function testAddStep()
     {
-        $step = $this->getMock('Ddeboer\\DataImport\\Step\\StepInterface');
+        $step = $this->getMock('Ddeboer\DataImport\Step');
 
         $this->getWorkflow()->addStep($step);
     }
