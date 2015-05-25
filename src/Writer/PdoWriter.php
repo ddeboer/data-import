@@ -15,10 +15,8 @@ use Ddeboer\DataImport\Writer;
  *
  * @author Stefan Warman
  */
-class PdoWriter implements Writer
+class PdoWriter implements Writer, FlushableWriter
 {
-    use WriterTemplate;
-
     /**
      * @var \PDO
      */
@@ -35,6 +33,11 @@ class PdoWriter implements Writer
     protected $statement;
 
     /**
+     * @var array
+     */
+    private $stack;
+
+    /**
      * Note if your table name is a reserved word for your target DB you should quote it in the appropriate way e.g.
      * for MySQL enclose the name in `backticks`.
      *
@@ -45,6 +48,16 @@ class PdoWriter implements Writer
     {
         $this->pdo = $pdo;
         $this->tableName = $tableName;
+
+        if (\PDO::ERRMODE_EXCEPTION !== $this->pdo->getAttribute(\PDO::ATTR_ERRMODE)) {
+            throw new WriterException('Please set the pdo error mode to PDO::ERRMODE_EXCEPTION');
+        }
+    }
+
+    public function prepare()
+    {
+        $this->stack = [];
+        $this->statement = null;
     }
 
     /**
@@ -52,31 +65,42 @@ class PdoWriter implements Writer
      */
     public function writeItem(array $item)
     {
-        try {
-            //prepare the statment as soon as we know how many values there are
-            if (!$this->statement) {
-
+        if (null === $this->statement) {
+            try {
                 $this->statement = $this->pdo->prepare(sprintf(
-                    'INSERT INTO %s(%s) VALUES (%s)',
+                    'INSERT INTO %s (%s) VALUES (%s)',
                     $this->tableName,
                     implode(',', array_keys($item)),
                     substr(str_repeat('?,', count($item)), 0, -1)
                 ));
-
-                //for PDO objects that do not have exceptions enabled
-                if (!$this->statement) {
-                    throw new WriterException('Failed to prepare write statement for item: '.implode(',', $item));
-                }
+            } catch (\PDOException $e) {
+                throw new WriterException('Failed to send query', null, $e);
             }
+        }
 
-            //do the insert
-            if (!$this->statement->execute(array_values($item))) {
-                throw new WriterException('Failed to write item: '.implode(',', $item));
+        $this->stack[] = array_values($item);
+    }
+
+    public function finish()
+    {
+        $this->flush();
+
+        return $this;
+    }
+
+    public function flush()
+    {
+        $this->pdo->beginTransaction();
+
+        try {
+            foreach ($this->stack as $data) {
+                $this->statement->execute($data);
             }
+            $this->stack = [];
 
-        } catch (\Exception $e) {
-            //convert exception so the abstracton doesn't leak
-            throw new WriterException(sprintf('Write failed (%s)', $e->getMessage()), null, $e);
+            $this->pdo->commit();
+        } catch (\PDOException $e) {
+            throw new WriterException('Failed to write to database', null, $e);
         }
     }
 }

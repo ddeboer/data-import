@@ -25,35 +25,6 @@ class DoctrineWriterTest extends \PHPUnit_Framework_TestCase
         $writer->writeItem($item);
     }
 
-    public function testBatches()
-    {
-        $em = $this->getEntityManager();
-        $em->expects($this->exactly(11))
-            ->method('persist');
-
-        $em->expects($this->exactly(4))
-            ->method('flush');
-
-        $writer = new DoctrineWriter($em, 'DdeboerDataImport:TestEntity');
-        $writer->prepare();
-
-        $writer->setBatchSize(3);
-        $this->assertEquals(3, $writer->getBatchSize());
-
-        $association = new TestEntity();
-        $item = array(
-            'firstProperty'   => 'some value',
-            'secondProperty'  => 'some other value',
-            'firstAssociation'=> $association
-        );
-
-        for ($i = 0; $i < 11; $i++) {
-            $writer->writeItem($item);
-        }
-
-        $writer->finish();
-    }
-
     protected function getEntityManager()
     {
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
