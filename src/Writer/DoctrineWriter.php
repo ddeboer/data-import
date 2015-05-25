@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
  *
  * @author David de Boer <david@ddeboer.nl>
  */
-class DoctrineWriter implements Writer
+class DoctrineWriter implements Writer, FlushableWriter
 {
     /**
      * @var EntityManagerInterface
@@ -37,18 +37,6 @@ class DoctrineWriter implements Writer
      * @var ClassMetadata
      */
     protected $entityMetadata;
-
-    /**
-     * Number of entities to be persisted per flush
-     *
-     * @var integer
-     */
-    protected $batchSize = 20;
-
-    /**
-     * @var integer
-     */
-    protected $counter = 0;
 
     /**
      * Original Doctrine logger
@@ -90,28 +78,6 @@ class DoctrineWriter implements Writer
                 $this->lookupFields = [$index];
             }
         }
-    }
-
-    /**
-     * @return integer
-     */
-    public function getBatchSize()
-    {
-        return $this->batchSize;
-    }
-
-    /**
-     * Set number of entities that may be persisted before a new flush
-     *
-     * @param integer $batchSize
-     *
-     * @return $this
-     */
-    public function setBatchSize($batchSize)
-    {
-        $this->batchSize = $batchSize;
-
-        return $this;
     }
 
     /**
@@ -201,8 +167,7 @@ class DoctrineWriter implements Writer
      */
     public function finish()
     {
-        $this->entityManager->flush();
-        $this->entityManager->clear($this->entityName);
+        $this->flush();
         $this->reEnableLogging();
 
         return $this;
@@ -213,17 +178,12 @@ class DoctrineWriter implements Writer
      */
     public function writeItem(array $item)
     {
-        $this->counter++;
         $entity = $this->findOrCreateItem($item);
 
         $this->loadAssociationObjectsToEntity($item, $entity);
         $this->updateEntity($item, $entity);
 
         $this->entityManager->persist($entity);
-
-        if (($this->counter % $this->batchSize) == 0) {
-            $this->flushAndClear();
-        }
 
         return $this;
     }
@@ -345,7 +305,7 @@ class DoctrineWriter implements Writer
     /**
      * Flush and clear the entity manager
      */
-    protected function flushAndClear()
+    public function flush()
     {
         $this->entityManager->flush();
         $this->entityManager->clear($this->entityName);
