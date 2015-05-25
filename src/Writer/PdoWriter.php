@@ -16,6 +16,8 @@ use Ddeboer\DataImport\Exception\WriterException;
  */
 class PdoWriter implements WriterInterface
 {
+    use WriterTemplate;
+
     /**
      * @var \PDO
      */
@@ -42,14 +44,6 @@ class PdoWriter implements WriterInterface
     {
         $this->pdo = $pdo;
         $this->tableName = $tableName;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function prepare()
-    {
-        return $this;
     }
 
     /**
@@ -84,14 +78,6 @@ class PdoWriter implements WriterInterface
             throw new WriterException(sprintf('Write failed (%s)', $e->getMessage()), null, $e);
         }
 
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function finish()
-    {
         return $this;
     }
 }

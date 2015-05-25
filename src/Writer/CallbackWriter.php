@@ -9,6 +9,8 @@ namespace Ddeboer\DataImport\Writer;
  */
 class CallbackWriter implements WriterInterface
 {
+    use WriterTemplate;
+
     /**
      * @var callable
      */
@@ -25,26 +27,10 @@ class CallbackWriter implements WriterInterface
     /**
      * {@inheritdoc}
      */
-    public function prepare()
-    {
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function writeItem(array $item)
     {
         call_user_func($this->callback, $item);
 
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function finish()
-    {
         return $this;
     }
 }

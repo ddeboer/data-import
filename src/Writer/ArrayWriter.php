@@ -9,6 +9,8 @@ namespace Ddeboer\DataImport\Writer;
  */
 class ArrayWriter implements WriterInterface
 {
+    use WriterTemplate;
+
     /**
      * @var array
      */
@@ -28,6 +30,8 @@ class ArrayWriter implements WriterInterface
     public function prepare()
     {
         $this->data = [];
+
+        return $this;
     }
 
     /**
@@ -36,13 +40,5 @@ class ArrayWriter implements WriterInterface
     public function writeItem(array $item)
     {
         $this->data[] = $item;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function finish()
-    {
-
     }
 }
