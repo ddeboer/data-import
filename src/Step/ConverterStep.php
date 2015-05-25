@@ -2,13 +2,13 @@
 
 namespace Ddeboer\DataImport\Step;
 
+use Ddeboer\DataImport\Step;
 use Ddeboer\DataImport\Exception\UnexpectedTypeException;
-use Ddeboer\DataImport\ItemConverter\ItemConverterInterface;
 
 /**
  * @author Markus Bachmann <markus.bachmann@bachi.biz>
  */
-class ConverterStep implements StepInterface
+class ConverterStep implements Step
 {
     /**
      * @var \SplObjectStorage

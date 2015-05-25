@@ -7,7 +7,7 @@ namespace Ddeboer\DataImport\Reader;
  *
  * @author David de Boer <david@ddeboer.nl>
  */
-class ArrayReader extends \ArrayIterator implements CountableReaderInterface
+class ArrayReader extends \ArrayIterator implements CountableReader
 {
     /**
      * {@inheritdoc}

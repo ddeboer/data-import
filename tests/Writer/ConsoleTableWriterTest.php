@@ -5,7 +5,7 @@ namespace Ddeboer\DataImport\Tests\Writer;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Helper\Table;
 
-use Ddeboer\DataImport\Workflow;
+use Ddeboer\DataImport\Workflow\StepAggregator;
 use Ddeboer\DataImport\Reader\ArrayReader;
 use Ddeboer\DataImport\ItemConverter\MappingItemConverter;
 use Ddeboer\DataImport\Writer\ConsoleTableWriter;
@@ -38,7 +38,7 @@ class ConsoleTableWriterTest extends \PHPUnit_Framework_TestCase
         $table->expects($this->at(2))
             ->method('addRow');
 
-        $workflow = new Workflow($reader);
+        $workflow = new StepAggregator($reader);
         $workflow
             ->addWriter(new ConsoleTableWriter($output, $table))
             ->process()

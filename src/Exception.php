@@ -1,13 +1,13 @@
 <?php
 
-namespace Ddeboer\DataImport\Exception;
+namespace Ddeboer\DataImport;
 
 /**
  * Base exception
  *
  * @author David de Boer <david@ddeboer.nl>
  */
-interface ExceptionInterface
+interface Exception
 {
 
 }

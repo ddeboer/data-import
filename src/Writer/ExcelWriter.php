@@ -2,6 +2,7 @@
 
 namespace Ddeboer\DataImport\Writer;
 
+use Ddeboer\DataImport\Writer;
 use PHPExcel;
 use PHPExcel_IOFactory;
 
@@ -10,7 +11,7 @@ use PHPExcel_IOFactory;
  *
  * @author David de Boer <david@ddeboer.nl>
  */
-class ExcelWriter implements WriterInterface
+class ExcelWriter implements Writer
 {
     /**
      * @var string

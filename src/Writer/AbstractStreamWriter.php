@@ -2,12 +2,14 @@
 
 namespace Ddeboer\DataImport\Writer;
 
+use Ddeboer\DataImport\Writer;
+
 /**
  * Base class to write into streams
  *
  * @author Benoît Burnichon <bburnichon@gmail.com>
  */
-abstract class AbstractStreamWriter implements WriterInterface
+abstract class AbstractStreamWriter implements Writer
 {
     use WriterTemplate;
 

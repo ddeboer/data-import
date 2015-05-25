@@ -3,7 +3,7 @@
 namespace Ddeboer\DataImport\Tests\Writer;
 
 use Ddeboer\DataImport\Writer\ConsoleProgressWriter;
-use Ddeboer\DataImport\Workflow;
+use Ddeboer\DataImport\Workflow\StepAggregator;
 use Ddeboer\DataImport\Reader\ArrayReader;
 use Symfony\Component\Console\Output\NullOutput;
 
@@ -38,7 +38,7 @@ class ConsoleProgressWriterTest extends \PHPUnit_Framework_TestCase
             ->method('write');
         $writer = new ConsoleProgressWriter($output, $reader);
 
-        $workflow = new Workflow($reader);
+        $workflow = new StepAggregator($reader);
         $workflow->addWriter($writer)
             ->process();
 

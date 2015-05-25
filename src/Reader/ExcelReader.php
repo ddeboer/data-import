@@ -12,7 +12,7 @@ namespace Ddeboer\DataImport\Reader;
  * @link http://phpexcel.codeplex.com/
  * @link https://github.com/logiQ/PHPExcel
  */
-class ExcelReader implements CountableReaderInterface, \SeekableIterator
+class ExcelReader implements CountableReader, \SeekableIterator
 {
     /**
      * @var array

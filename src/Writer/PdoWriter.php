@@ -3,6 +3,7 @@
 namespace Ddeboer\DataImport\Writer;
 
 use Ddeboer\DataImport\Exception\WriterException;
+use Ddeboer\DataImport\Writer;
 
 /**
  * Write data into a specific database table using a PDO instance.
@@ -14,7 +15,7 @@ use Ddeboer\DataImport\Exception\WriterException;
  *
  * @author Stefan Warman
  */
-class PdoWriter implements WriterInterface
+class PdoWriter implements Writer
 {
     use WriterTemplate;
 

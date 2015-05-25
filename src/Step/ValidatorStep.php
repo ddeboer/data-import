@@ -10,7 +10,7 @@ use Ddeboer\DataImport\Exception\ValidationException;
 /**
  * @author Markus Bachmann <markus.bachmann@bachi.biz>
  */
-class ValidatorStep implements PriorityStepInterface
+class ValidatorStep implements PriorityStep
 {
     /**
      * @var array

@@ -7,7 +7,7 @@ namespace Ddeboer\DataImport\Reader;
  *
  * @author Robbie Mackay
  */
-class PdoReader implements CountableReaderInterface
+class PdoReader implements CountableReader
 {
     /**
      * @var \PDO

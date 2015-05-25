@@ -1,11 +1,11 @@
 <?php
 
-namespace Ddeboer\DataImport\Step;
+namespace Ddeboer\DataImport;
 
 /**
  * @author Markus Bachmann <markus.bachmann@bachi.biz>
  */
-interface StepInterface
+interface Step
 {
     /**
      * Any processing done on each item in the data stack

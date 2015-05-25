@@ -2,7 +2,8 @@
 
 namespace Ddeboer\DataImport\Writer;
 
-use Ddeboer\DataImport\Reader\CountableReaderInterface;
+use Ddeboer\DataImport\Reader\CountableReader;
+use Ddeboer\DataImport\Writer;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 
@@ -11,7 +12,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
  *
  * @author David de Boer <david@ddeboer.nl>
  */
-class ConsoleProgressWriter implements WriterInterface
+class ConsoleProgressWriter implements Writer
 {
     /**
      * @var OutputInterface
@@ -29,7 +30,7 @@ class ConsoleProgressWriter implements WriterInterface
     protected $verbosity;
 
     /**
-     * @var CountableReaderInterface
+     * @var CountableReader
      */
     protected $reader;
 
@@ -39,14 +40,14 @@ class ConsoleProgressWriter implements WriterInterface
     protected $redrawFrequency;
 
     /**
-     * @param OutputInterface          $output
-     * @param CountableReaderInterface $reader
-     * @param string                   $verbosity
-     * @param integer                  $redrawFrequency
+     * @param OutputInterface $output
+     * @param CountableReader $reader
+     * @param string          $verbosity
+     * @param integer         $redrawFrequency
      */
     public function __construct(
         OutputInterface $output,
-        CountableReaderInterface $reader,
+        CountableReader $reader,
         $verbosity = 'debug',
         $redrawFrequency = 1
     ) {

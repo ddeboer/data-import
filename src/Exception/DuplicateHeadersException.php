@@ -5,7 +5,7 @@ namespace Ddeboer\DataImport\Exception;
 /**
  * @author David de Boer <david@ddeboer.nl>
  */
-class DuplicateHeadersException extends ReaderException implements ExceptionInterface
+class DuplicateHeadersException extends ReaderException
 {
     /**
      * @param array $duplicates
