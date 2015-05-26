@@ -56,8 +56,6 @@ class StreamMergeWriter extends AbstractStreamWriter
 
             $writer->writeItem($item);
         }
-
-        return $this;
     }
 
     /**

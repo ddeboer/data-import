@@ -135,22 +135,6 @@ class DoctrineWriterTest extends \PHPUnit_Framework_TestCase
         return $em;
     }
 
-    public function testFluentInterface()
-    {
-        $writer = new DoctrineWriter($this->getEntityManager(), 'DdeboerDataImport:TestEntity');
-
-        $association = new TestEntity();
-        $item = array(
-            'firstProperty'   => 'some value',
-            'secondProperty'  => 'some other value',
-            'firstAssociation'=> $association
-        );
-
-        $this->assertSame($writer, $writer->prepare());
-        $this->assertSame($writer, $writer->writeItem($item));
-        $this->assertSame($writer, $writer->finish());
-    }
-
     public function testLoadAssociationWithoutObject()
     {
         $em = $this->getEntityManager();

@@ -32,7 +32,5 @@ class CallbackWriter implements Writer
     public function writeItem(array $item)
     {
         call_user_func($this->callback, $item);
-
-        return $this;
     }
 }

@@ -77,8 +77,6 @@ abstract class AbstractStreamWriter implements Writer
         if (is_resource($this->stream) && $this->getCloseStreamOnFinish()) {
             fclose($this->stream);
         }
-
-        return $this;
     }
 
     /**

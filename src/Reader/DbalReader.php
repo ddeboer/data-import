@@ -65,14 +65,10 @@ class DbalReader implements CountableReader
      * Do calculate row count?
      *
      * @param boolean $calculate
-     *
-     * @return $this
      */
     public function setRowCountCalculated($calculate = true)
     {
         $this->rowCountCalculated = (bool) $calculate;
-
-        return $this;
     }
 
     /**
@@ -105,24 +101,18 @@ class DbalReader implements CountableReader
      *
      * @param string $sql
      * @param array  $params
-     *
-     * @return $this
      */
     public function setSql($sql, array $params = [])
     {
         $this->sql = (string) $sql;
 
         $this->setSqlParameters($params);
-
-        return $this;
     }
 
     /**
      * Set SQL parameters
      *
      * @param array $params
-     *
-     * @return $this
      */
     public function setSqlParameters(array $params)
     {
@@ -130,8 +120,6 @@ class DbalReader implements CountableReader
 
         $this->stmt = null;
         $this->rowCount = null;
-
-        return $this;
     }
 
     /**

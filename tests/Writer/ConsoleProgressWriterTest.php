@@ -44,25 +44,4 @@ class ConsoleProgressWriterTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('debug', $writer->getVerbosity());
     }
-
-    public function testFluentInterface()
-    {
-        $data = array(
-            array(
-                'first'  => 'The first',
-                'second' => 'Second property'
-            ), array(
-                'first'  => 'Another first',
-                'second' => 'Last second'
-            )
-        );
-        $reader = new ArrayReader($data);
-        $output = new NullOutput();
-
-        $writer = new ConsoleProgressWriter($output, $reader);
-
-        $this->assertSame($writer, $writer->prepare());
-        $this->assertSame($writer, $writer->writeItem(array('foo' => 'bar', 'bar' => 'foo')));
-        $this->assertSame($writer, $writer->finish());
-    }
 }

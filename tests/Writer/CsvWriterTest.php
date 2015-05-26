@@ -13,15 +13,16 @@ class CsvWriterTest extends StreamWriterTest
         $writer->prepare();
         $writer->writeItem(array('first', 'last'));
 
-        $writer
-            ->writeItem(array(
-                'first' => 'James',
-                'last'  => 'Bond'
-            ))
-            ->writeItem(array(
-                'first' => '',
-                'last'  => 'Dr. No'
-            ));
+        $writer->writeItem(array(
+            'first' => 'James',
+            'last'  => 'Bond'
+        ));
+
+        $writer->writeItem(array(
+            'first' => '',
+            'last'  => 'Dr. No'
+        ));
+
         $this->assertContentsEquals(
             "first;last\nJames;Bond\n;\"Dr. No\"\n",
             $writer
@@ -43,14 +44,5 @@ class CsvWriterTest extends StreamWriterTest
         );
 
         $writer->finish();
-    }
-
-    public function testFluentInterface()
-    {
-        $writer = new CsvWriter(';', '"', $this->getStream());
-
-        $this->assertSame($writer, $writer->prepare());
-        $this->assertSame($writer, $writer->writeItem(array('foo' => 'bar', 'bar' => 'foo')));
-        $this->assertSame($writer, $writer->finish());
     }
 }

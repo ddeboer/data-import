@@ -22,6 +22,8 @@ class FilterStep implements Step
     /**
      * @param callable $filter
      * @param integer  $priority
+     *
+     * @return $this
      */
     public function add(callable $filter, $priority = null)
     {

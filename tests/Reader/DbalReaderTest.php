@@ -15,13 +15,13 @@ class DbalReaderTest extends \PHPUnit_Framework_TestCase
     {
         $reader = $this->getReader();
 
-        $this->assertSame($reader, $reader->setRowCountCalculated());
+        $reader->setRowCountCalculated();
         $this->assertTrue($reader->isRowCountCalculated());
 
-        $this->assertSame($reader, $reader->setRowCountCalculated(false));
+        $reader->setRowCountCalculated(false);
         $this->assertFalse($reader->isRowCountCalculated());
 
-        $this->assertSame($reader, $reader->setRowCountCalculated(true));
+        $reader->setRowCountCalculated(true);
         $this->assertTrue($reader->isRowCountCalculated());
     }
 
@@ -49,7 +49,7 @@ class DbalReaderTest extends \PHPUnit_Framework_TestCase
     {
         $reader = $this->getReader();
 
-        $this->assertSame($reader, $reader->setSql('SELECT * FROM groups WHERE id = :id', array('id' => 2)));
+        $reader->setSql('SELECT * FROM groups WHERE id = :id', array('id' => 2));
         $this->assertAttributeEquals('SELECT * FROM groups WHERE id = :id', 'sql', $reader);
         $this->assertAttributeEquals(array('id' => 2), 'params', $reader);
     }

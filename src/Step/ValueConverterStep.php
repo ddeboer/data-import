@@ -18,6 +18,8 @@ class ValueConverterStep implements Step
     /**
      * @param string   $property
      * @param callable $converter
+     *
+     * @return $this
      */
     public function add($property, callable $converter)
     {

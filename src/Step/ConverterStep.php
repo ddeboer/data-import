@@ -27,6 +27,8 @@ class ConverterStep implements Step
 
     /**
      * @param callable $converter
+     *
+     * @return $this
      */
     public function add(callable $converter)
     {

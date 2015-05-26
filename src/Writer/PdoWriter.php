@@ -78,7 +78,5 @@ class PdoWriter implements Writer
             //convert exception so the abstracton doesn't leak
             throw new WriterException(sprintf('Write failed (%s)', $e->getMessage()), null, $e);
         }
-
-        return $this;
     }
 }

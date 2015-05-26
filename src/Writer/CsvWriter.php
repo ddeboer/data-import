@@ -47,8 +47,6 @@ class CsvWriter extends AbstractStreamWriter
         if ($this->utf8Encoding) {
             fprintf($this->getStream(), chr(0xEF) . chr(0xBB) . chr(0xBF));
         }
-
-        return $this;
     }
 
     /**
@@ -57,7 +55,5 @@ class CsvWriter extends AbstractStreamWriter
     public function writeItem(array $item)
     {
         fputcsv($this->getStream(), $item, $this->delimiter, $this->enclosure);
-
-        return $this;
     }
 }
