@@ -21,11 +21,7 @@ class ValueConverterStep implements Step
      */
     public function add($property, callable $converter)
     {
-        if (!isset($this->converters[$property])) {
-            $this->converters[$property] = new \SplObjectStorage();
-        }
-
-        $this->converters[$property]->attach($converter);
+        $this->converters[$property][] = $converter;
 
         return $this;
     }
