@@ -14,7 +14,7 @@ interface Workflow
      *
      * @return Result Object Containing Workflow Results
      *
-     * @throws ExceptionInterface
+     * @throws Exception
      */
-    function process();
+    public function process();
 }
