@@ -133,11 +133,11 @@ class Result
      */
     public function hasErrors()
     {
-        return count($this->exceptions) > 0;
+        return $this->errorCount > 0;
     }
 
     /**
-     * @return ExceptionInterface[]
+     * @return \SplObjectStorage
      */
     public function getExceptions()
     {
