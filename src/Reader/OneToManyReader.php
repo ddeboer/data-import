@@ -54,17 +54,15 @@ class OneToManyReader implements CountableReader
         $leftJoinField,
         $rightJoinField = null
     ) {
-        $this->leftJoinField = $leftJoinField;
-
-        if (null === $rightJoinField) {
-            $this->rightJoinField = $this->leftJoinField;
-        } else {
-            $this->rightJoinField = $rightJoinField;
+        if (is_null($rightJoinField)) {
+            $rightJoinField = $leftJoinField;
         }
 
-        $this->leftReader   = $leftReader;
-        $this->rightReader  = $rightReader;
-        $this->nestKey      = $nestKey;
+        $this->leftJoinField  = $leftJoinField;
+        $this->rightJoinField = $rightJoinField;
+        $this->leftReader     = $leftReader;
+        $this->rightReader    = $rightReader;
+        $this->nestKey        = $nestKey;
     }
 
     /**
