@@ -53,4 +53,59 @@ class CsvWriterTest extends StreamWriterTest
         $this->assertSame($writer, $writer->writeItem(array('foo' => 'bar', 'bar' => 'foo')));
         $this->assertSame($writer, $writer->finish());
     }
+
+    /**
+     * Test that column names not prepended to first row 
+     * if CsvWriter's 5-th parameter not given
+     * 
+     * @author  Igor Mukhin <igor.mukhin@gmail.com>
+     */
+    public function testHeaderNotPrependedByDefault()
+    {
+        $writer = new CsvWriter(';', '"', $this->getStream(), false);
+        $writer
+            ->prepare()
+            ->writeItem(array(
+                'col 1 name'=>'col 1 value',
+                'col 2 name'=>'col 2 value',
+                'col 3 name'=>'col 3 value'
+            ))
+        ;
+        
+        # Values should be at first line
+        $this->assertContentsEquals(
+            "\"col 1 value\";\"col 2 value\";\"col 3 value\"\n",
+            $writer
+        );
+        $writer->finish();
+    }
+
+    /**
+     * Test that column names prepended at first row
+     * and values have been written at second line
+     * if CsvWriter's 5-th parameter set to true
+     * 
+     * @author  Igor Mukhin <igor.mukhin@gmail.com>
+     */
+    public function testHeaderPrependedWhenOptionSetToTrue()
+    {
+        $writer = new CsvWriter(';', '"', $this->getStream(), false, true);
+        $writer
+            ->prepare()
+            ->writeItem(array(
+                'col 1 name'=>'col 1 value',
+                'col 2 name'=>'col 2 value',
+                'col 3 name'=>'col 3 value'
+            ))
+        ;
+        
+        # Column names should be at second line
+        # Values should be at second line
+        $this->assertContentsEquals(
+            "\"col 1 name\";\"col 2 name\";\"col 3 name\"\n" .
+            "\"col 1 value\";\"col 2 value\";\"col 3 value\"\n",
+            $writer
+        );
+        $writer->finish();
+    }
 }
