@@ -20,10 +20,12 @@ class CountableIteratorReader extends IteratorReader implements CountableReader
      */
     public function count()
     {
-        if ($this->iterator instanceof \Countable) {
-            return count($this->iterator);
+        $iterator = $this->getInnerIterator();
+
+        if ($iterator instanceof \Countable) {
+            return count($iterator);
         }
 
-        return iterator_count($this->iterator);
+        return iterator_count($iterator);
     }
 }
