@@ -11,7 +11,7 @@ use Ddeboer\DataImport\Exception\UnexpectedTypeException;
 class ConverterStep implements Step
 {
     /**
-     * @var \SplObjectStorage
+     * @var callable[]
      */
     private $converters;
 
@@ -20,8 +20,6 @@ class ConverterStep implements Step
      */
     public function __construct(array $converters = [])
     {
-        $this->converters = new \SplObjectStorage();
-
         foreach ($converters as $converter) {
             $this->add($converter);
         }
@@ -32,7 +30,7 @@ class ConverterStep implements Step
      */
     public function add(callable $converter)
     {
-        $this->converters->attach($converter);
+        $this->converters[] = $converter;
 
         return $this;
     }
