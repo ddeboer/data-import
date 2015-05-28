@@ -160,8 +160,6 @@ class DoctrineWriter implements Writer
         if (true === $this->truncate) {
             $this->truncateTable();
         }
-
-        return $this;
     }
 
     /**
@@ -204,8 +202,6 @@ class DoctrineWriter implements Writer
         $this->entityManager->flush();
         $this->entityManager->clear($this->entityName);
         $this->reEnableLogging();
-
-        return $this;
     }
 
     /**
@@ -224,8 +220,6 @@ class DoctrineWriter implements Writer
         if (($this->counter % $this->batchSize) == 0) {
             $this->flushAndClear();
         }
-
-        return $this;
     }
 
     /**

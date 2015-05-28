@@ -16,7 +16,7 @@ class CallbackWriterTest extends \PHPUnit_Framework_TestCase
         };
 
         $writer = new CallbackWriter($callable);
-        $this->assertEquals($writer, $writer->prepare());
+        $writer->prepare();
     }
 
     public function testWriteItem()
@@ -27,7 +27,8 @@ class CallbackWriterTest extends \PHPUnit_Framework_TestCase
         };
 
         $writer = new CallbackWriter($callable);
-        $this->assertEquals($writer, $writer->writeItem(array('foo' => 'bar', 'bar' => 'foo')));
+        $writer->writeItem(array('foo' => 'bar', 'bar' => 'foo'));
+
         $this->assertEquals('bar,foo', $string);
     }
 
@@ -38,19 +39,6 @@ class CallbackWriterTest extends \PHPUnit_Framework_TestCase
         };
 
         $writer = new CallbackWriter($callable);
-        $this->assertEquals($writer, $writer->finish());
-    }
-
-    public function testFluentInterface()
-    {
-        $callable = function(array $item) {
-            return '';
-        };
-
-        $writer = new CallbackWriter($callable);
-
-        $this->assertSame($writer, $writer->prepare());
-        $this->assertSame($writer, $writer->writeItem(array('foo' => 'bar', 'bar' => 'foo')));
-        $this->assertSame($writer, $writer->finish());
+        $writer->finish();
     }
 }

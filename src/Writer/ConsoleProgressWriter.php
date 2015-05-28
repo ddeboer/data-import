@@ -66,8 +66,6 @@ class ConsoleProgressWriter implements Writer
         $this->progress->setFormat($this->verbosity);
         $this->progress->setRedrawFrequency($this->redrawFrequency);
         $this->progress->start();
-
-        return $this;
     }
 
     /**
@@ -76,8 +74,6 @@ class ConsoleProgressWriter implements Writer
     public function writeItem(array $item)
     {
         $this->progress->advance();
-
-        return $this;
     }
 
     /**
@@ -86,8 +82,6 @@ class ConsoleProgressWriter implements Writer
     public function finish()
     {
         $this->progress->finish();
-
-        return $this;
     }
 
     /**

@@ -18,35 +18,35 @@ class ExcelWriterTest extends \PHPUnit_Framework_TestCase
         $file = tempnam(sys_get_temp_dir(), null);
 
         $writer = new ExcelWriter(new \SplFileObject($file, 'w'), 'Sheet 1');
-        $writer
-            ->prepare()
-            ->writeItem(array('first', 'last'))
-            ->writeItem(
-                array(
-                    'first' => 'James',
-                    'last'  => 'Bond'
-                )
-            )
-            ->writeItem(
-                array(
-                    'first' => '',
-                    'last'  => 'Dr. No'
-                )
-            )
-            ->finish();
+
+        $writer->prepare();
+        $writer->writeItem(array('first', 'last'));
+
+        $writer->writeItem(array(
+            'first' => 'James',
+            'last'  => 'Bond'
+        ));
+
+        $writer->writeItem(array(
+            'first' => '',
+            'last'  => 'Dr. No'
+        ));
+
+        $writer->finish();
 
         // Open file with append mode ('a') to add a sheet
         $writer = new ExcelWriter(new \SplFileObject($file, 'a'), 'Sheet 2');
-        $writer
-            ->prepare()
-            ->writeItem(array('first', 'last'))
-            ->writeItem(
-                array(
-                    'first' => 'Miss',
-                    'last'  => 'Moneypenny'
-                )
-            )
-            ->finish();
+
+        $writer->prepare();
+
+        $writer->writeItem(array('first', 'last'));
+
+        $writer->writeItem(array(
+            'first' => 'Miss',
+            'last'  => 'Moneypenny'
+        ));
+
+        $writer->finish();
 
         $excel = \PHPExcel_IOFactory::load($file);
 
@@ -62,19 +62,10 @@ class ExcelWriterTest extends \PHPUnit_Framework_TestCase
         $outputFile = new \SplFileObject(tempnam(sys_get_temp_dir(), null));
         $writer = new ExcelWriter($outputFile);
 
-        $writer
-            ->prepare()
-            ->writeItem(array('first', 'last'))
-            ->finish();
-    }
+        $writer->prepare();
 
-    public function testFluentInterface()
-    {
-        $outputFile = new \SplFileObject(tempnam(sys_get_temp_dir(), null));
-        $writer = new ExcelWriter($outputFile);
+        $writer->writeItem(array('first', 'last'));
 
-        $this->assertSame($writer, $writer->prepare());
-        $this->assertSame($writer, $writer->writeItem(array('first', 'last')));
-        $this->assertSame($writer, $writer->finish());
+        $writer->finish();
     }
 }

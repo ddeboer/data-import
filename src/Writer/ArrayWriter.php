@@ -32,8 +32,6 @@ class ArrayWriter implements Writer
     public function prepare()
     {
         $this->data = [];
-
-        return $this;
     }
 
     /**

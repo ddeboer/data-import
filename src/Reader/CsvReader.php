@@ -157,15 +157,11 @@ class CsvReader implements CountableReader, \SeekableIterator
      * Set column headers
      *
      * @param array $columnHeaders
-     *
-     * @return CsvReader
      */
     public function setColumnHeaders(array $columnHeaders)
     {
         $this->columnHeaders = array_count_values($columnHeaders);
         $this->headersCount = count($columnHeaders);
-
-        return $this;
     }
 
     /**
@@ -179,7 +175,6 @@ class CsvReader implements CountableReader, \SeekableIterator
      *                        values for duplicate headers into an array
      *                        (dup => [value1, value2, value3])
      *
-     * @return CsvReader
      * @throws DuplicateHeadersException If duplicate headers are encountered
      *                                   and no duplicate handling has been
      *                                   specified
@@ -190,7 +185,7 @@ class CsvReader implements CountableReader, \SeekableIterator
         $this->headerRowNumber = $rowNumber;
         $headers = $this->readHeaderRow($rowNumber);
 
-        return $this->setColumnHeaders($headers);
+        $this->setColumnHeaders($headers);
     }
 
     /**
@@ -317,14 +312,10 @@ class CsvReader implements CountableReader, \SeekableIterator
      * Set strict parsing
      *
      * @param boolean $strict
-     *
-     * @return CsvReader
      */
     public function setStrict($strict)
     {
         $this->strict = $strict;
-
-        return $this;
     }
 
     /**

@@ -104,14 +104,10 @@ class ExcelReader implements CountableReader, \SeekableIterator
      * Set column headers
      *
      * @param array $columnHeaders
-     *
-     * @return $this
      */
     public function setColumnHeaders(array $columnHeaders)
     {
         $this->columnHeaders = $columnHeaders;
-
-        return $this;
     }
 
     /**
@@ -134,15 +130,11 @@ class ExcelReader implements CountableReader, \SeekableIterator
      * Set header row number
      *
      * @param integer $rowNumber Number of the row that contains column header names
-     *
-     * @return $this
      */
     public function setHeaderRowNumber($rowNumber)
     {
         $this->headerRowNumber = $rowNumber;
         $this->columnHeaders = $this->worksheet[$rowNumber];
-
-        return $this;
     }
 
     /**

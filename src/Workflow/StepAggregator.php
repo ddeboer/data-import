@@ -76,7 +76,7 @@ class StepAggregator implements Workflow
      * @param Step         $step
      * @param integer|null $priority
      *
-     * @return Workflow
+     * @return $this
      */
     public function addStep(Step $step, $priority = null)
     {
@@ -93,7 +93,7 @@ class StepAggregator implements Workflow
      *
      * @param Writer $writer
      *
-     * @return Workflow
+     * @return $this
      */
     public function addWriter(Writer $writer)
     {

@@ -68,8 +68,6 @@ class ExcelWriter implements Writer
             }
             $this->excel->setActiveSheetIndexByName($this->sheet);
         }
-
-        return $this;
     }
 
     /**
@@ -85,8 +83,6 @@ class ExcelWriter implements Writer
         }
 
         $this->row++;
-
-        return $this;
     }
 
     /**
@@ -96,7 +92,5 @@ class ExcelWriter implements Writer
     {
         $writer = \PHPExcel_IOFactory::createWriter($this->excel, $this->type);
         $writer->save($this->filename);
-
-        return $this;
     }
 }

@@ -14,7 +14,7 @@ trait WriterTemplate
      */
     public function prepare()
     {
-        return $this;
+
     }
 
     /**
@@ -22,6 +22,6 @@ trait WriterTemplate
      */
     public function finish()
     {
-        return $this;
+
     }
 }

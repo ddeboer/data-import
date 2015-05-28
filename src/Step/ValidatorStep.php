@@ -64,14 +64,10 @@ class ValidatorStep implements PriorityStep
 
     /**
      * @param boolean $flag
-     *
-     * @return $this
      */
     public function throwExceptions($flag = true)
     {
         $this->throwExceptions = $flag;
-
-        return $this;
     }
 
     /**

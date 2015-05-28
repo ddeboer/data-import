@@ -100,7 +100,7 @@ class StreamMergeWriterTest extends AbstractStreamWriterTest
             ->with($barItem)
             ->will($this->returnSelf());
 
-        $this->assertSame($this->writer, $this->writer->writeItem($barItem));
+        $this->writer->writeItem($barItem);
     }
 
     public function testSetStream()
