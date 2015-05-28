@@ -39,6 +39,17 @@ class PdoReader implements CountableReader
         $this->pdo = $pdo;
         $this->statement = $this->pdo->prepare($sql);
 
+        $this->setParameters($params);
+    }
+
+    /**
+     * Parameter setter. Useful if you build the reader with DI but need to
+     * inject dynamic parameters.
+     *
+     * @param array $params SQL statement parameters
+     */
+    public function setParameters(array $params)
+    {
         foreach ($params as $key => $value) {
             $this->statement->bindValue($key, $value);
         }
