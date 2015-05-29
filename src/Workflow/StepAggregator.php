@@ -11,6 +11,8 @@ use Ddeboer\DataImport\Step\PriorityStep;
 use Ddeboer\DataImport\Workflow;
 use Ddeboer\DataImport\Writer;
 use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 
 /**
@@ -18,8 +20,10 @@ use Psr\Log\NullLogger;
  *
  * @author David de Boer <david@ddeboer.nl>
  */
-class StepAggregator implements Workflow
+class StepAggregator implements Workflow, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @var Reader
      */
@@ -38,11 +42,6 @@ class StepAggregator implements Workflow
     private $skipItemOnFailure = false;
 
     /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
      * @var \SplPriorityQueue
      */
     private $steps;
@@ -58,15 +57,16 @@ class StepAggregator implements Workflow
     protected $shouldStop = false;
 
     /**
-     * @param Reader          $reader
-     * @param LoggerInterface $logger
-     * @param string          $name
+     * @param Reader $reader
+     * @param string $name
      */
-    public function __construct(Reader $reader, LoggerInterface $logger = null, $name = null)
+    public function __construct(Reader $reader, $name = null)
     {
         $this->name = $name;
-        $this->logger = $logger ?: new NullLogger();
         $this->reader = $reader;
+
+        // Defaults
+        $this->logger = new NullLogger();
         $this->steps = new \SplPriorityQueue();
     }
 

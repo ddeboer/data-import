@@ -193,7 +193,8 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
             ->with($exception->getMessage());
 
 
-        $workflow = new StepAggregator($reader, $logger);
+        $workflow = new StepAggregator($reader);
+        $workflow->setLogger($logger);
         $workflow->setSkipItemOnFailure(true);
         $workflow->addWriter($writer);
         $workflow->process();
