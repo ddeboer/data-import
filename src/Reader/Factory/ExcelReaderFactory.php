@@ -1,6 +1,7 @@
 <?php
 
 namespace Ddeboer\DataImport\Reader\Factory;
+
 use Ddeboer\DataImport\Reader\ExcelReader;
 
 /**
