@@ -2,10 +2,12 @@
 
 namespace Ddeboer\DataImport\ValueConverter;
 
+use Ddeboer\DataImport\Exception\UnexpectedValueException;
+
 /**
  * Convert an date time object into string
  */
-class DateTimeToStringValueConverter implements ValueConverterInterface
+class DateTimeToStringValueConverter
 {
     /**
      * Date time format
@@ -38,8 +40,9 @@ class DateTimeToStringValueConverter implements ValueConverterInterface
         }
 
         if (!($input instanceof \DateTime)) {
-            throw new \UnexpectedValueException('Input must be DateTime object.');
+            throw new UnexpectedValueException('Input must be DateTime object.');
         }
 
         return $input->format($this->outputFormat);
-    }}
+    }
+}
