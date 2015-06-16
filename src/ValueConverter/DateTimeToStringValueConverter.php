@@ -26,14 +26,13 @@ class DateTimeToStringValueConverter
     }
 
     /**
-     * Convert string to date time object
-     * using specified format
+     * Convert a date time object to a string using the specified format
      *
      * @param mixed $input
-     * @return \DateTime|string
+     * @return string
      * @throws UnexpectedValueException
      */
-    public function convert($input)
+    public function __invoke($input)
     {
         if (!$input) {
             return;
