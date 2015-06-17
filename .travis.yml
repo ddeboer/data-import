@@ -16,7 +16,8 @@ before_script:
   - phpenv config-add travis_php.ini
   - composer install --dev
 
-matrix:  allow_failures:
+matrix:  
+  allow_failures:
     - php: 7.0
     - php: hhvm
   include:
