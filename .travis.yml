@@ -12,10 +12,6 @@ php:
 services:
   - mongodb
 
-before_script:
-  - phpenv config-add travis_php.ini
-  - composer install --dev
-
 matrix:  
   allow_failures:
     - php: 7.0
@@ -34,6 +30,8 @@ cache:
 install:
   - if [[ "$TRAVIS_PHP_VERSION" == "hhvm" ]]; then composer require mongofill/mongofill=dev-master --no-update; fi
   - travis_retry composer update --no-progress --no-plugins ${COMPOSER_FLAGS}
+
+before_script: phpenv config-add travis_php.ini
 
 script: phpunit ${PHPUNIT_FLAGS}
 
