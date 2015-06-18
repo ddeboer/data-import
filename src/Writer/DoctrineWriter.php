@@ -59,13 +59,6 @@ class DoctrineWriter implements Writer, FlushableWriter
     protected $truncate = true;
 
     /**
-     * Index field name.
-     *
-     * @var null|string
-     */
-    protected $index;
-
-    /**
      * List of fields used to lookup an object
      *
      * @var array
@@ -82,7 +75,6 @@ class DoctrineWriter implements Writer, FlushableWriter
     public function __construct(ObjectManager $objectManager, $objectName, $index = null)
     {
         $this->objectManager = $objectManager;
-        $this->objectName = $objectName;
         $this->objectRepository = $objectManager->getRepository($objectName);
         $this->objectMetadata = $objectManager->getClassMetadata($objectName);
         //translate objectName in case a namespace alias is used
@@ -183,8 +175,6 @@ class DoctrineWriter implements Writer, FlushableWriter
     {
         $this->flush();
         $this->reEnableLogging();
-
-        return $this;
     }
 
     /**
@@ -192,7 +182,6 @@ class DoctrineWriter implements Writer, FlushableWriter
      */
     public function writeItem(array $item)
     {
-        $this->counter++;
         $object = $this->findOrCreateItem($item);
 
         $this->loadAssociationObjectsToObject($item, $object);
@@ -261,7 +250,7 @@ class DoctrineWriter implements Writer, FlushableWriter
         if ($this->objectManager instanceof \Doctrine\ORM\objectManager) {
             $tableName = $this->objectMetadata->table['name'];
             $connection = $this->objectManager->getConnection();
-        $query = $connection->getDatabasePlatform()->getTruncateTableSQL($tableName, true);
+            $query = $connection->getDatabasePlatform()->getTruncateTableSQL($tableName, true);
             $connection->executeQuery($query);
         } elseif ($this->objectManager instanceof \Doctrine\ODM\MongoDB\DocumentManager) {
             $this->objectManager->getDocumentCollection($this->objectName)->remove(array());
