@@ -74,6 +74,7 @@ class DoctrineWriter implements Writer, FlushableWriter
      */
     public function __construct(ObjectManager $objectManager, $objectName, $index = null)
     {
+        $this->ensureSupportedObjectManager($objectManager);
         $this->objectManager = $objectManager;
         $this->objectRepository = $objectManager->getRepository($objectName);
         $this->objectMetadata = $objectManager->getClassMetadata($objectName);
@@ -85,6 +86,19 @@ class DoctrineWriter implements Writer, FlushableWriter
             } else {
                 $this->lookupFields = [$index];
             }
+        }
+    }
+
+    protected function ensureSupportedObjectManager(ObjectManager $objectManager)
+    {
+        if (!($objectManager instanceof \Doctrine\ORM\EntityManager
+            || $objectManager instanceof \Doctrine\ODM\MongoDB\DocumentManager)
+        ) {
+            $message = sprintf(
+                'Unknown Object Manager type. Expected \Doctrine\ORM\EntityManager or \Doctrine\ODM\MongoDB\DocumentManager, %s given',
+                get_class($objectManager)
+            );
+            throw new UnsupportedDatabaseTypeException($message);
         }
     }
 
@@ -254,12 +268,6 @@ class DoctrineWriter implements Writer, FlushableWriter
             $connection->executeQuery($query);
         } elseif ($this->objectManager instanceof \Doctrine\ODM\MongoDB\DocumentManager) {
             $this->objectManager->getDocumentCollection($this->objectName)->remove(array());
-        } else {
-            $message = sprintf(
-                'Unknown Object Manager type. Expected \Doctrine\ORM\objectManager or \Doctrine\ODM\MongoDB\DocumentManager, %s given',
-                get_class($this->objectManager)
-            );
-            throw new UnsupportedDatabaseTypeException($message);
         }
     }
 
