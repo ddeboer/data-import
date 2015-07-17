@@ -40,6 +40,7 @@ Documentation
     - [DoctrineWriter](#doctrinewriter)
     - [PdoWriter](#pdowriter)
     - [ExcelWriter](#excelwriter)
+    - [ConsoleTableWriter](#consoletablewriter)
     - [ConsoleProgressWriter](#consoleprogresswriter)
     - [CallbackWriter](#callbackwriter)
     - [AbstractStreamWriter](#abstractstreamwriter)
@@ -48,6 +49,7 @@ Documentation
   * [Filters](#filters)
     - [CallbackFilter](#callbackfilter)
     - [OffsetFilter](#offsetfilter)
+    - [DateTimeThresholdFilter](#datetimethresholdfilter)
     - [ValidatorFilter](#offsetfilter)
   * [Converters](#converters)
     - [Item converters](#item-converters)
@@ -55,11 +57,13 @@ Documentation
       - [Create an item converter](#create-an-item-converter)
       - [CallbackItemConverter](#callbackitemconverter)
     - [Value converters](#value-converters)
-      - [DateTimeValueConverter](#datetimevalueconverter)
+      - [StringToDateTimeValueConverter](#stringtodatetimevalueconverter)
+      - [DateTimeToStringValueConverter](#datetimetostringvalueconverter)
       - [ObjectConverter](#objectconverter)
       - [StringToObjectConverter](#stringtoobjectconverter)
       - [ArrayValueConverterMap](#arrayvalueconvertermap)
       - [CallbackValueConverter](#callbackvalueconverter)
+      - [MappingValueConverter](#mappingvalueconverter)
   * [Examples](#examples)
     - [Import CSV file and write to database](#import-csv-file-and-write-to-database)
     - [Export to CSV file](#export-to-csv-file)
@@ -99,7 +103,7 @@ Broadly speaking, you can use this library in two ways:
 Each data import revolves around the workflow and takes place along the following lines:
 
 1. Construct a [reader](#readers).
-2. Construct a workflow and pass the reader to it, optionaly pass a logger as second argument.
+2. Construct a workflow and pass the reader to it, optionally pass a logger as second argument.
    Add at least one [writer](#writers) to the workflow.
 3. Optionally, add [filters](#filters), item converters and
    [value converters](#value-converters) to the workflow.
@@ -313,7 +317,7 @@ $reader = new DoctrineReader($entityManager, 'Your\Namespace\Entity\User');
 #### ExcelReader
 
 Acts as an adapter for the [PHPExcel library](http://phpexcel.codeplex.com/). Make sure
-to incude that library in your project:
+to include that library in your project:
 
 ```bash
 $ composer require phpoffice/phpexcel
@@ -328,9 +332,22 @@ $file = new \SplFileObject('path/to/ecxel_file.xls');
 $reader = new ExcelReader($file);
 ```
 
+To set the row number that headers will be read from, pass a number as the second
+argument.
+
+```php
+$reader = new ExcelReader($file, 2);
+```
+
+To read the specific sheet:
+
+```php
+$reader = new ExcelReader($file, null, 3);
+```
+
 ###OneToManyReader
 
-Allows for merging of two data sources (using existing readers), for example you have one CSV with orders and another with order items. 
+Allows for merging of two data sources (using existing readers), for example you have one CSV with orders and another with order items.
 
 Imagine two CSV's like the following:
 
@@ -348,7 +365,7 @@ OrderId,Name
 ```
 
 You want to associate the items to the order. Using the OneToMany reader we can nest these rows in the order using a key
-which you specify in the OneToManyReader.  
+which you specify in the OneToManyReader.
 
 The code would look something like:
 
@@ -364,43 +381,43 @@ $orderItemReader->setHeaderRowNumber(0);
 $oneToManyReader = new OneToManyReader($orderReader, $orderItemReader, 'items', 'OrderId', 'OrderId');
 ```
 
-The third parameter is the key which the order item data will be nested under. This will be an array of order items. 
+The third parameter is the key which the order item data will be nested under. This will be an array of order items.
 The fourth and fifth parameters are "primary" and "foreign" keys of the data. The OneToMany reader will try to match the data using these keys.
-Take for example the CSV's given above, you would expect that Order "1" has the first 2 Order Items associated to it due to their Order Id's also 
+Take for example the CSV's given above, you would expect that Order "1" has the first 2 Order Items associated to it due to their Order Id's also
 being "1".
 
 Note: You can omit the last parameter, if both files have the same field. Eg if parameter 4 is 'OrderId' and you don't specify
-paramater 5, the reader will look for the foreign key using 'OrderId'
+parameter 5, the reader will look for the foreign key using 'OrderId'
 
 The resulting data will look like:
 
 ```php
 //Row 1
 array(
-	'OrderId' => 1,
-	'Price' => 30,
-	'items' => array(
-		array(
-			'OrderId' => 1,
-			'Name' => 'Super Cool Item 1',
-		),
-		array(
-			'OrderId' => 1,
-			'Name' => 'Super Cool Item 2',
-		),
-	),
+    'OrderId' => 1,
+    'Price' => 30,
+    'items' => array(
+        array(
+            'OrderId' => 1,
+            'Name' => 'Super Cool Item 1',
+        ),
+        array(
+            'OrderId' => 1,
+            'Name' => 'Super Cool Item 2',
+        ),
+    ),
 );
 
 //Row2
 array(
-	'OrderId' => 2,
-	'Price' => 15,
-	'items' => array(
-		array(
-			'OrderId' => 2,
-			'Name' => 'Super Cool Item 1',
-		),
-	)
+    'OrderId' => 2,
+    'Price' => 15,
+    'items' => array(
+        array(
+            'OrderId' => 2,
+            'Name' => 'Super Cool Item 1',
+        ),
+    )
 );
 ```
 
@@ -472,6 +489,12 @@ or
 $writer = new DoctrineWriter($entityManager, 'YourNamespace:Employee', array('column1', 'column2', 'column3'));
 ```
 
+The DoctrineWriter will also search out associations automatically and link them by an entity reference. For example
+suppose you have a Product entity that you are importing and must be associated to a Category. If there is a field in 
+the import file named 'Category' with an id, the writer will use metadata to get the association class and create a
+reference so that it can be associated properly. The DoctrineWriter will skip any association fields that are already
+objects in cases where a converter was used to retrieve the association.
+
 #### PdoWriter
 
 Use the PDO writer for importing data into a relational database (such as
@@ -525,6 +548,34 @@ existing sheet:
 
 ```php
 $writer = new ExcelWriter($file, 'Old sheet');
+```
+#### ConsoleTableWriter
+
+This writer displays items as table on console output for debug purposes
+when you start the workflow from the command-line. 
+It requires Symfony’s Console component 2.5 or higher:
+
+```bash
+$ composer require symfony/console ~2.5
+```
+
+```php
+use Ddeboer\DataImport\Reader;
+use Ddeboer\DataImport\Writer\ConsoleTableWriter;
+use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Helper\Table;
+
+$reader = new Reader\...;
+$output = new ConsoleOutput(...);
+
+$table = new Table($output);
+
+// Make some manipulations, e.g. set table style
+$table->setStyle('compact');
+
+$workflow = new Workflow($reader);
+$workflow->addWriter(new ConsoleTableWriter($output, $table));
+
 ```
 
 #### ConsoleProgressWriter
@@ -684,6 +735,23 @@ $filter = new OffsetFilter(0, 3);
 $filter = new OffsetFilter(2, 5);
 ```
 
+#### DateTimeThresholdFilter
+
+This filter is useful if you want to do incremental imports. Specify a threshold
+`DateTime` instance, a column name (defaults to `updated_at`), and a
+`DateTimeValueConverter` that will be used to convert values read from the
+filtered items. The item strictly older than the threshold will be discarded.
+
+```php
+use Ddeboer\DataImport\Filter\DateTimeThresholdFilter;
+use Ddeboer\DataImport\ValueConverter\DateTimeValueConverter;
+
+new DateTimeThresholdFilter(
+    new DateTimeValueConverter(),
+    new \DateTime('yesterday')
+);
+```
+
 #### ValidatorFilter
 
 It’s a common use case to validate the data before you save it to the database.
@@ -839,7 +907,7 @@ $converter = new CallbackItemConverter(function ($item) use ($translator) {
         $item[$key] = $translator->translate($value);
     }
 
-    return $row;
+    return $item;
 });
 ```
 
@@ -847,9 +915,9 @@ $converter = new CallbackItemConverter(function ($item) use ($translator) {
 
 Value converters are used to convert specific fields (e.g., columns in database).
 
-#### DateTimeValueConverter
+#### StringToDateTimeValueConverter
 
-There are two uses for the DateTimeValueConverter:
+There are two uses for the StringToDateTimeValueConverter:
 
 1. Convert a date representation in a format you specify into a `DateTime` object.
 2. Convert a date representation in a format you specify into a different format.
@@ -857,37 +925,49 @@ There are two uses for the DateTimeValueConverter:
 ##### Convert a date into a `DateTime` object.
 
 ```php
-use Ddeboer\DataImport\ValueConverter\DateTimeValueConverter;
+use Ddeboer\DataImport\ValueConverter\StringDateTimeValueConverter;
 
-$converter = new DateTimeValueConverter('d/m/Y H:i:s');
+$converter = new StringToDateTimeValueConverter('d/m/Y H:i:s');
 $workflow->addValueConverter('my_date_field', $converter);
 ```
 
 If your date string is in a format specified at: http://www.php.net/manual/en/datetime.formats.date.php then you can omit the format parameter.
 
 ```php
-use Ddeboer\DataImport\ValueConverter\DateTimeValueConverter;
+use Ddeboer\DataImport\ValueConverter\StringToDateTimeValueConverter;
 
-$converter = new DateTimeValueConverter();
+$converter = new StringToDateTimeValueConverter();
 $workflow->addValueConverter('my_date_field', $converter);
 ```
 
 ##### Convert a date string into a differently formatted date string.
 
 ```php
-use Ddeboer\DataImport\ValueConverter\DateTimeValueConverter;
+use Ddeboer\DataImport\ValueConverter\StringToDateTimeValueConverter;
 
-$converter = new DateTimeValueConverter('d/m/Y H:i:s', 'd-M-Y');
+$converter = new StringToDateTimeValueConverter('d/m/Y H:i:s', 'd-M-Y');
 $workflow->addValueConverter('my_date_field', $converter);
 ```
 
 If your date is in a format specified at: http://www.php.net/manual/en/datetime.formats.date.php you can pass `null` as the first argument.
 
 ```php
-use Ddeboer\DataImport\ValueConverter\DateTimeValueConverter;
+use Ddeboer\DataImport\ValueConverter\StringToDateTimeValueConverter;
 
-$converter = new DateTimeValueConverter(null, 'd-M-Y');
+$converter = new StringToDateTimeValueConverter(null, 'd-M-Y');
 $workflow->addValueConverter('my_date_field', $converter);
+```
+
+#### DateTimeToStringValueConverter
+
+The main use of DateTimeToStringValueConverter is to convert DateTime object into it's string representation in proper format.
+Default format is 'Y-m-d H:i:s';
+
+```php
+use Ddeboer\DataImport\ValueConverter\DateTimeToStringValueConverter;
+
+$converter = new DateTimeToStringValueConverter;
+$converter->convert(\DateTime('2010-01-01 01:00:00'));  //will return string '2010-01-01 01:00:00'
 ```
 
 #### ObjectConverter
@@ -972,6 +1052,21 @@ $converter = new CallbackValueConverter($callable);
 $output = $converter->convert(array('foo', 'bar')); // $output will be "foo,bar"
 ```
 
+#### MappingValueConverter
+
+Looks for a key in a hash you must provide in the constructor:
+
+```php
+use Ddeboer\DataImport\ValueConverter\MappingValueConverter;
+
+$converter = new MappingValueConverter(array(
+    'source' => 'destination'
+));
+
+$converter->convert('source'); // destination
+$converter->convert('unexpected value'); // throws an UnexpectedValueException
+```
+
 ### Examples
 
 #### Import CSV file and write to database
@@ -1039,7 +1134,7 @@ Then you can import the CSV and save it as your entity in the following way.
 use Ddeboer\DataImport\Workflow;
 use Ddeboer\DataImport\Reader\CsvReader;
 use Ddeboer\DataImport\Writer\DoctrineWriter;
-use Ddeboer\DataImport\ValueConverter\DateTimeValueConverter;
+use Ddeboer\DataImport\ValueConverter\StringToDateTimeValueConverter;
 
 // Create and configure the reader
 $file = new \SplFileObject('input.csv');
@@ -1057,7 +1152,7 @@ $workflow->addWriter($doctrineWriter);
 
 // Add a converter to the workflow that will convert `beginDate` and `endDate`
 // to \DateTime objects
-$dateTimeConverter = new DateTimeValueConverter('Ymd');
+$dateTimeConverter = new StringToDateTimeValueConverter('Ymd');
 $workflow
     ->addValueConverter('beginDate', $dateTimeConverter)
     ->addValueConverter('endDate', $dateTimeConverter);
@@ -1097,7 +1192,7 @@ $workflow = new Workflow($reader);
 
 // Add the writer to the workflow
 $file = new \SplFileObject('output.csv', 'w');
-$writer = new Writer($file);
+$writer = new CsvWriter($file);
 $workflow->addWriter($writer);
 
 // As you can see, the first names are not capitalized correctly. Let's fix
