@@ -45,6 +45,10 @@ class ConverterStep implements Step
     {
         foreach ($this->converters as $converter) {
             $item = call_user_func($converter, $item);
+
+            if($report !== null && $converter instanceof ReporterInterface && $converter->hasMessage()) {
+                $report->addMessage(new ReportMessage($converter->getMessage()));
+            }
         }
 
         return true;
