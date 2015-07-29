@@ -176,6 +176,7 @@ class DoctrineWriter implements Writer, FlushableWriter
     {
         $entity = $this->findOrCreateItem($item);
 
+        $this->updateAssociations($item,$entity);
         $this->loadAssociationObjectsToEntity($item, $entity);
         $this->updateEntity($item, $entity);
 
@@ -206,6 +207,49 @@ class DoctrineWriter implements Writer, FlushableWriter
             ) {
                 $setter = 'set' . ucfirst($fieldName);
                 $this->setValue($entity, $value, $setter);
+            }
+        }
+    }
+
+    /**
+     * @param array $item
+     * @param $entity
+     * @throws \Exception
+     */
+    public function updateAssociations(array &$item, $entity)
+    {
+        foreach ($this->entityMetadata->getAssociationMappings() as $map) {
+            // There is data for the association
+            if (isset($item[$map['fieldName']]) && is_array($item[$map['fieldName']])) {
+
+                $getterMethod = sprintf('get%s', $map['fieldName']);
+
+                if (method_exists($entity, $getterMethod)) {
+                    $orgRepository = $this->entityRepository;
+                    $orgMetadata = $this->entityMetadata;
+                    $orgName = $this->entityName;
+
+                    $this->entityRepository = $this->entityManager->getRepository($map['targetEntity']);
+                    $this->entityMetadata = $this->entityManager->getClassMetadata($map['targetEntity']);
+                    $this->entityName = $this->entityMetadata->getName();
+
+                    $association = call_user_func([$entity,$getterMethod]);
+                    if (!$association) {
+                        $association = $this->getNewInstance();
+                    }
+
+                    $value = $item[$map['fieldName']];
+                    unset($item[$map['fieldName']]);
+
+                    $this->updateEntity($value, $association);
+
+                    $setterMethod = sprintf('set%s',$map['fieldName']);
+                    call_user_func([$entity, $setterMethod],$association);
+
+                    $this->entityRepository = $orgRepository;
+                    $this->entityMetadata = $orgMetadata;
+                    $this->entityName = $orgName;
+                }
             }
         }
     }
