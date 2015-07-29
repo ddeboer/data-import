@@ -14,5 +14,5 @@ interface Step
      *
      * @return boolean False return value means the item should be skipped
      */
-    public function process(&$item);
+    public function process(&$item, Report $report = null);
 }

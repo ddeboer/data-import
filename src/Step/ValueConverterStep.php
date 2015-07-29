@@ -2,6 +2,9 @@
 
 namespace Ddeboer\DataImport\Step;
 
+use Ddeboer\DataImport\Report;
+use Ddeboer\DataImport\ReporterInterface;
+use Ddeboer\DataImport\ReportMessage;
 use Ddeboer\DataImport\Step;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
@@ -31,7 +34,7 @@ class ValueConverterStep implements Step
     /**
      * {@inheritdoc}
      */
-    public function process(&$item)
+    public function process(&$item, Report $report = null)
     {
         $accessor = new PropertyAccessor();
 
@@ -40,6 +43,9 @@ class ValueConverterStep implements Step
                 $orgValue = $accessor->getValue($item, $property);
                 $value = call_user_func($converter, $orgValue);
                 $accessor->setValue($item,$property,$value);
+                if($report !== null && $converter instanceof ReporterInterface && $converter->hasMessage()) {
+                    $report->addMessage(new ReportMessage($converter->getMessage(),$property));
+                }
             }
         }
 

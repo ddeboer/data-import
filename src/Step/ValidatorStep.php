@@ -2,6 +2,7 @@
 
 namespace Ddeboer\DataImport\Step;
 
+use Ddeboer\DataImport\Report;
 use Symfony\Component\Validator\ValidatorInterface;
 use Symfony\Component\Validator\Constraints;
 use Symfony\Component\Validator\Constraint;
@@ -81,7 +82,7 @@ class ValidatorStep implements PriorityStep
     /**
      * {@inheritdoc}
      */
-    public function process(&$item)
+    public function process(&$item, Report $report = null)
     {
         $constraints = new Constraints\Collection($this->constraints);
         $list = $this->validator->validateValue($item, $constraints);

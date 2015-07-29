@@ -2,6 +2,7 @@
 
 namespace Ddeboer\DataImport\Step;
 
+use Ddeboer\DataImport\Report;
 use Ddeboer\DataImport\Step;
 
 /**
@@ -35,7 +36,7 @@ class FilterStep implements Step
     /**
      * {@inheritdoc}
      */
-    public function process(&$item)
+    public function process(&$item, Report $report = null)
     {
         foreach (clone $this->filters as $filter) {
             if (false === call_user_func($filter, $item)) {

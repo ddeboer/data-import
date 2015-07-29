@@ -2,6 +2,7 @@
 
 namespace Ddeboer\DataImport\Step;
 
+use Ddeboer\DataImport\Report;
 use Ddeboer\DataImport\Step;
 use Ddeboer\DataImport\Exception\UnexpectedTypeException;
 
@@ -40,7 +41,7 @@ class ConverterStep implements Step
     /**
      * {@inheritdoc}
      */
-    public function process(&$item)
+    public function process(&$item, Report $report = null)
     {
         foreach ($this->converters as $converter) {
             $item = call_user_func($converter, $item);
