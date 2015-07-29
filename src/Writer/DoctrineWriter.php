@@ -135,13 +135,11 @@ class DoctrineWriter implements Writer, FlushableWriter
      */
     protected function getNewInstance()
     {
-        $className = $this->entityMetadata->getName();
-
-        if (class_exists($className) === false) {
-            throw new \Exception('Unable to create new instance of ' . $className);
+        if (class_exists($this->entityName) === false) {
+            throw new \Exception('Unable to create new instance of ' . $this->entityName);
         }
 
-        return new $className;
+        return new $this->entityName;
     }
 
     /**
