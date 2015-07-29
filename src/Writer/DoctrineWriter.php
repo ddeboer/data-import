@@ -34,6 +34,11 @@ class DoctrineWriter implements Writer, FlushableWriter
     protected $entityRepository;
 
     /**
+     * @var string
+     */
+    protected $entityRepositoryMethod;
+
+    /**
      * @var ClassMetadata
      */
     protected $entityMetadata;
@@ -280,9 +285,14 @@ class DoctrineWriter implements Writer, FlushableWriter
                 foreach ($this->lookupFields as $fieldName) {
                     $lookupConditions[$fieldName] = $item[$fieldName];
                 }
-                $entity = $this->entityRepository->findOneBy(
-                    $lookupConditions
-                );
+
+                if ($this->entityRepositoryMethod && method_exists($this->entityRepository, $this->entityRepositoryMethod)) {
+                    $entity = call_user_func([$this->entityRepository, $this->entityRepositoryMethod], $lookupConditions);
+                } else {
+                    $entity = $this->entityRepository->findOneBy(
+                        $lookupConditions
+                    );
+                }
             } else {
                 $entity = $this->entityRepository->find(current($item));
             }
@@ -302,5 +312,15 @@ class DoctrineWriter implements Writer, FlushableWriter
     {
         $this->entityManager->flush();
         $this->entityManager->clear($this->entityName);
+    }
+
+    /**
+     * @param string $entityRepositoryMethod
+     * @return DoctrineWriter
+     */
+    public function setEntityRepositoryMethod($entityRepositoryMethod)
+    {
+        $this->entityRepositoryMethod = $entityRepositoryMethod;
+        return $this;
     }
 }
