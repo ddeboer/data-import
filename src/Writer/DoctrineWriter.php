@@ -131,6 +131,7 @@ class DoctrineWriter implements Writer, FlushableWriter
     /**
      * Return a new instance of the entity
      *
+     * @throws \Exception
      * @return object
      */
     protected function getNewInstance()
@@ -221,36 +222,47 @@ class DoctrineWriter implements Writer, FlushableWriter
         foreach ($this->entityMetadata->getAssociationMappings() as $map) {
             // There is data for the association
             if (isset($item[$map['fieldName']]) && is_array($item[$map['fieldName']])) {
-
-                $getterMethod = sprintf('get%s', $map['fieldName']);
-
-                if (method_exists($entity, $getterMethod)) {
-                    $orgRepository = $this->entityRepository;
-                    $orgMetadata = $this->entityMetadata;
-                    $orgName = $this->entityName;
-
-                    $this->entityRepository = $this->entityManager->getRepository($map['targetEntity']);
-                    $this->entityMetadata = $this->entityManager->getClassMetadata($map['targetEntity']);
-                    $this->entityName = $this->entityMetadata->getName();
-
-                    $association = call_user_func([$entity,$getterMethod]);
-                    if (!$association) {
-                        $association = $this->getNewInstance();
-                    }
-
-                    $value = $item[$map['fieldName']];
-                    unset($item[$map['fieldName']]);
-
-                    $this->updateEntity($value, $association);
-
-                    $setterMethod = sprintf('set%s',$map['fieldName']);
-                    call_user_func([$entity, $setterMethod],$association);
-
-                    $this->entityRepository = $orgRepository;
-                    $this->entityMetadata = $orgMetadata;
-                    $this->entityName = $orgName;
-                }
+                $this->updateAssociation($item, $entity, $map['fieldName'], $map['targetEntity']);
             }
+        }
+    }
+
+    /**
+     * @param array $item
+     * @param object $entity
+     * @param string $fieldName
+     * @param string $targetEntity
+     * @throws \Exception
+     */
+    public function updateAssociation(array &$item, $entity, $fieldName, $targetEntity)
+    {
+        $getterMethod = sprintf('get%s', $fieldName);
+
+        if (method_exists($entity, $getterMethod)) {
+            $orgRepository = $this->entityRepository;
+            $orgMetadata = $this->entityMetadata;
+            $orgName = $this->entityName;
+
+            $this->entityRepository = $this->entityManager->getRepository($targetEntity);
+            $this->entityMetadata = $this->entityManager->getClassMetadata($targetEntity);
+            $this->entityName = $this->entityMetadata->getName();
+
+            $association = call_user_func([$entity,$getterMethod]);
+            if (!$association) {
+                $association = $this->getNewInstance();
+            }
+
+            $value = $item[$fieldName];
+            unset($item[$fieldName]);
+
+            $this->updateEntity($value, $association);
+
+            $setterMethod = sprintf('set%s',$fieldName);
+            call_user_func([$entity, $setterMethod],$association);
+
+            $this->entityRepository = $orgRepository;
+            $this->entityMetadata = $orgMetadata;
+            $this->entityName = $orgName;
         }
     }
 
@@ -265,7 +277,7 @@ class DoctrineWriter implements Writer, FlushableWriter
         foreach ($this->entityMetadata->getAssociationMappings() as $associationMapping) {
 
             $value = null;
-            if (isset($item[$associationMapping['fieldName']]) && !is_object($item[$associationMapping['fieldName']])) {
+            if (isset($item[$associationMapping['fieldName']]) && !is_object($item[$associationMapping['fieldName']]) && !is_array($item[$associationMapping['fieldName']])) {
                 $value = $this->entityManager->getReference($associationMapping['targetEntity'], $item[$associationMapping['fieldName']]);
             }
 
@@ -312,6 +324,7 @@ class DoctrineWriter implements Writer, FlushableWriter
      * Finds existing entity or create a new instance
      *
      * @param array $item
+     * @return mixed|null|object
      */
     protected function findOrCreateItem(array $item)
     {
