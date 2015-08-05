@@ -47,7 +47,7 @@ class ConverterStep implements Step
             $item = call_user_func($converter, $item);
 
             if($report !== null && $converter instanceof ReporterInterface && $converter->hasMessage()) {
-                $report->addMessage(new ReportMessage($converter->getMessage()));
+                $report->addMessage(new ReportMessage($converter->getMessage(),$converter->getSeverity()));
             }
         }
 

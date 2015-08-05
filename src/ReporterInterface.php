@@ -11,6 +11,11 @@ namespace Ddeboer\DataImport;
 
 interface ReporterInterface
 {
+    const INFO    = 0;
+    const WARNING = 1;
+    const ERROR   = 2;
+
     public function hasMessage();
     public function getMessage();
+    public function getSeverity();
 }

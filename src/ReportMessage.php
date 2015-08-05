@@ -13,10 +13,12 @@ class ReportMessage
 {
     private $column;
     private $message;
+    private $severity;
 
-    public function __construct($message, $column = null)
+    public function __construct($message, $severity, $column = null)
     {
         $this->message = $message;
+        $this->severity = $severity;
         $this->column  = $column;
     }
 
@@ -44,6 +46,24 @@ class ReportMessage
     public function getMessage()
     {
         return $this->message;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSeverity()
+    {
+        return $this->severity;
+    }
+
+    /**
+     * @param integer $severity
+     * @return ReportMessage
+     */
+    public function setSeverity($severity)
+    {
+        $this->severity = $severity;
+        return $this;
     }
 
     /**

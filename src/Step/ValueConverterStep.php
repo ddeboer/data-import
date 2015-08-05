@@ -44,7 +44,7 @@ class ValueConverterStep implements Step
                 $value = call_user_func($converter, $orgValue);
                 $accessor->setValue($item,$property,$value);
                 if($report !== null && $converter instanceof ReporterInterface && $converter->hasMessage()) {
-                    $report->addMessage(new ReportMessage($converter->getMessage(),$property));
+                    $report->addMessage(new ReportMessage($converter->getMessage(),$converter->getSeverity(),$property));
                 }
             }
         }

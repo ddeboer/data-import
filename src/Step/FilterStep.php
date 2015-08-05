@@ -41,7 +41,7 @@ class FilterStep implements Step
         foreach (clone $this->filters as $filter) {
             if (false === call_user_func($filter, $item)) {
                 if($report !== null && $filter instanceof ReporterInterface && $filter->hasMessage()) {
-                    $report->addMessage(new ReportMessage($filter->getMessage()));
+                    $report->addMessage(new ReportMessage($filter->getMessage(),$filter->getSeverity()));
                 }
 
                 return false;
