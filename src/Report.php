@@ -14,6 +14,9 @@ class Report
     private $row;
     private $messages;
 
+    /**
+     * @param $row
+     */
     public function __construct($row)
     {
         $this->row = $row;

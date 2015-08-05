@@ -64,6 +64,7 @@ class Result
      * @param \DateTime         $endTime
      * @param integer           $totalCount
      * @param \SplObjectStorage $exceptions
+     * @param \SplObjectStorage $reports
      */
     public function __construct($name, \DateTime $startTime, \DateTime $endTime, $totalCount, \SplObjectStorage $exceptions, \SplObjectStorage $reports = null)
     {
@@ -157,5 +158,4 @@ class Result
     {
         return $this->reports;
     }
-
 }
