@@ -149,8 +149,6 @@ class StepAggregator implements Workflow, LoggerAwareInterface
                 foreach ($this->writers as $writer) {
                     $writer->writeItem($item);
                 }
-
-                $reports->attach($report,$index);
             } catch(Exception $e) {
                 if (!$this->skipItemOnFailure) {
                     throw $e;
@@ -160,6 +158,8 @@ class StepAggregator implements Workflow, LoggerAwareInterface
                 $this->logger->error($e->getMessage());
             }
 
+            $reports->attach($report,$index);
+
             $count++;
         }
 
@@ -167,7 +167,7 @@ class StepAggregator implements Workflow, LoggerAwareInterface
             $writer->finish();
         }
 
-        return new Result($this->name, $startTime, new \DateTime, $count, $exceptions);
+        return new Result($this->name, $startTime, new \DateTime, $count, $exceptions, $reports);
     }
 
     /**
