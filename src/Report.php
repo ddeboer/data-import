@@ -11,7 +11,14 @@ namespace Ddeboer\DataImport;
 
 class Report
 {
+    /**
+     * @var integer $row
+     */
     private $row;
+
+    /**
+     * @var array $messages
+     */
     private $messages;
 
     /**
@@ -20,6 +27,7 @@ class Report
     public function __construct($row)
     {
         $this->row = $row;
+        $this->messages = array();
     }
 
     /**
@@ -63,7 +71,7 @@ class Report
      * @param mixed $messages
      * @return Report
      */
-    public function setMessages($messages)
+    public function setMessages(array $messages)
     {
         $this->messages = $messages;
         return $this;
@@ -77,3 +85,4 @@ class Report
         $this->messages[] = $message;
     }
 }
+
