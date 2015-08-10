@@ -3,6 +3,7 @@
 namespace Ddeboer\DataImport\Tests\Writer;
 
 use Ddeboer\DataImport\Writer\PdoWriter;
+use PhpSpec\Exception\Exception;
 
 class PdoWriterTest extends \PHPUnit_Framework_TestCase
 {
@@ -46,6 +47,27 @@ class PdoWriterTest extends \PHPUnit_Framework_TestCase
         $stmnt = $this->pdo->query('SELECT * FROM `example`');
         $this->assertEquals(
             array(array('a'=>'foo', 'b'=>'bar'), array('a'=>'cat', 'b'=>'dog'), array('a'=>'ac', 'b'=>'dc')),
+            $stmnt->fetchAll(\PDO::FETCH_ASSOC),
+            'database does not contain all expected rows'
+        );
+    }
+
+    /**
+     *
+     */
+    public function testValidWriteToReservedNameTable()
+    {
+        $this->pdo->exec('DROP TABLE IF EXISTS `TABLE`');
+        $this->pdo->exec('CREATE TABLE `TABLE` (a TEXT, b TEXT)');
+
+        $writer = new PdoWriter($this->pdo, 'TABLE');
+        $writer->prepare();
+        $writer->writeItem(array('a' => 'foo', 'b' => 'bar'));
+        $writer->finish();
+
+        $stmnt = $this->pdo->query('SELECT * FROM `TABLE`');
+        $this->assertEquals(
+            array(array('a'=>'foo', 'b'=>'bar')),
             $stmnt->fetchAll(\PDO::FETCH_ASSOC),
             'database does not contain all expected rows'
         );
