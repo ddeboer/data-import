@@ -286,8 +286,8 @@ class DoctrineWriter implements Writer, FlushableWriter
                     $lookupConditions[$fieldName] = $item[$fieldName];
                 }
 
-                if ($this->entityRepositoryMethod && method_exists($this->entityRepository, $this->entityRepositoryMethod)) {
-                    $entity = call_user_func([$this->entityRepository, $this->entityRepositoryMethod], $lookupConditions);
+                if ($this->entityRepositoryMethod) {
+                    $entity = call_user_func($this->entityRepositoryMethod, $lookupConditions);
                 } else {
                     $entity = $this->entityRepository->findOneBy(
                         $lookupConditions
@@ -320,7 +320,11 @@ class DoctrineWriter implements Writer, FlushableWriter
      */
     public function setEntityRepositoryMethod($entityRepositoryMethod)
     {
-        $this->entityRepositoryMethod = $entityRepositoryMethod;
+        if (!method_exists($this->entityRepository, $entityRepositoryMethod)) {
+            throw new \InvalidArgumentException(sprintf('Repository method %s does not exist in reposistory %s',$entityRepositoryMethod,$this->entityRepository));
+        }
+
+        $this->entityRepositoryMethod = [$this->entityRepository,$entityRepositoryMethod];
         return $this;
     }
 }
