@@ -3,7 +3,6 @@
 namespace Ddeboer\DataImport\Tests\Writer;
 
 use Ddeboer\DataImport\Writer\PdoWriter;
-use PhpSpec\Exception\Exception;
 
 class PdoWriterTest extends \PHPUnit_Framework_TestCase
 {
