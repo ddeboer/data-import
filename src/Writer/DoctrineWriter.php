@@ -60,6 +60,13 @@ class DoctrineWriter implements Writer, FlushableWriter
     protected $lookupFields = array();
 
     /**
+     * Whether to clear the entity manager
+     *
+     * @var boolean
+     */
+    protected $clearOnFlush = true;
+
+    /**
      * @param EntityManagerInterface $entityManager
      * @param string                 $entityName
      * @param string|array           $index Field or fields to find current entities by
@@ -301,6 +308,17 @@ class DoctrineWriter implements Writer, FlushableWriter
     public function flush()
     {
         $this->entityManager->flush();
-        $this->entityManager->clear($this->entityName);
+
+        if($this->clearOnFlush) {
+            $this->entityManager->clear($this->entityName);
+        }
+    }
+
+    /**
+     * @param boolean $clearOnFlush
+     */
+    public function setClearOnFlush($clearOnFlush)
+    {
+        $this->clearOnFlush = $clearOnFlush;
     }
 }
