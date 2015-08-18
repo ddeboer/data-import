@@ -84,5 +84,13 @@ class Report
     {
         $this->messages[] = $message;
     }
+
+    /**
+     * @return boolean
+     */
+    public function hasMessages()
+    {
+        return (!empty($this->messages));
+    }
 }
 
