@@ -321,7 +321,7 @@ class DoctrineWriter implements Writer, FlushableWriter
     public function setEntityRepositoryMethod($entityRepositoryMethod)
     {
         if (!method_exists($this->entityRepository, $entityRepositoryMethod)) {
-            throw new \InvalidArgumentException(sprintf('Repository method %s does not exist in reposistory %s',$entityRepositoryMethod,$this->entityRepository));
+            throw new \InvalidArgumentException(sprintf('Repository method %s does not exist in reposistory %s',$entityRepositoryMethod,get_class($this->entityRepository)));
         }
 
         $this->entityRepositoryMethod = [$this->entityRepository,$entityRepositoryMethod];
