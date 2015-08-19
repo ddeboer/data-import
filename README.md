@@ -94,7 +94,7 @@ Usage
 
 Broadly speaking, you can use this library in two ways:
 
-* organize your import process around a [workflow](#workflow), or
+* organize your import process around a [workflow](#the-workflow), or
 * use one or more of the components on their own, such as [readers](#readers),
   [writers](#writers) or [converters](#converters).
 
@@ -424,7 +424,7 @@ array(
 #### Create a reader
 
 You can create your own data reader by implementing the
-[ReaderInterface](/src/Ddeboer/DataImport/Reader/ReaderInterface.php).
+[Reader Interface](/src/Reader.php).
 
 ### Writers
 
