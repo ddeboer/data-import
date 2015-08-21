@@ -49,6 +49,11 @@ class Result
     protected $totalProcessedCount = 0;
 
     /**
+     * @var integer
+     */
+    protected $skippedCount = 0;
+
+    /**
      * @var \SplObjectStorage
      */
     protected $exceptions;
@@ -133,6 +138,14 @@ class Result
     public function getTotalProcessedCount()
     {
         return $this->totalProcessedCount;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSkippedCount()
+    {
+        return $this->skippedCount;
     }
 
     /**
