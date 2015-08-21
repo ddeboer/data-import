@@ -57,18 +57,25 @@ class Result
      * @param string            $name
      * @param \DateTime         $startTime
      * @param \DateTime         $endTime
-     * @param integer           $totalCount
+     * @param integer           $processed
+     * @param integer           $imported
+     * @param integer           $skipped
+     * @param integer           $errors
      * @param \SplObjectStorage $exceptions
      */
-    public function __construct($name, \DateTime $startTime, \DateTime $endTime, $totalCount, \SplObjectStorage $exceptions)
+    public function __construct($name, \DateTime $startTime, \DateTime $endTime, $processed, $imported, $skipped, $errors, \SplObjectStorage $exceptions)
     {
         $this->name                = $name;
         $this->startTime           = $startTime;
         $this->endTime             = $endTime;
         $this->elapsed             = $startTime->diff($endTime);
-        $this->totalProcessedCount = $totalCount;
-        $this->errorCount          = count($exceptions);
-        $this->successCount        = $totalCount - $this->errorCount;
+
+        //Should expect $processed = $errors+$imported+$skipped
+        $this->totalProcessedCount = $processed;
+        $this->errorCount          = $errors;
+        $this->successCount        = $imported;
+        $this->skippedCount        = $skipped;
+
         $this->exceptions          = $exceptions;
     }
 

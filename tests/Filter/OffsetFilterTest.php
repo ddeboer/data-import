@@ -48,4 +48,22 @@ class OffsetFilterTest extends \PHPUnit_Framework_TestCase
         $resultItems = $this->applyFilter(new OffsetFilter(1, 1), $items);
         $this->assertEquals($resultItems, array('second'));
     }
+
+    /**
+     * @expectedException \Ddeboer\DataImport\Exception\StopException
+     */
+    public function testMaxCountStop()
+    {
+        $items = array('first','second','third','fourth');
+        $this->applyFilter(new OffsetFilter(0, 2, true), $items);
+    }
+
+    /**
+     * @expectedException \Ddeboer\DataImport\Exception\StopException
+     */
+    public function testOffsetWithMaxCountStop()
+    {
+        $items = array('first','second','third','fourth');
+        $this->applyFilter(new OffsetFilter(1, 1, true), $items);
+    }
 }
