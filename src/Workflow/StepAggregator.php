@@ -153,6 +153,7 @@ class StepAggregator implements Workflow, LoggerAwareInterface
                     $writer->writeItem($item);
                 }
             } catch(Exception\StopException $e) {
+                $processed--;
                 break;
             } catch(Exception $e) {
                 if (!$this->skipItemOnFailure) {
