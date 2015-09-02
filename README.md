@@ -316,7 +316,7 @@ $reader = new DoctrineReader($entityManager, 'Your\Namespace\Entity\User');
 
 #### ExcelReader
 
-Acts as an adapter for the [PHPExcel library](http://phpexcel.codeplex.com/). Make sure
+Acts as an adapter for the [PHPExcel library](https://github.com/PHPOffice/PHPExcel). Make sure
 to include that library in your project:
 
 ```bash
