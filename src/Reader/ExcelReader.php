@@ -15,9 +15,19 @@ namespace Ddeboer\DataImport\Reader;
 class ExcelReader implements CountableReader, \SeekableIterator
 {
     /**
-     * @var array
+     * @var \PHPExcel_Worksheet
      */
     protected $worksheet;
+
+    /**
+     * @var string
+     */
+    protected $maxColumn;
+
+    /**
+     * @var int
+     */
+    protected $maxRow;
 
     /**
      * @var integer
@@ -27,7 +37,7 @@ class ExcelReader implements CountableReader, \SeekableIterator
     /**
      * @var integer
      */
-    protected $pointer = 0;
+    protected $pointer = 1;
 
     /**
      * @var array
@@ -58,7 +68,9 @@ class ExcelReader implements CountableReader, \SeekableIterator
             $excel->setActiveSheetIndex($activeSheet);
         }
 
-        $this->worksheet = $excel->getActiveSheet()->toArray();
+        $this->worksheet = $excel->getActiveSheet();
+        $this->maxColumn = $this->worksheet->getHighestColumn();
+        $this->maxRow    = $this->worksheet->getHighestRow();
 
         if (null !== $headerRowNumber) {
             $this->setHeaderRowNumber($headerRowNumber);
@@ -74,7 +86,7 @@ class ExcelReader implements CountableReader, \SeekableIterator
      */
     public function current()
     {
-        $row = $this->worksheet[$this->pointer];
+        $row = current($this->worksheet->rangeToArray(sprintf('A%d:%s%d',$this->pointer,$this->maxColumn,$this->pointer)));
 
         // If the CSV has column headers, use them to construct an associative
         // array for the columns in this line
@@ -120,7 +132,7 @@ class ExcelReader implements CountableReader, \SeekableIterator
     public function rewind()
     {
         if (null === $this->headerRowNumber) {
-            $this->pointer = 0;
+            $this->pointer = 1;
         } else {
             $this->pointer = $this->headerRowNumber + 1;
         }
@@ -133,8 +145,11 @@ class ExcelReader implements CountableReader, \SeekableIterator
      */
     public function setHeaderRowNumber($rowNumber)
     {
+        $rowNumber++;
         $this->headerRowNumber = $rowNumber;
-        $this->columnHeaders = $this->worksheet[$rowNumber];
+        $res = $this->worksheet->rangeToArray(sprintf('A%d:%s%d',$rowNumber,$this->maxColumn,$rowNumber));
+        $this->columnHeaders = current($res);
+        $this->pointer = $rowNumber;
     }
 
     /**
@@ -150,7 +165,7 @@ class ExcelReader implements CountableReader, \SeekableIterator
      */
     public function valid()
     {
-         return isset($this->worksheet[$this->pointer]);
+        return ($this->pointer < $this->maxRow);
     }
 
     /**
@@ -174,12 +189,12 @@ class ExcelReader implements CountableReader, \SeekableIterator
      */
     public function count()
     {
-        $count = count($this->worksheet);
+        $maxRow = $this->maxRow;
         if (null !== $this->headerRowNumber) {
-            $count--;
+            $maxRow -= $this->headerRowNumber;
         }
 
-        return $count;
+        return $maxRow;
     }
 
     /**
