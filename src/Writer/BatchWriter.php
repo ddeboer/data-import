@@ -50,8 +50,11 @@ class BatchWriter implements Writer
             $this->delegate->writeItem($item);
         }
 
+        $this->queue = new \SplQueue();
+
         if ($this->delegate instanceof FlushableWriter) {
             $this->delegate->flush();
+            $this->delegate->prepare();
         }
     }
 }
