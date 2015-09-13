@@ -26,6 +26,7 @@ class BatchWriter implements Writer
         $this->delegate->prepare();
 
         $this->queue = new \SplQueue();
+        $this->queue->setIteratorMode(\SplDoublyLinkedList::IT_MODE_DELETE);
     }
 
     public function writeItem(array $item)
