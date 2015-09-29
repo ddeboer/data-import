@@ -943,9 +943,9 @@ $workflow->addValueConverter('my_date_field', $converter);
 ##### Convert a date string into a differently formatted date string.
 
 ```php
-use Ddeboer\DataImport\ValueConverter\StringToDateTimeValueConverter;
+use Ddeboer\DataImport\ValueConverter\DateTimeValueConverter;
 
-$converter = new StringToDateTimeValueConverter('d/m/Y H:i:s', 'd-M-Y');
+$converter = new DateTimeValueConverter('d/m/Y H:i:s', 'd-M-Y');
 $workflow->addValueConverter('my_date_field', $converter);
 ```
 
