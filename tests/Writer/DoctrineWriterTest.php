@@ -22,7 +22,9 @@ class DoctrineWriterTest extends \PHPUnit_Framework_TestCase
             'secondProperty'  => 'some other value',
             'firstAssociation'=> $association
         );
-        $writer->writeItem($item);
+        $entity = $writer->writeItem($item);
+
+        $this->assertInstanceOf('Ddeboer\DataImport\Tests\Fixtures\Entity\TestEntity', $entity);
     }
 
     protected function getEntityManager()

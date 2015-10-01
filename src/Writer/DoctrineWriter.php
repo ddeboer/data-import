@@ -170,7 +170,9 @@ class DoctrineWriter implements Writer, FlushableWriter
     }
 
     /**
-     * {@inheritdoc}
+     * @param array $item
+     *
+     * @return object
      */
     public function writeItem(array $item)
     {
@@ -180,6 +182,8 @@ class DoctrineWriter implements Writer, FlushableWriter
         $this->updateEntity($item, $entity);
 
         $this->entityManager->persist($entity);
+
+        return $entity;
     }
 
     /**
