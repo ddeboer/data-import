@@ -5,6 +5,8 @@ namespace Ddeboer\DataImport\Step;
 use Ddeboer\DataImport\Report;
 use Ddeboer\DataImport\Step;
 use Ddeboer\DataImport\Exception\UnexpectedTypeException;
+use Ddeboer\DataImport\ReporterInterface;
+use Ddeboer\DataImport\ReportMessage;
 
 /**
  * @author Markus Bachmann <markus.bachmann@bachi.biz>

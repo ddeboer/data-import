@@ -4,6 +4,8 @@ namespace Ddeboer\DataImport\Step;
 
 use Ddeboer\DataImport\Report;
 use Ddeboer\DataImport\Step;
+use Ddeboer\DataImport\ReporterInterface;
+use Ddeboer\DataImport\ReportMessage;
 
 /**
  * @author Markus Bachmann <markus.bachmann@bachi.biz>
@@ -51,3 +53,4 @@ class FilterStep implements Step
         return true;
     }
 }
+
