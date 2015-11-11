@@ -138,6 +138,9 @@ class StepAggregator implements Workflow, LoggerAwareInterface
 
                 foreach (clone $this->steps as $step) {
                     if (false === $step->process($item, $report)) {
+                        if ($report->hasMessages()) {
+                            $reports->attach($report,$index);
+                        }
                         continue 2;
                     }
                 }
