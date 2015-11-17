@@ -31,6 +31,7 @@
         "doctrine/orm": "~2.4",
         "symfony/console": "~2.5.0",
         "symfony/validator": "~2.3.0",
+        "phpunit/phpunit": "~4.8",
         "phpspec/phpspec": "~2.1",
         "henrikbjorn/phpspec-code-coverage" : "~1.0"
     },
