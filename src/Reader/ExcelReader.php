@@ -148,7 +148,7 @@ class ExcelReader implements CountableReader, \SeekableIterator
         $rowNumber++;
         $this->headerRowNumber = $rowNumber;
         $res = $this->worksheet->rangeToArray(sprintf('A%d:%s%d',$rowNumber,$this->maxColumn,$rowNumber));
-        $this->columnHeaders = current($res);
+        $this->setColumnHeaders(current($res));
         $this->pointer = $rowNumber;
     }
 
