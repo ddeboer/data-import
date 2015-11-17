@@ -2,13 +2,21 @@
 
 namespace Ddeboer\DataImport\Tests\Filter;
 
+use PHPUnit_Framework_MockObject_MockObject as Mock;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Constraints;
+use Symfony\Component\Validator\ValidatorInterface;
 use Ddeboer\DataImport\Filter\ValidatorFilter;
 use Ddeboer\DataImport\Exception\ValidationException;
 
 class ValidationFilterTest extends \PHPUnit_Framework_TestCase
 {
+    /** @var ValidatorFilter */
+    private $filter;
+
+    /** @var Mock|ValidatorInterface */
+    private $validator;
+
     protected function setUp()
     {
         $this->validator = $this->getMock('Symfony\\Component\\Validator\\ValidatorInterface');
