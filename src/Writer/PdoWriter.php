@@ -68,7 +68,7 @@ class PdoWriter implements Writer, FlushableWriter
         if (null === $this->statement) {
             try {
                 $this->statement = $this->pdo->prepare(sprintf(
-                    'INSERT INTO %s (%s) VALUES (%s)',
+                    'INSERT INTO `%s` (%s) VALUES (%s)',
                     $this->tableName,
                     implode(',', array_keys($item)),
                     substr(str_repeat('?,', count($item)), 0, -1)
