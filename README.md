@@ -681,7 +681,7 @@ $writer->addWriter('second writer', new MyStreamWriter());
 #### Create a writer
 
 Build your own writer by implementing the
-[WriterInterface](/src/Ddeboer/DataImport/Writer/WriterInterface.php).
+[Writer Interface](/src/Writer.php).
 
 ### Filters
 
