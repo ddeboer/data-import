@@ -67,6 +67,10 @@ class ExcelWriter implements Writer
             $this->excel = $reader->load($this->filename);
         } else {
             $this->excel = new PHPExcel();
+            if(null !== $this->sheet && !$this->excel->sheetNameExists($this->sheet))
+            {
+                $this->excel->removeSheetByIndex(0);
+            }
         }
 
         if (null !== $this->sheet) {
