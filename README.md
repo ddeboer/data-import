@@ -328,7 +328,7 @@ Then use the reader to open an Excel file:
 ```php
 use Ddeboer\DataImport\Reader\ExcelReader;
 
-$file = new \SplFileObject('path/to/ecxel_file.xls');
+$file = new \SplFileObject('path/to/excel_file.xls');
 $reader = new ExcelReader($file);
 ```
 
