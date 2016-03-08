@@ -23,12 +23,12 @@ class ValidatorStepTest extends \PHPUnit_Framework_TestCase
 
         $this->filter->add('title', $constraint = new Constraints\NotNull());
 
-        $constraintViolations = new ConstraintViolationList();
-        $constraintViolations->add($this->buildConstraintViolation());
+        $list = new ConstraintViolationList();
+        $list->add($this->buildConstraintViolation());
 
         $this->validator->expects($this->once())
                         ->method('validate')
-                        ->willReturn($constraintViolations);
+                        ->willReturn($list);
 
         $this->assertFalse($this->filter->process($data));
 
@@ -45,12 +45,12 @@ class ValidatorStepTest extends \PHPUnit_Framework_TestCase
         $this->filter->add('title', $constraint = new Constraints\NotNull());
         $this->filter->throwExceptions();
 
-        $constraintViolations = new ConstraintViolationList();
-        $constraintViolations->add($this->buildConstraintViolation());
+        $list = new ConstraintViolationList();
+        $list->add($this->buildConstraintViolation());
 
         $this->validator->expects($this->once())
                         ->method('validate')
-                        ->willReturn($constraintViolations);
+                        ->willReturn($list);
 
         $this->assertFalse($this->filter->process($data));
     }
