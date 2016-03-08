@@ -2,10 +2,10 @@
 
 namespace Ddeboer\DataImport\Step;
 
-use Symfony\Component\Validator\ValidatorInterface;
+use Ddeboer\DataImport\Exception\ValidationException;
 use Symfony\Component\Validator\Constraints;
 use Symfony\Component\Validator\Constraint;
-use Ddeboer\DataImport\Exception\ValidationException;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @author Markus Bachmann <markus.bachmann@bachi.biz>

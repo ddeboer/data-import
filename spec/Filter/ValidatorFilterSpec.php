@@ -4,7 +4,7 @@ namespace spec\Ddeboer\DataImport\Filter;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintViolationList;
-use Symfony\Component\Validator\ValidatorInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
