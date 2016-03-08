@@ -101,7 +101,7 @@ class ValidatorFilter
         }
 
         $constraints = new Constraints\Collection($this->constraints);
-        $list = $this->validator->validateValue($item, $constraints);
+        $list = $this->validator->validate($item, $constraints);
         $currentLine = $this->line++;
 
         if (count($list) > 0) {

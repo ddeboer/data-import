@@ -27,7 +27,7 @@ class ValidatorStepTest extends \PHPUnit_Framework_TestCase
         $constraintViolations->add($this->buildConstraintViolation());
 
         $this->validator->expects($this->once())
-                        ->method('validateValue')
+                        ->method('validate')
                         ->willReturn($constraintViolations);
 
         $this->assertFalse($this->filter->process($data));
@@ -49,7 +49,7 @@ class ValidatorStepTest extends \PHPUnit_Framework_TestCase
         $constraintViolations->add($this->buildConstraintViolation());
 
         $this->validator->expects($this->once())
-                        ->method('validateValue')
+                        ->method('validate')
                         ->willReturn($constraintViolations);
 
         $this->assertFalse($this->filter->process($data));
