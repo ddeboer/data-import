@@ -6,13 +6,12 @@ use Ddeboer\DataImport\Step\ValidatorStep;
 use Symfony\Component\Validator\Constraints;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ValidatorStepTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        $this->validator = $this->getMock(ValidatorInterface::class);
+        $this->validator = $this->getMock('Symfony\Component\Validator\Validator\ValidatorInterface');
 
         $this->filter = new ValidatorStep($this->validator);
     }
@@ -62,7 +61,7 @@ class ValidatorStepTest extends \PHPUnit_Framework_TestCase
 
     private function buildConstraintViolation()
     {
-        return $this->getMockBuilder(ConstraintViolation::class)
+        return $this->getMockBuilder('Symfony\Component\Validator\ConstraintViolation')
                     ->disableOriginalConstructor()
                     ->getMock();
     }

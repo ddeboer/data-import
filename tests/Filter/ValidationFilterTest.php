@@ -6,13 +6,12 @@ use Ddeboer\DataImport\Filter\ValidatorFilter;
 use Ddeboer\DataImport\Exception\ValidationException;
 use Symfony\Component\Validator\Constraints;
 use Symfony\Component\Validator\ConstraintViolationList;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ValidationFilterTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        $this->validator = $this->getMock(ValidatorInterface::class);
+        $this->validator = $this->getMock('Symfony\Component\Validator\Validator\ValidatorInterface');
         $this->filter = new ValidatorFilter($this->validator);
     }
 
