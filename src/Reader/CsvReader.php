@@ -365,19 +365,24 @@ class CsvReader implements CountableReader, \SeekableIterator
      */
     protected function incrementHeaders(array $headers)
     {
-        $incrementedHeaders = [];
-        foreach (array_count_values($headers) as $header => $count) {
+        $incrementedHeaders = array();
+
+        // Get all headlines that are duplicate or more
+        foreach ( array_count_values ( $headers ) as $header => $count ) {
             if ($count > 1) {
-                $incrementedHeaders[] = $header;
-                for ($i = 1; $i < $count; $i++) {
-                    $incrementedHeaders[] = $header . $i;
-                }
-            } else {
-                $incrementedHeaders[] = $header;
+                $incrementedHeaders [$header] = 0;
             }
         }
 
-        return $incrementedHeaders;
+        // Replace the headers with the new header name but keep the position ($key) in the array
+        foreach ( $headers as $key => $headerName ) {
+            if (isset ( $incrementedHeaders [$headerName] )) {
+                $prefix = empty ( $headerName ) ? 'UNKNOWN' : '';
+                $headers [$key] = $prefix . $headerName . $incrementedHeaders [$headerName] ++;
+            }
+        }
+
+        return $headers;
     }
 
     /**
