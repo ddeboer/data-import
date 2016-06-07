@@ -365,7 +365,7 @@ class CsvReader implements CountableReader, \SeekableIterator
      */
     protected function incrementHeaders(array $headers)
     {
-        $incrementedHeaders = array();
+        $incrementedHeaders = [ ];
 
         // Get all headlines that are duplicate or more
         foreach ( array_count_values ( $headers ) as $header => $count ) {
@@ -375,10 +375,16 @@ class CsvReader implements CountableReader, \SeekableIterator
         }
 
         // Replace the headers with the new header name but keep the position ($key) in the array
-        foreach ( $headers as $key => $headerName ) {
-            if (isset ( $incrementedHeaders [$headerName] )) {
-                $prefix = empty ( $headerName ) ? 'UNKNOWN' : '';
-                $headers [$key] = $prefix . $headerName . $incrementedHeaders [$headerName] ++;
+        foreach ($headers as $key => $headerName) {
+            if (isset ($incrementedHeaders [$headerName])) {
+                $prefix = empty ($headerName) ? 'UNKNOWN' : '';
+                $nr     = $incrementedHeaders [$headerName]++;
+
+                // to stay compatible with old test
+                if ($nr == 0)
+                    $nr = '';
+
+                $headers [$key] = $prefix . $headerName . $nr;
             }
         }
 
