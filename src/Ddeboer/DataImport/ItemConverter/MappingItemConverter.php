@@ -81,7 +81,7 @@ class MappingItemConverter implements ItemConverterInterface
         }
 
         // skip equal fields
-        if ($from == $to) {
+        if ($from === $to) {
             return $item;
         }
 
