@@ -2,10 +2,10 @@
 
 namespace Ddeboer\DataImport\Step;
 
-use Symfony\Component\Validator\ValidatorInterface;
+use Ddeboer\DataImport\Exception\ValidationException;
 use Symfony\Component\Validator\Constraints;
 use Symfony\Component\Validator\Constraint;
-use Ddeboer\DataImport\Exception\ValidationException;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @author Markus Bachmann <markus.bachmann@bachi.biz>
@@ -84,7 +84,7 @@ class ValidatorStep implements PriorityStep
     public function process(&$item)
     {
         $constraints = new Constraints\Collection($this->constraints);
-        $list = $this->validator->validateValue($item, $constraints);
+        $list = $this->validator->validate($item, $constraints);
 
         if (count($list) > 0) {
             $this->violations[$this->line] = $list;

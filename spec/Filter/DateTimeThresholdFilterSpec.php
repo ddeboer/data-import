@@ -33,7 +33,7 @@ class DateTimeThresholdFilterSpec extends ObjectBehavior
             'updated_at' => '1970-01-01'
         ];
 
-        $valueConverter->__invoke($item)->willReturn(new \DateTime('1970-01-01'));
+        $valueConverter->__invoke($item['updated_at'])->willReturn(new \DateTime('1970-01-01'));
         $this->beConstructedWith($valueConverter, new \DateTime());
 
         $this->__invoke($item)->shouldReturn(false);
