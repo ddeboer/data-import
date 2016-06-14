@@ -3,6 +3,7 @@
 namespace Ddeboer\DataImport\Exception;
 
 use Ddeboer\DataImport\Exception;
+use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 /**
@@ -28,6 +29,8 @@ class ValidationException extends \Exception implements Exception
     {
         $this->violations = $list;
         $this->lineNumber = $line;
+
+        $this->message = $this->createMessage($list, $line);
     }
 
     /**
@@ -44,5 +47,21 @@ class ValidationException extends \Exception implements Exception
     public function getLineNumber()
     {
         return $this->lineNumber;
+    }
+
+    /**
+     * @param ConstraintViolationListInterface|ConstraintViolationInterface[] $list
+     * @param integer $line
+     *
+     * @return string
+     */
+    private function createMessage(ConstraintViolationListInterface $list, $line)
+    {
+        $messages = [];
+        foreach ($list as $violation) {
+            $messages[] = $violation->getMessage();
+        }
+
+        return sprintf('Line %d: %s', $line, implode(', ', $messages));
     }
 }
