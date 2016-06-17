@@ -5,6 +5,7 @@ namespace Ddeboer\DataImport\Workflow;
 use Ddeboer\DataImport\Exception;
 use Ddeboer\DataImport\Exception\UnexpectedTypeException;
 use Ddeboer\DataImport\Reader;
+use Ddeboer\DataImport\Report;
 use Ddeboer\DataImport\Result;
 use Ddeboer\DataImport\Step;
 use Ddeboer\DataImport\Step\PriorityStep;
@@ -109,6 +110,7 @@ class StepAggregator implements Workflow, LoggerAwareInterface
     {
         $count      = 0;
         $exceptions = new \SplObjectStorage();
+        $reports    = new \SplObjectStorage();
         $startTime  = new \DateTime;
 
         foreach ($this->writers as $writer) {
@@ -132,8 +134,13 @@ class StepAggregator implements Workflow, LoggerAwareInterface
             }
 
             try {
+                $report = new Report($index);
+
                 foreach (clone $this->steps as $step) {
-                    if (false === $step->process($item)) {
+                    if (false === $step->process($item, $report)) {
+                        if ($report->hasMessages()) {
+                            $reports->attach($report,$index);
+                        }
                         continue 2;
                     }
                 }
@@ -152,6 +159,15 @@ class StepAggregator implements Workflow, LoggerAwareInterface
 
                 $exceptions->attach($e, $index);
                 $this->logger->error($e->getMessage());
+
+                if ($report->hasMessages()) {
+                    $reports->attach($report,$index);
+                }
+                continue;
+            }
+
+            if ($report->hasMessages()) {
+                $reports->attach($report,$index);
             }
 
             $count++;
@@ -161,7 +177,7 @@ class StepAggregator implements Workflow, LoggerAwareInterface
             $writer->finish();
         }
 
-        return new Result($this->name, $startTime, new \DateTime, $count, $exceptions);
+        return new Result($this->name, $startTime, new \DateTime, $count, $exceptions, $reports);
     }
 
     /**

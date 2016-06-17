@@ -3,6 +3,7 @@
 namespace Ddeboer\DataImport\Step;
 
 use Ddeboer\DataImport\Exception\MappingException;
+use Ddeboer\DataImport\Report;
 use Ddeboer\DataImport\Step;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\Exception\UnexpectedTypeException;
@@ -51,7 +52,7 @@ class MappingStep implements Step
      *
      * @throws MappingException
      */
-    public function process(&$item)
+    public function process(&$item, Report $report = null)
     {
         try {
             foreach ($this->mappings as $from => $to) {

@@ -54,13 +54,19 @@ class Result
     protected $exceptions;
 
     /**
+     * @var \SplObjectStorage
+     */
+    protected $reports;
+
+    /**
      * @param string            $name
      * @param \DateTime         $startTime
      * @param \DateTime         $endTime
      * @param integer           $totalCount
      * @param \SplObjectStorage $exceptions
+     * @param \SplObjectStorage $reports
      */
-    public function __construct($name, \DateTime $startTime, \DateTime $endTime, $totalCount, \SplObjectStorage $exceptions)
+    public function __construct($name, \DateTime $startTime, \DateTime $endTime, $totalCount, \SplObjectStorage $exceptions, \SplObjectStorage $reports = null)
     {
         $this->name                = $name;
         $this->startTime           = $startTime;
@@ -70,6 +76,7 @@ class Result
         $this->errorCount          = count($exceptions);
         $this->successCount        = $totalCount - $this->errorCount;
         $this->exceptions          = $exceptions;
+        $this->reports             = $reports;
     }
 
     /**
@@ -142,5 +149,13 @@ class Result
     public function getExceptions()
     {
         return $this->exceptions;
+    }
+
+    /**
+     * @return \SplObjectStorage
+     */
+    public function getReports()
+    {
+        return $this->reports;
     }
 }
