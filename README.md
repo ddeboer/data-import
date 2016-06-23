@@ -915,9 +915,9 @@ $converter = new CallbackItemConverter(function ($item) use ($translator) {
 
 Value converters are used to convert specific fields (e.g., columns in database).
 
-#### StringToDateTimeValueConverter
+#### DateTimeValueConverter
 
-There are two uses for the StringToDateTimeValueConverter:
+There are two uses for the DateTimeValueConverter:
 
 1. Convert a date representation in a format you specify into a `DateTime` object.
 2. Convert a date representation in a format you specify into a different format.
@@ -925,18 +925,18 @@ There are two uses for the StringToDateTimeValueConverter:
 ##### Convert a date into a `DateTime` object.
 
 ```php
-use Ddeboer\DataImport\ValueConverter\StringDateTimeValueConverter;
+use Ddeboer\DataImport\ValueConverter\DateTimeValueConverter;
 
-$converter = new StringToDateTimeValueConverter('d/m/Y H:i:s');
+$converter = new DateTimeValueConverter('d/m/Y H:i:s');
 $workflow->addValueConverter('my_date_field', $converter);
 ```
 
 If your date string is in a format specified at: http://www.php.net/manual/en/datetime.formats.date.php then you can omit the format parameter.
 
 ```php
-use Ddeboer\DataImport\ValueConverter\StringToDateTimeValueConverter;
+use Ddeboer\DataImport\ValueConverter\DateTimeValueConverter;
 
-$converter = new StringToDateTimeValueConverter();
+$converter = new DateTimeValueConverter();
 $workflow->addValueConverter('my_date_field', $converter);
 ```
 
@@ -952,9 +952,9 @@ $workflow->addValueConverter('my_date_field', $converter);
 If your date is in a format specified at: http://www.php.net/manual/en/datetime.formats.date.php you can pass `null` as the first argument.
 
 ```php
-use Ddeboer\DataImport\ValueConverter\StringToDateTimeValueConverter;
+use Ddeboer\DataImport\ValueConverter\DateTimeValueConverter;
 
-$converter = new StringToDateTimeValueConverter(null, 'd-M-Y');
+$converter = new DateTimeValueConverter(null, 'd-M-Y');
 $workflow->addValueConverter('my_date_field', $converter);
 ```
 
