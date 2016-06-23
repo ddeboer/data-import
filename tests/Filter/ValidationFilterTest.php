@@ -2,16 +2,16 @@
 
 namespace Ddeboer\DataImport\Tests\Filter;
 
-use Symfony\Component\Validator\ConstraintViolationList;
-use Symfony\Component\Validator\Constraints;
-use Ddeboer\DataImport\Filter\ValidatorFilter;
 use Ddeboer\DataImport\Exception\ValidationException;
+use Ddeboer\DataImport\Filter\ValidatorFilter;
+use Symfony\Component\Validator\Constraints;
+use Symfony\Component\Validator\ConstraintViolationList;
 
 class ValidationFilterTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        $this->validator = $this->getMock('Symfony\\Component\\Validator\\ValidatorInterface');
+        $this->validator = $this->getMock('Symfony\\Component\\Validator\\Validator\\ValidatorInterface');
         $this->filter = new ValidatorFilter($this->validator);
     }
 
@@ -22,8 +22,8 @@ class ValidationFilterTest extends \PHPUnit_Framework_TestCase
         $list = new ConstraintViolationList();
 
         $this->validator->expects($this->once())
-            ->method('validateValue')
-            ->will($this->returnValue($list));
+                        ->method('validate')
+                        ->willReturn($list);
 
         $this->assertTrue(call_user_func($this->filter, $item));
     }
@@ -36,8 +36,8 @@ class ValidationFilterTest extends \PHPUnit_Framework_TestCase
         $list = new ConstraintViolationList(array($violation));
 
         $this->validator->expects($this->once())
-            ->method('validateValue')
-            ->will($this->returnValue($list));
+                        ->method('validate')
+                        ->willReturn($list);
 
         $this->assertFalse(call_user_func($this->filter, $item));
 
@@ -54,8 +54,8 @@ class ValidationFilterTest extends \PHPUnit_Framework_TestCase
         $list = new ConstraintViolationList(array($violation));
 
         $this->validator->expects($this->once())
-            ->method('validateValue')
-            ->will($this->returnValue($list));
+                        ->method('validate')
+                        ->willReturn($list);
 
         try {
             call_user_func($this->filter, $item);
@@ -72,7 +72,7 @@ class ValidationFilterTest extends \PHPUnit_Framework_TestCase
 
         $item = array('foo' => true, 'bar' => true);
 
-        $this->filter->add('foo', new Constraints\True());
+        $this->filter->add('foo', new Constraints\IsTrue());
         $this->assertTrue(call_user_func($this->filter, $item));
     }
 
@@ -86,8 +86,8 @@ class ValidationFilterTest extends \PHPUnit_Framework_TestCase
         $list = new ConstraintViolationList(array($violation));
 
         $this->validator->expects($this->exactly(2))
-            ->method('validateValue')
-            ->will($this->returnValue($list));
+                        ->method('validate')
+                        ->willReturn($list);
 
         try {
             $this->assertTrue(call_user_func($this->filter, $item));
