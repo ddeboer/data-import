@@ -54,10 +54,10 @@ class ValidatorStep implements PriorityStep
     public function add($field, Constraint $constraint)
     {
         if (!isset($this->constraints[$field])) {
-            $this->constraints[$field] = [];
+            $this->constraints['fields'][$field] = [];
         }
 
-        $this->constraints[$field][] = $constraint;
+        $this->constraints['fields'][$field][] = $constraint;
 
         return $this;
     }
@@ -76,6 +76,14 @@ class ValidatorStep implements PriorityStep
     public function getViolations()
     {
         return $this->violations;
+    }
+
+    /**
+     * Use this option to allow extra fields without specific validation constraint set.
+     */
+    public function allowExtraFields()
+    {
+        $this->constraints['allowExtraFields'] = true;
     }
 
     /**
