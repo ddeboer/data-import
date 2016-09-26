@@ -1,6 +1,6 @@
 {
-    "name": "ddeboer/data-import",
-    "description": "Import data from, and export data to, a range of file formats and media",
+    "name": "ivbre/data-import",
+    "description": "Import data from, and export data to, a range of file formats and media - fork from ddeboer",
     "keywords": [ "data", "import", "export", "csv", "excel", "doctrine" ],
     "license": "MIT",
     "authors": [
