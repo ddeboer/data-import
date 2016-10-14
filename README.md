@@ -50,7 +50,7 @@ Documentation
     - [CallbackFilter](#callbackfilter)
     - [OffsetFilter](#offsetfilter)
     - [DateTimeThresholdFilter](#datetimethresholdfilter)
-    - [ValidatorFilter](#offsetfilter)
+    - [ValidatorFilter](#validatorfilter)
   * [Converters](#converters)
     - [Item converters](#item-converters)
       - [MappingItemConverter](#mappingitemconverter)
