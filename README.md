@@ -120,13 +120,13 @@ Errors will be logged if you have passed a logger to the workflow constructor.
 Schematically:
 
 ```php
-use Ddeboer\DataImport\Workflow;
+use Ddeboer\DataImport\StepAggregator;
 use Ddeboer\DataImport\Reader;
 use Ddeboer\DataImport\Writer;
 use Ddeboer\DataImport\Filter;
 
 $reader = new Reader\...;
-$workflow = new Workflow($reader, $logger);
+$workflow = new StepAggregator($reader, $logger);
 $result = $workflow
     ->addWriter(new Writer\...())
     ->addWriter(new Writer\...())
@@ -139,13 +139,13 @@ $result = $workflow
 
 The Workflow Result object exposes various methods which you can use to decide what to do after an import.
 The result will be an instance of `Ddeboer\DataImport\Result`. It is automatically created and populated by the
-`Workflow`. It will be returned to you after calling the `process()` method on the `Workflow`
+`StepAggregator`. It will be returned to you after calling the `process()` method on the `StepAggregator`
 
 The `Result` provides the following methods:
 
 ```php
 //the name of the import - which is an optional 3rd parameter to
-//the Workflow class. Returns null by default.
+//the StepAggregator class. Returns null by default.
 public function getName();
 
 //DateTime instance created at the start of the import.
@@ -190,7 +190,7 @@ includes a handful of readers. Additionally, you can easily
 You can use readers on their own, or construct a workflow from them:
 
 ```php
-$workflow = new Workflow($reader);
+$workflow = new StepAggregator($reader);
 ```
 #### ArrayReader
 
@@ -573,7 +573,7 @@ $table = new Table($output);
 // Make some manipulations, e.g. set table style
 $table->setStyle('compact');
 
-$workflow = new Workflow($reader);
+$workflow = new StepAggregator($reader);
 $workflow->addWriter(new ConsoleTableWriter($output, $table));
 
 ```
@@ -1131,7 +1131,7 @@ class Event
 Then you can import the CSV and save it as your entity in the following way.
 
 ```php
-use Ddeboer\DataImport\Workflow;
+use Ddeboer\DataImport\StepAggregator;
 use Ddeboer\DataImport\Reader\CsvReader;
 use Ddeboer\DataImport\Writer\DoctrineWriter;
 use Ddeboer\DataImport\ValueConverter\StringToDateTimeValueConverter;
@@ -1144,7 +1144,7 @@ $csvReader = new CsvReader($file);
 $csvReader->setHeaderRowNumber(0);
 
 // Create the workflow from the reader
-$workflow = new Workflow($csvReader);
+$workflow = new StepAggregator($csvReader);
 
 // Create a writer: you need Doctrine’s EntityManager.
 $doctrineWriter = new DoctrineWriter($entityManager, 'MyApp:Event');
@@ -1166,7 +1166,7 @@ $workflow->process();
 This example shows how you can export data to a CSV file.
 
 ```php
-use Ddeboer\DataImport\Workflow;
+use Ddeboer\DataImport\StepAggregator;
 use Ddeboer\DataImport\Reader\ArrayReader;
 use Ddeboer\DataImport\Writer\CsvWriter;
 use Ddeboer\DataImport\ValueConverter\CallbackValueConverter;
@@ -1188,7 +1188,7 @@ $reader = new ArrayReader(array(
 );
 
 // Create the workflow from the reader
-$workflow = new Workflow($reader);
+$workflow = new StepAggregator($reader);
 
 // Add the writer to the workflow
 $file = new \SplFileObject('output.csv', 'w');
