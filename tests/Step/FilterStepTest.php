@@ -8,31 +8,31 @@ class FilterStepTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        $this->filter = new FilterStep();
+        $this->step = new FilterStep();
     }
 
     public function testProcess()
     {
-        $this->filter->add(function ($v) { return in_array('bar', $v); });
+        $this->step->add(function ($v) { return in_array('bar', $v); });
 
         $d = ['foo'];
-        $this->assertFalse($this->filter->process($d));
+        $this->assertFalse($this->step->process($d));
 
         $d = ['bar'];
-        $this->assertTrue($this->filter->process($d));
+        $this->assertTrue($this->step->process($d));
     }
 
     public function testClone()
     {
-        $reflection = new \ReflectionObject($this->filter);
-        $property = $reflection->getProperty('filters');
+        $reflection = new \ReflectionObject($this->step);
+        $property = $reflection->getProperty('steps');
         $property->setAccessible(true);
 
-        $this->filter->add(function ($v) { return in_array('bar', $v); });
+        $this->step->add(function ($v) { return in_array('bar', $v); });
         $d = ['foo'];
 
-        $this->filter->process($d);
+        $this->step->process($d);
 
-        $this->assertCount(1, $property->getValue($this->filter));
+        $this->assertCount(1, $property->getValue($this->step));
     }
 }

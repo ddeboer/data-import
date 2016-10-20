@@ -13,14 +13,14 @@ class ValidatorStepTest extends \PHPUnit_Framework_TestCase
     {
         $this->validator = $this->getMock('Symfony\Component\Validator\Validator\ValidatorInterface');
 
-        $this->filter = new ValidatorStep($this->validator);
+        $this->step = new ValidatorStep($this->validator);
     }
 
     public function testProcess()
     {
         $data = ['title' => null];
 
-        $this->filter->add('title', $constraint = new Constraints\NotNull());
+        $this->step->add('title', $constraint = new Constraints\NotNull());
 
         $list = new ConstraintViolationList();
         $list->add($this->buildConstraintViolation());
@@ -29,9 +29,9 @@ class ValidatorStepTest extends \PHPUnit_Framework_TestCase
                         ->method('validate')
                         ->willReturn($list);
 
-        $this->assertFalse($this->filter->process($data));
+        $this->assertFalse($this->step->process($data));
 
-        $this->assertEquals([1 => $list], $this->filter->getViolations());
+        $this->assertEquals([1 => $list], $this->step->getViolations());
     }
 
     /**
@@ -41,8 +41,8 @@ class ValidatorStepTest extends \PHPUnit_Framework_TestCase
     {
         $data = ['title' => null];
 
-        $this->filter->add('title', $constraint = new Constraints\NotNull());
-        $this->filter->throwExceptions();
+        $this->step->add('title', $constraint = new Constraints\NotNull());
+        $this->step->throwExceptions();
 
         $list = new ConstraintViolationList();
         $list->add($this->buildConstraintViolation());
@@ -51,12 +51,12 @@ class ValidatorStepTest extends \PHPUnit_Framework_TestCase
                         ->method('validate')
                         ->willReturn($list);
 
-        $this->assertFalse($this->filter->process($data));
+        $this->assertFalse($this->step->process($data));
     }
 
     public function testPriority()
     {
-        $this->assertEquals(128, $this->filter->getPriority());
+        $this->assertEquals(128, $this->step->getPriority());
     }
 
     private function buildConstraintViolation()

@@ -10,18 +10,18 @@ class MappingStepTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->mapper = new MappingStep();
+        $this->step = new MappingStep();
     }
 
     public function testProcess()
     {
-        $this->mapper->map('[foo]', '[bar]');
+        $this->step->map('[foo]', '[bar]');
 
         $data = [
             'foo' => '1',
         ];
 
-        $this->mapper->process($data);
+        $this->step->process($data);
 
         $this->assertEquals([
             'bar' => '1',
