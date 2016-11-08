@@ -37,6 +37,10 @@ class ValidatorStep implements PriorityStep
      */
     private $validator;
 
+    /**
+     * Possible options to set for Constraints\Collection
+     * @var array
+     */
     private $possibleOptions = [ 'groups', 'allowExtraFields', 'allowMissingFields', 'extraFieldsMessage', 'missingFieldsMessage' ];
 
     /**
