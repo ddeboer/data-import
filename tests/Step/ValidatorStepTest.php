@@ -17,7 +17,7 @@ class ValidatorStepTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->validator = $this->createMock('Symfony\Component\Validator\Validator\ValidatorInterface');
+        $this->validator = $this->getMock('Symfony\Component\Validator\Validator\ValidatorInterface');
         $this->filter = new ValidatorStep($this->validator);
     }
 
