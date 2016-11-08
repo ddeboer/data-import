@@ -61,7 +61,7 @@ class ValidatorStepTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessWithAllowedExtraFields()
     {
-        $this->filter->allowExtraFields();
+        $this->filter->addOption('allowExtraFields', true);
 
         $data = ['title' => null, 'telephone' => '0155/555-555'];
 

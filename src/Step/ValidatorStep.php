@@ -37,6 +37,8 @@ class ValidatorStep implements PriorityStep
      */
     private $validator;
 
+    private $possibleOptions = [ 'groups', 'allowExtraFields', 'allowMissingFields', 'extraFieldsMessage', 'missingFieldsMessage' ];
+
     /**
      * @param ValidatorInterface $validator
      */
@@ -79,11 +81,17 @@ class ValidatorStep implements PriorityStep
     }
 
     /**
-     * Use this option to allow extra fields without specific validation constraint set.
+     * Add additional options for the constraints
+     * @param string $option
+     * @param $optionValue
      */
-    public function allowExtraFields()
+    public function addOption($option, $optionValue)
     {
-        $this->constraints['allowExtraFields'] = true;
+        if (!isset($this->possibleOptions[$option])) {
+            return;
+        }
+
+        $this->constraints[$option] = $optionValue;
     }
 
     /**
