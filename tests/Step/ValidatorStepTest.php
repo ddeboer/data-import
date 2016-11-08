@@ -17,7 +17,7 @@ class ValidatorStepTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->validator = $this->createMock(ValidatorInterface::class);
+        $this->validator = $this->createMock('Symfony\Component\Validator\Validator\ValidatorInterface');
         $this->filter = new ValidatorStep($this->validator);
     }
 
@@ -86,6 +86,8 @@ class ValidatorStepTest extends \PHPUnit_Framework_TestCase
 
     private function buildConstraintViolation()
     {
-        return $this->createMock('Symfony\Component\Validator\ConstraintViolation');
+        return $this->getMockBuilder('Symfony\Component\Validator\ConstraintViolation')
+                    ->disableOriginalConstructor()
+                    ->getMock();
     }
 }
