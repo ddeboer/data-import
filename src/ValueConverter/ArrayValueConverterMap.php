@@ -31,11 +31,7 @@ class ArrayValueConverterMap
             throw new \InvalidArgumentException('Input of a ArrayValueConverterMap must be an array');
         }
 
-        foreach ($input as $key => $item) {
-            $input[$key] = $this->convertItem($item);
-        }
-
-        return $input;
+        return $this->convertItem($input);
     }
 
     /**

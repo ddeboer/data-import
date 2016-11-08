@@ -22,14 +22,8 @@ class ArrayValueConverterMapTest extends \PHPUnit_Framework_TestCase
     public function testConvertWithMultipleFields()
     {
         $data = array(
-            array(
-                'foo' => 'test',
-                'bar' => 'test'
-            ),
-            array(
-                'foo' => 'test2',
-                'bar' => 'test2'
-            ),
+            'foo' => 'test',
+            'bar' => 'test'
         );
 
         $addBarConverter = function($input) { return 'bar'.$input; };
@@ -44,10 +38,7 @@ class ArrayValueConverterMapTest extends \PHPUnit_Framework_TestCase
 
         $data = call_user_func($converter, $data);
 
-        $this->assertEquals('bartest', $data[0]['foo']);
-        $this->assertEquals('barbaztest', $data[0]['bar']);
-
-        $this->assertEquals('bartest2', $data[1]['foo']);
-        $this->assertEquals('barbaztest2', $data[1]['bar']);
+        $this->assertEquals('bartest', $data['foo']);
+        $this->assertEquals('barbaztest', $data['bar']);
     }
 }
