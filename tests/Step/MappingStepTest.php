@@ -6,21 +6,25 @@ use Ddeboer\DataImport\Step\MappingStep;
 
 class MappingStepTest extends \PHPUnit_Framework_TestCase
 {
+    protected $mapper;
+
     protected function setUp()
     {
-        $this->filter = new MappingStep();
+        $this->step = new MappingStep();
     }
 
     public function testProcess()
     {
-        $this->filter->map('[foo]', '[bar]');
+        $this->step->map('[foo]', '[bar]');
 
         $data = [
             'foo' => '1',
         ];
 
-        $this->filter->process($data);
+        $this->step->process($data);
 
-        $this->assertEquals(['bar' => '1'], $data);
+        $this->assertEquals([
+            'bar' => '1',
+        ], $data);
     }
 }

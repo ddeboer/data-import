@@ -1,3 +1,4 @@
+
 Ddeboer Data Import library
 ===========================
 [![Build Status](https://travis-ci.org/ddeboer/data-import.svg?branch=master)](https://travis-ci.org/ddeboer/data-import)
@@ -5,10 +6,12 @@ Ddeboer Data Import library
 [![Code Coverage](https://scrutinizer-ci.com/g/ddeboer/data-import/badges/coverage.png?s=724267091a6d02f83b6c435a431e71d467b361f8)](https://scrutinizer-ci.com/g/ddeboer/data-import/)
 [![Latest Stable Version](https://poser.pugx.org/ddeboer/data-import/v/stable.png)](https://packagist.org/packages/ddeboer/data-import)
 
+
 Introduction
 ------------
 This PHP library offers a way to read data from, and write data to, a range of
 file formats and media. Additionally, it includes tools to manipulate your data.
+
 
 Features
 --------
@@ -19,6 +22,7 @@ Features
 * Decoupled components that you can use on their own, such as a CSV and Excel
   reader and writer.
 * Well-tested code.
+
 
 Documentation
 -------------
@@ -70,6 +74,7 @@ Documentation
 * [Running the tests](#running-the-tests)
 * [License](#license)
 
+
 Installation
 ------------
 
@@ -88,6 +93,7 @@ require_once 'vendor/autoload.php';
 
 For integration with Symfony2 projects, the [DdeboerDataImportBundle](https://github.com/ddeboer/DdeboerDataImportBundle)
 is available.
+
 
 Usage
 -----
@@ -120,13 +126,13 @@ Errors will be logged if you have passed a logger to the workflow constructor.
 Schematically:
 
 ```php
-use Ddeboer\DataImport\Workflow;
+use Ddeboer\DataImport\StepAggregator;
 use Ddeboer\DataImport\Reader;
 use Ddeboer\DataImport\Writer;
 use Ddeboer\DataImport\Filter;
 
 $reader = new Reader\...;
-$workflow = new Workflow($reader, $logger);
+$workflow = new StepAggregator($reader, $logger);
 $result = $workflow
     ->addWriter(new Writer\...())
     ->addWriter(new Writer\...())
@@ -139,13 +145,13 @@ $result = $workflow
 
 The Workflow Result object exposes various methods which you can use to decide what to do after an import.
 The result will be an instance of `Ddeboer\DataImport\Result`. It is automatically created and populated by the
-`Workflow`. It will be returned to you after calling the `process()` method on the `Workflow`
+`StepAggregator`. It will be returned to you after calling the `process()` method on the `StepAggregator`
 
 The `Result` provides the following methods:
 
 ```php
 //the name of the import - which is an optional 3rd parameter to
-//the Workflow class. Returns null by default.
+//the StepAggregator class. Returns null by default.
 public function getName();
 
 //DateTime instance created at the start of the import.
@@ -176,10 +182,10 @@ public function getExceptions();
 ```
 
 Example use cases:
- * You want to send an e-mail with the results of the import
- * You want to send a Text alert if a particular file failed
- * You want to move an import file to a failed directory if there were errors
- * You want to log how long imports are taking
+* You want to send an e-mail with the results of the import
+* You want to send a Text alert if a particular file failed
+* You want to move an import file to a failed directory if there were errors
+* You want to log how long imports are taking
 
 ### Readers
 
@@ -190,7 +196,7 @@ includes a handful of readers. Additionally, you can easily
 You can use readers on their own, or construct a workflow from them:
 
 ```php
-$workflow = new Workflow($reader);
+$workflow = new StepAggregator($reader);
 ```
 #### ArrayReader
 
@@ -270,9 +276,9 @@ Examples where this is useful:
 
 Sometimes a CSV file contains duplicate column headers, for instance:
 
-id  | details  | details
---- | -------- | --------
-1   | bla      | more bla
+| id   | details | details  |
+| ---- | ------- | -------- |
+| 1    | bla     | more bla |
 
 By default, a `DuplicateHeadersException` will be thrown if you call
 `setHeaderRowNumber(0)` on this file. You can handle duplicate columns in
@@ -573,7 +579,7 @@ $table = new Table($output);
 // Make some manipulations, e.g. set table style
 $table->setStyle('compact');
 
-$workflow = new Workflow($reader);
+$workflow = new StepAggregator($reader);
 $workflow->addWriter(new ConsoleTableWriter($output, $table));
 
 ```
@@ -759,7 +765,7 @@ This is exactly what the ValidatorFilter does. To use it, include Symfony’s
 Validator component in your project:
 
 ```bash
-$ compose require symfony/validator
+$ composer require symfony/validator
 ```
 
 The ValidatorFilter works as follows:
@@ -782,46 +788,40 @@ containing the line number and the violation list.
 
 #### MappingItemConverter
 
+To use mapping features, you need to install Symfony/PropertyAccessor component :
+
+```bash
+$ composer require symfony/property-accessor
+```
+
 Use the MappingItemConverter to add mappings to your workflow. Your keys from
 the input data will be renamed according to these mappings. Say you have input data:
 
 ```php
-$data = array(
-    array(
-        'foo' => 'bar',
-        'baz' => array(
-            'some' => 'value'
-        )
-    )
-);
+$data = [
+    'foo' => 'bar',
+];
 ```
 
 You can map the keys `foo` and `baz` in the following way:
 
 ```php
 
-use Ddeboer\DataImport\ItemConverter\MappingItemConverter;
+use Ddeboer\DataImport\Step\MappingStep;
 
-$converter = new MappingItemConverter();
-$converter
-    ->addMapping('foo', 'fooloo')
-    ->addMapping('baz', array('some' => 'else'));
+$mappingStep = new MappingStep();
+$mappingStep->map('[foo]', '[baz]');
 
-$workflow->addItemConverter($converter)
-    ->process();
+$workflow->addStep($mappingStep)
+	->process();
 ```
 
 Your output data will now be:
 
 ```php
-array(
-    array(
-        'fooloo' => 'bar',
-        'baz'    => array(
-            'else' => 'value'
-        )
-    )
-);
+[
+	'baz' => 'bar'
+];
 ```
 
 #### NestedMappingItemConverter
@@ -1131,7 +1131,7 @@ class Event
 Then you can import the CSV and save it as your entity in the following way.
 
 ```php
-use Ddeboer\DataImport\Workflow;
+use Ddeboer\DataImport\StepAggregator;
 use Ddeboer\DataImport\Reader\CsvReader;
 use Ddeboer\DataImport\Writer\DoctrineWriter;
 use Ddeboer\DataImport\ValueConverter\StringToDateTimeValueConverter;
@@ -1144,7 +1144,7 @@ $csvReader = new CsvReader($file);
 $csvReader->setHeaderRowNumber(0);
 
 // Create the workflow from the reader
-$workflow = new Workflow($csvReader);
+$workflow = new StepAggregator($csvReader);
 
 // Create a writer: you need Doctrine’s EntityManager.
 $doctrineWriter = new DoctrineWriter($entityManager, 'MyApp:Event');
@@ -1166,7 +1166,7 @@ $workflow->process();
 This example shows how you can export data to a CSV file.
 
 ```php
-use Ddeboer\DataImport\Workflow;
+use Ddeboer\DataImport\StepAggregator;
 use Ddeboer\DataImport\Reader\ArrayReader;
 use Ddeboer\DataImport\Writer\CsvWriter;
 use Ddeboer\DataImport\ValueConverter\CallbackValueConverter;
@@ -1188,7 +1188,7 @@ $reader = new ArrayReader(array(
 );
 
 // Create the workflow from the reader
-$workflow = new Workflow($reader);
+$workflow = new StepAggregator($reader);
 
 // Add the writer to the workflow
 $file = new \SplFileObject('output.csv', 'w');
@@ -1213,6 +1213,7 @@ first;last
 James;Bond
 Hugo;Drax
 ```
+
 
 ArrayValueConverterMap
 ----------------------
@@ -1263,6 +1264,7 @@ $data = array(
 );
 ```
 
+
 Running the tests
 -----------------
 
@@ -1284,6 +1286,7 @@ And run PHPUnit:
 ```bash
 $ phpunit
 ```
+
 
 License
 -------

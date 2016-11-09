@@ -59,10 +59,13 @@ class MappingStep implements Step
                 $this->accessor->setValue($item, $to, $value);
 
                 $from = str_replace(['[',']'], '', $from);
+                $to = str_replace(['[',']'], '', $to);
 
                 // Check if $item is an array, because properties can't be unset.
                 // So we don't call unset for objects to prevent side affects.
-                if (is_array($item) && isset($item[$from])) {
+                //
+                // We also check if $from is not equals to $to. This is to avoid unexpected unset
+                if (is_array($item) && isset($item[$from]) && $from !== $to) {
                     unset($item[$from]);
                 }
             }
