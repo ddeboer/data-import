@@ -38,6 +38,12 @@ class ValidatorStep implements PriorityStep
     private $validator;
 
     /**
+     * Possible options to set for Constraints\Collection
+     * @var array
+     */
+    private $possibleOptions = [ 'groups', 'allowExtraFields', 'allowMissingFields', 'extraFieldsMessage', 'missingFieldsMessage' ];
+
+    /**
      * @param ValidatorInterface $validator
      */
     public function __construct(ValidatorInterface $validator)
@@ -54,10 +60,10 @@ class ValidatorStep implements PriorityStep
     public function add($field, Constraint $constraint)
     {
         if (!isset($this->constraints[$field])) {
-            $this->constraints[$field] = [];
+            $this->constraints['fields'][$field] = [];
         }
 
-        $this->constraints[$field][] = $constraint;
+        $this->constraints['fields'][$field][] = $constraint;
 
         return $this;
     }
@@ -76,6 +82,20 @@ class ValidatorStep implements PriorityStep
     public function getViolations()
     {
         return $this->violations;
+    }
+
+    /**
+     * Add additional options for the constraints
+     * @param string $option
+     * @param $optionValue
+     */
+    public function addOption($option, $optionValue)
+    {
+        if (!isset($this->possibleOptions[$option])) {
+            return;
+        }
+
+        $this->constraints[$option] = $optionValue;
     }
 
     /**
