@@ -91,7 +91,7 @@ class ValidatorStep implements PriorityStep
      */
     public function addOption($option, $optionValue)
     {
-        if (!isset($this->possibleOptions[$option])) {
+        if (!in_array($option, $this->possibleOptions)) {
             return;
         }
 
