@@ -5,6 +5,8 @@ Ddeboer Data Import library
 [![Code Coverage](https://scrutinizer-ci.com/g/ddeboer/data-import/badges/coverage.png?s=724267091a6d02f83b6c435a431e71d467b361f8)](https://scrutinizer-ci.com/g/ddeboer/data-import/)
 [![Latest Stable Version](https://poser.pugx.org/ddeboer/data-import/v/stable.png)](https://packagist.org/packages/ddeboer/data-import)
 
+## This library has been renamed to PortPHP and will be deprecated. Please use [PortPHP](https://github.com/portphp) instead.
+
 Introduction
 ------------
 This PHP library offers a way to read data from, and write data to, a range of
