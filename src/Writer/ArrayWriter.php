@@ -27,6 +27,14 @@ class ArrayWriter implements Writer
     }
 
     /**
+     * @return array
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function prepare()
