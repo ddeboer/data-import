@@ -145,20 +145,6 @@ class DoctrineWriter implements Writer, FlushableWriter
     }
 
     /**
-     * Call a setter of the entity
-     *
-     * @param object $entity
-     * @param mixed  $value
-     * @param string $setter
-     */
-    protected function setValue($entity, $value, $setter)
-    {
-        if (method_exists($entity, $setter)) {
-            $entity->$setter($value);
-        }
-    }
-
-    /**
      * Re-enable Doctrine logging
      *
      * @return $this
@@ -204,8 +190,7 @@ class DoctrineWriter implements Writer, FlushableWriter
             if (!($value instanceof \DateTime)
                 || $value != $this->entityMetadata->getFieldValue($entity, $fieldName)
             ) {
-                $setter = 'set' . ucfirst($fieldName);
-                $this->setValue($entity, $value, $setter);
+                $this->entityMetadata->setFieldValue($entity, $fieldName, $value);
             }
         }
     }
@@ -229,8 +214,7 @@ class DoctrineWriter implements Writer, FlushableWriter
                 continue;
             }
 
-            $setter = 'set' . ucfirst($associationMapping['fieldName']);
-            $this->setValue($entity, $value, $setter);
+            $this->entityMetadata->setFieldValue($entity, $associationMapping['fieldName'], $value);
         }
     }
 
