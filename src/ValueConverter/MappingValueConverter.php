@@ -24,7 +24,7 @@ class MappingValueConverter
 
     public function __invoke($input)
     {
-        if (!isset($this->mapping[$input])) {
+        if (!array_key_exists($input, $this->mapping)) {
             throw new UnexpectedValueException(sprintf(
                 'Cannot find mapping for value "%s"',
                 $input
