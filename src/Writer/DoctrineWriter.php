@@ -60,11 +60,18 @@ class DoctrineWriter implements Writer, FlushableWriter
     protected $lookupFields = array();
 
     /**
+     * List of additional fields which are not in the medatadata field class
+     *
+     * @var array
+     */
+    protected $fieldNames;
+
+    /**
      * @param EntityManagerInterface $entityManager
      * @param string                 $entityName
      * @param string|array           $index Field or fields to find current entities by
      */
-    public function __construct(EntityManagerInterface $entityManager, $entityName, $index = null)
+    public function __construct(EntityManagerInterface $entityManager, $entityName, $index = null, $fieldNames = array())
     {
         $this->entityManager = $entityManager;
         $this->entityRepository = $entityManager->getRepository($entityName);
@@ -78,6 +85,7 @@ class DoctrineWriter implements Writer, FlushableWriter
                 $this->lookupFields = [$index];
             }
         }
+        $this->fieldNames = $fieldNames;
     }
 
     /**
@@ -188,7 +196,7 @@ class DoctrineWriter implements Writer, FlushableWriter
      */
     protected function updateEntity(array $item, $entity)
     {
-        $fieldNames = array_merge($this->entityMetadata->getFieldNames(), $this->entityMetadata->getAssociationNames());
+        $fieldNames = array_merge($this->entityMetadata->getFieldNames(), $this->entityMetadata->getAssociationNames(), $this->fieldNames);
         foreach ($fieldNames as $fieldName) {
             $value = null;
             if (isset($item[$fieldName])) {
