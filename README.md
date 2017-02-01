@@ -308,13 +308,15 @@ $reader = new DbalReader(
 
 #### DoctrineReader
 
-Reads data through the [Doctrine ORM](http://www.doctrine-project.org/projects/orm.html):
+Reads data through the [Doctrine ORM](http://www.doctrine-project.org/projects/orm.html) or [Doctrine MongoDB ODM](http://www.doctrine-project.org/projects/mongodb-odm.html):
 
 ```php
 use Ddeboer\DataImport\Reader\DoctrineReader;
 
 $reader = new DoctrineReader($entityManager, 'Your\Namespace\Entity\User');
 ```
+
+To use Doctrine MongoDB Document Manager you just need to pass it instead of ```$entityManager``` parameter.
 
 #### ExcelReader
 
@@ -456,7 +458,7 @@ $writer
 
 #### DoctrineWriter
 
-Writes data through Doctrine:
+Writes data through [Doctrine ORM](http://www.doctrine-project.org/projects/orm.html) or [Doctrine MongoDB ODM](http://www.doctrine-project.org/projects/mongodb-odm.html)::
 
 ```php
 use Ddeboer\DataImport\Writer\DoctrineWriter;
@@ -472,6 +474,8 @@ $writer
     )
     ->finish();
 ```
+
+To use Doctrine MongoDB Document Manager you just need to pass it instead of ```$entityManager``` parameter.
 
 By default, DoctrineWriter will truncate your data before running the workflow.
 Call `disableTruncate()` if you don't want this.

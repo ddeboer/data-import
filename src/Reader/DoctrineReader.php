@@ -85,9 +85,12 @@ class DoctrineReader implements CountableReader
     public function rewind()
     {
         if (!$this->iterableResult) {
-            $query = $this->objectManager->createQuery(
-                sprintf('SELECT o FROM %s o', $this->objectName)
-            );
+            
+            $query = $this->objectManager->createQueryBuilder()
+               ->select('o')
+               ->from($this->objectName, 'o')
+               ->getQuery();
+
             $this->iterableResult = $query->iterate([], Query::HYDRATE_ARRAY);
         }
 
@@ -99,9 +102,10 @@ class DoctrineReader implements CountableReader
      */
     public function count()
     {
-        $query = $this->objectManager->createQuery(
-            sprintf('SELECT COUNT(o) FROM %s o', $this->objectName)
-        );
+        $query = $this->objectManager->createQueryBuilder()
+           ->select('count(o)')
+           ->from($this->objectName, 'o')
+           ->getQuery();
 
         return $query->getSingleScalarResult();
     }

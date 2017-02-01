@@ -32,7 +32,9 @@
         "symfony/console": "~2.8|~3.0",
         "symfony/validator": "~2.8|~3.0",
         "phpspec/phpspec": "~2.1",
-        "henrikbjorn/phpspec-code-coverage" : "~1.0"
+        "henrikbjorn/phpspec-code-coverage" : "~1.0",
+        "doctrine/mongodb": "*",
+        "doctrine/mongodb-odm": "@dev"
     },
     "suggest": {
         "ext-iconv": "For the CharsetValueConverter",
@@ -47,6 +49,6 @@
         "psr-4": {
             "Ddeboer\\DataImport\\": "src/",
             "Ddeboer\\DataImport\\Tests\\": "tests/"
-        }
     }
+}
 }
