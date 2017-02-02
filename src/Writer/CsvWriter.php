@@ -36,7 +36,7 @@ class CsvWriter extends AbstractStreamWriter
      * @param resource $stream
      * @param boolean  $utf8Encoding
      */
-    public function __construct($delimiter = ';', $enclosure = '"', $stream = null, $utf8Encoding = false, $prependHeaderRow = false)
+    public function __construct($delimiter = ',', $enclosure = '"', $stream = null, $utf8Encoding = false, $prependHeaderRow = false)
     {
         parent::__construct($stream);
 
