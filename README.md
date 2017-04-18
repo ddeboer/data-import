@@ -347,7 +347,7 @@ To read the specific sheet:
 $reader = new ExcelReader($file, null, 3);
 ```
 
-###OneToManyReader
+### OneToManyReader
 
 Allows for merging of two data sources (using existing readers), for example you have one CSV with orders and another with order items.
 
