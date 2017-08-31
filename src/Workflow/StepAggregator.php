@@ -73,7 +73,7 @@ class StepAggregator implements Workflow, LoggerAwareInterface
     /**
      * Add a step to the current workflow
      *
-     * @param Step         $step
+     * @param Step $step
      * @param integer|null $priority
      *
      * @return $this
@@ -107,9 +107,9 @@ class StepAggregator implements Workflow, LoggerAwareInterface
      */
     public function process()
     {
-        $count      = 0;
+        $count = 0;
         $exceptions = new \SplObjectStorage();
-        $startTime  = new \DateTime;
+        $startTime = new \DateTime(date_format(new \DateTime(), 'd-m-Y H:i:s') . substr((string)microtime(), 1, 8));
 
         foreach ($this->writers as $writer) {
             $writer->prepare();
@@ -145,7 +145,7 @@ class StepAggregator implements Workflow, LoggerAwareInterface
                 foreach ($this->writers as $writer) {
                     $writer->writeItem($item);
                 }
-            } catch(Exception $e) {
+            } catch (Exception $e) {
                 if (!$this->skipItemOnFailure) {
                     throw $e;
                 }
@@ -161,7 +161,7 @@ class StepAggregator implements Workflow, LoggerAwareInterface
             $writer->finish();
         }
 
-        return new Result($this->name, $startTime, new \DateTime, $count, $exceptions);
+        return new Result($this->name, $startTime, new \DateTime(date_format(new \DateTime(), 'd-m-Y H:i:s') . substr((string)microtime(), 1, 8)), $count, $exceptions);
     }
 
     /**

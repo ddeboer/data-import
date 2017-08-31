@@ -11,6 +11,7 @@ use Ddeboer\DataImport\Exception\ExceptionInterface;
  */
 class Result
 {
+    const MICRO_FORMAT = 'd-m-Y H:i:s.u';
     /**
      * Identifier given to the import/export
      *
@@ -142,5 +143,19 @@ class Result
     public function getExceptions()
     {
         return $this->exceptions;
+    }
+
+    /**
+     * find the elapsed microseconds for the result. This only finds the microsecond difference, use {@link getElapsed()}
+     *
+     * @return number
+     */
+    public function getMicroElapsed()
+    {
+        $microStart = $this->startTime->format('u');
+        $microEnd = $this->endTime->format('u');
+        $microDiff = abs($microEnd - $microStart);
+
+        return $microDiff;
     }
 }

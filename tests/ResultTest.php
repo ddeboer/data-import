@@ -46,6 +46,16 @@ class ResultTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('DateInterval', $result->getElapsed());
     }
 
+    public function testMicroElapsed()
+    {
+        $startDate = new \DateTime('2016-07-12 20:51:42.805421');
+        $endDate = new \DateTime('2016-07-12 20:51:42.841276');
+        $microElapsed = abs($endDate->format('u') - $startDate->format('u'));
+
+        $result = new Result('export', $startDate, $endDate, 10, new \SplObjectStorage());
+        $this->assertSame($microElapsed, $result->getMicroElapsed());
+    }
+
     public function testHasErrorsReturnsTrueIfAnyExceptions()
     {
         $exceptions = new \SplObjectStorage();
