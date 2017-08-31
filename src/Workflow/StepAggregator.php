@@ -10,7 +10,6 @@ use Ddeboer\DataImport\Step;
 use Ddeboer\DataImport\Step\PriorityStep;
 use Ddeboer\DataImport\Workflow;
 use Ddeboer\DataImport\Writer;
-use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
