@@ -41,6 +41,8 @@ class DoctrineWriterTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $assocMetadata = clone $metadata;
+
         $metadata->expects($this->any())
             ->method('getName')
             ->will($this->returnValue('Ddeboer\DataImport\Tests\Fixtures\Entity\TestEntity'));
@@ -55,7 +57,19 @@ class DoctrineWriterTest extends \PHPUnit_Framework_TestCase
 
         $metadata->expects($this->any())
             ->method('getAssociationMappings')
-            ->will($this->returnValue(array(array('fieldName' => 'firstAssociation','targetEntity' => 'Ddeboer\DataImport\Tests\Fixtures\Entity\TestEntity'))));
+            ->will($this->returnValue(array(array('fieldName' => 'firstAssociation','targetEntity' => 'Ddeboer\DataImport\Tests\Fixtures\Entity\TestEntityAssociation'))));
+
+        $assocMetadata->expects($this->any())
+            ->method('getName')
+            ->will($this->returnValue('Ddeboer\DataImport\Tests\Fixtures\Entity\TestEntityAssociation'));
+
+        $assocMetadata->expects($this->any())
+            ->method('getFieldNames')
+            ->will($this->returnValue(array('aProperty', 'bProperty')));
+
+        $assocMetadata->expects($this->any())
+            ->method('getAssociationNames')
+            ->will($this->returnValue(array()));
 
         $configuration = $this->getMockBuilder('Doctrine\DBAL\Configuration')
             ->setMethods(array('getConnection'))
@@ -83,13 +97,15 @@ class DoctrineWriterTest extends \PHPUnit_Framework_TestCase
             ->method('executeQuery')
             ->with('TRUNCATE SQL');
 
-        $em->expects($this->once())
+        $em->expects($this->any())
             ->method('getRepository')
             ->will($this->returnValue($repo));
 
-        $em->expects($this->once())
+        $em->expects($this->any())
             ->method('getClassMetadata')
-            ->will($this->returnValue($metadata));
+            ->will($this->returnCallback(function($arg) use ($metadata,$assocMetadata){
+                return ($arg =='DdeboerDataImport:TestEntity') ? $metadata :$assocMetadata;
+            }));
 
         $em->expects($this->any())
             ->method('getConnection')
@@ -147,6 +163,32 @@ class DoctrineWriterTest extends \PHPUnit_Framework_TestCase
         );
 
         $writer->writeItem($item);
+    }
+
+    public function testUpdateAssociationUnmapped()
+    {
+        $em = $this->getEntityManager();
+
+        $em->expects($this->never())
+            ->method('persist');
+
+        $em->expects($this->never())
+            ->method('getReference');
+
+        $association = new TestEntity();
+        $writer = new DoctrineWriter($em, 'DdeboerDataImport:TestEntity');
+        $item = [
+            'firstProperty' => 'some value',
+            'secondProperty' => 'some other value',
+            'firstAssociation' => [
+                'aProperty' => 'another value',
+                'bProperty' => 'another other value',
+            ]
+        ];
+
+        $writer->updateAssociations($item,$association);
+        $this->assertInstanceOf('Ddeboer\DataImport\Tests\Fixtures\Entity\TestEntityAssociation',$association->getFirstAssociation());
+        $this->assertEquals('another value',$association->getFirstAssociation()->getAProperty());
     }
 
     /**
