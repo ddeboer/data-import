@@ -205,7 +205,7 @@ class CsvReaderTest extends \PHPUnit_Framework_TestCase
         $current = $reader->current();
 
         $this->assertEquals(
-            array('id', 'description', 'description1', 'description2', 'details', 'details1', 'last'),
+            array('id', 'description', 'description1', 'description2', 'details', 'details1', 'last', 'UNKNOWN', 'UNKNOWN1'),
             $reader->getColumnHeaders()
         );
 
@@ -217,7 +217,9 @@ class CsvReaderTest extends \PHPUnit_Framework_TestCase
                 'description2' => 'Third',
                 'details'      => 'Details1',
                 'details1'     => 'Details2',
-                'last'         => 'Last one'
+                'last'         => 'Last one',
+                'UNKNOWN'      => 'empty1',
+                'UNKNOWN1'     => 'empty2'
             ),
             $current
         );
@@ -230,13 +232,14 @@ class CsvReaderTest extends \PHPUnit_Framework_TestCase
         $reader->rewind();
         $current = $reader->current();
 
-        $this->assertCount(4, $reader->getColumnHeaders());
+        $this->assertCount(5, $reader->getColumnHeaders());
 
         $expected = array(
             'id'          => '50',
             'description' => array('First', 'Second', 'Third'),
             'details'     => array('Details1', 'Details2'),
-            'last'        => 'Last one'
+            'last'        => 'Last one',
+            ''            => array('empty1', 'empty2')
         );
         $this->assertEquals($expected, $current);
     }
