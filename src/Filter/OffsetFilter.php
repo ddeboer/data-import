@@ -1,6 +1,7 @@
 <?php
 
 namespace Ddeboer\DataImport\Filter;
+use Ddeboer\DataImport\Exception\StopException;
 
 /**
  * This filter can be used to filter out some items from the beginning and/or
@@ -36,13 +37,19 @@ class OffsetFilter
     protected $maxLimitHit = false;
 
     /**
+     * @var boolean
+     */
+    protected $stopOnMaxLimit = false;
+
+    /**
      * @param integer      $offset 0-based index of the item to start read from
      * @param integer|null $limit  Maximum count of items to read. null = no limit
      */
-    public function __construct($offset = 0, $limit = null)
+    public function __construct($offset = 0, $limit = null, $stopOnLimit = false)
     {
         $this->offset = $offset;
         $this->limit = $limit;
+        $this->stopOnMaxLimit = ($limit>0 && $stopOnLimit);
     }
 
     /**
@@ -52,6 +59,10 @@ class OffsetFilter
     {
         // In case we've already filtered up to limited
         if ($this->maxLimitHit) {
+            if($this->stopOnMaxLimit) {
+                throw new StopException();
+            }
+
             return false;
         }
 

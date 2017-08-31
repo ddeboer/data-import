@@ -107,7 +107,11 @@ class StepAggregator implements Workflow, LoggerAwareInterface
      */
     public function process()
     {
-        $count      = 0;
+        $processed  = 0;
+        $skipped    = 0;
+        $errors     = 0;
+        $imported   = 0;
+
         $exceptions = new \SplObjectStorage();
         $startTime  = new \DateTime;
 
@@ -131,9 +135,12 @@ class StepAggregator implements Workflow, LoggerAwareInterface
                 break;
             }
 
+            $processed++;
+
             try {
                 foreach (clone $this->steps as $step) {
                     if (false === $step->process($item)) {
+                        $skipped++;
                         continue 2;
                     }
                 }
@@ -145,23 +152,29 @@ class StepAggregator implements Workflow, LoggerAwareInterface
                 foreach ($this->writers as $writer) {
                     $writer->writeItem($item);
                 }
+            } catch(Exception\StopException $e) {
+                $processed--;
+                break;
             } catch(Exception $e) {
                 if (!$this->skipItemOnFailure) {
                     throw $e;
                 }
 
+                $errors++;
                 $exceptions->attach($e, $index);
                 $this->logger->error($e->getMessage());
+
+                continue;
             }
 
-            $count++;
+            $imported++;
         }
 
         foreach ($this->writers as $writer) {
             $writer->finish();
         }
 
-        return new Result($this->name, $startTime, new \DateTime, $count, $exceptions);
+        return new Result($this->name, $startTime, new \DateTime, $processed, $imported, $skipped, $errors, $exceptions);
     }
 
     /**
