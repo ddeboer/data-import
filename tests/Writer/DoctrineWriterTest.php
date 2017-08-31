@@ -17,12 +17,45 @@ class DoctrineWriterTest extends \PHPUnit_Framework_TestCase
         $writer = new DoctrineWriter($em, 'DdeboerDataImport:TestEntity');
 
         $association = new TestEntity();
+        $secondAssociation = array(new TestEntity());
         $item = array(
-            'firstProperty'   => 'some value',
-            'secondProperty'  => 'some other value',
-            'firstAssociation'=> $association
+            'firstProperty'     => 'some value',
+            'secondProperty'    => 'some other value',
+            'firstAssociation'  => $association,
+            'secondAssociation' => $secondAssociation
         );
         $writer->writeItem($item);
+    }
+
+    public function testBatches()
+    {
+        $em = $this->getEntityManager();
+        $em->expects($this->exactly(11))
+            ->method('persist');
+
+        $em->expects($this->exactly(4))
+            ->method('flush');
+
+        $writer = new DoctrineWriter($em, 'DdeboerDataImport:TestEntity');
+        $writer->prepare();
+
+        $writer->setBatchSize(3);
+        $this->assertEquals(3, $writer->getBatchSize());
+
+        $association = new TestEntity();
+        $secondAssociation = array(new TestEntity());
+        $item = array(
+            'firstProperty'     => 'some value',
+            'secondProperty'    => 'some other value',
+            'firstAssociation'  => $association,
+            'secondAssociation' => $secondAssociation
+        );
+
+        for ($i = 0; $i < 11; $i++) {
+            $writer->writeItem($item);
+        }
+
+        $writer->finish();
     }
 
     protected function getEntityManager()
@@ -51,7 +84,7 @@ class DoctrineWriterTest extends \PHPUnit_Framework_TestCase
 
         $metadata->expects($this->any())
             ->method('getAssociationNames')
-            ->will($this->returnValue(array('firstAssociation')));
+            ->will($this->returnValue(array('firstAssociation', 'secondAssociation')));
 
         $metadata->expects($this->any())
             ->method('getAssociationMappings')
@@ -140,10 +173,12 @@ class DoctrineWriterTest extends \PHPUnit_Framework_TestCase
         $writer = new DoctrineWriter($em, 'DdeboerDataImport:TestEntity');
 
         $association = new TestEntity();
-        $item        = array(
-            'firstProperty'    => 'some value',
-            'secondProperty'   => 'some other value',
-            'firstAssociation' => $association,
+        $secondAssociation = array(new TestEntity());
+        $item = array(
+            'firstProperty'     => 'some value',
+            'secondProperty'    => 'some other value',
+            'firstAssociation'  => $association,
+            'secondAssociation' => $secondAssociation
         );
 
         $writer->writeItem($item);

@@ -10,6 +10,13 @@ class TestEntity
 
     private $firstAssociation;
 
+    private $secondAssociation;
+
+    public function __construct()
+    {
+        $this->secondAssociation = array();
+    }
+
     public function getFirstProperty()
     {
         return $this->firstProperty;
@@ -40,4 +47,13 @@ class TestEntity
         $this->firstAssociation = $firstAssociation;
     }
 
+    public function getSecondAssociation() 
+    {
+        return $this->secondAssociation;
+    }
+
+    public function addSecondAssociation($secondAssociation)
+    {
+        $this->secondAssociation[] = $secondAssociation;
+    }
 }
